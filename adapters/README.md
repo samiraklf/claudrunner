@@ -25,11 +25,11 @@ Two rules apply to every adapter:
 | `jira` | workflow statuses | Yes, via assignee | Shell |
 | `linear` | workflow states | Yes, via assignee | Shell |
 | `azure-boards` | work item states | Yes, via assignee | Shell |
-| `shortcut` | workflow states | Yes, via owner | Agent-side |
-| `asana` | sections | Yes, via assignee | Agent-side |
-| `clickup` | statuses | Yes, one PUT | Agent-side |
-| `monday` | status column values | Yes, one mutation | Agent-side |
-| `notion` | select property values | Yes, one patch | Agent-side |
+| `shortcut` | workflow states | Yes, via owner | Shell |
+| `asana` | sections | Yes, via assignee | Shell |
+| `clickup` | statuses | Yes, one PUT | Shell |
+| `monday` | status column values | Yes, one mutation | Shell |
+| `notion` | select property values | Yes, one patch | Shell |
 | `trello` | lists | No — re-read guard | Shell |
 
 See `docs/writing-an-adapter.md`.

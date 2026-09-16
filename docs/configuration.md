@@ -41,6 +41,11 @@ board:
   #   jira          settings.project or settings.jql, settings.transitions.<role>
   #   azure-boards  settings.organization, settings.project, settings.area_path
   #   gitlab-issues settings.project (path or id)
+  #   shortcut      settings.states.<role> (workflow state ids)
+  #   asana         settings.sections.<role> (section gids)
+  #   clickup       settings.list_id
+  #   monday        settings.board_id, settings.status_column (the column id)
+  #   notion        settings.database_id, settings.status_property
   settings: {}
 
 loops:
@@ -108,6 +113,11 @@ sees them.
 | `linear` | `LINEAR_API_KEY` |
 | `azure-boards` | `AZURE_DEVOPS_EXT_PAT` |
 | `trello` | `TRELLO_API_KEY`, `TRELLO_TOKEN` |
+| `shortcut` | `SHORTCUT_API_TOKEN` |
+| `asana` | `ASANA_TOKEN` |
+| `clickup` | `CLICKUP_TOKEN` |
+| `monday` | `MONDAY_TOKEN` |
+| `notion` | `NOTION_TOKEN` |
 
 ## Two files that are not config
 

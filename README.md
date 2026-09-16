@@ -72,19 +72,17 @@ found, and asks you to confirm. Your project's commands always win over a pack's
 
 ## Task boards
 
-Eleven, covering what teams actually use. A board is four verbs — fetch, claim, comment,
-move — so adding yours takes an afternoon.
+Eleven, and every one runs from the orchestrator — the shell fetches, claims and moves, so
+the agent never holds your board credential. A board is four verbs, so adding yours takes an
+afternoon.
 
-| Board | Queues are | Claiming | Runs from |
-|---|---|---|---|
-| **GitHub Issues** · **GitLab Issues** | labels | Guarded re-read | Orchestrator |
-| **Jira** · **Linear** · **Azure Boards** | workflow states | Atomic, via assignee | Orchestrator |
-| **Trello** | lists | Guarded re-read | Orchestrator |
-| **Shortcut** · **Asana** · **ClickUp** · **monday.com** · **Notion** | states, sections, columns | Atomic, one write | Agent |
-| **None** | — | — | Sweep only, findings to files |
-
-*Orchestrator* means the shell fetches, claims and moves, so the agent never holds the
-board credential. *Agent* means the same four verbs, driven from inside the run.
+| Board | Queues are | Claiming |
+|---|---|---|
+| **GitHub Issues** · **GitLab Issues** | labels | Claim, re-read, release if contested |
+| **Jira** · **Linear** · **Azure Boards** · **Shortcut** | workflow states | Atomic, via assignee |
+| **Asana** · **ClickUp** · **monday.com** · **Notion** | sections, statuses, columns | Atomic, one write |
+| **Trello** | lists | Claim label, verified by re-read |
+| **None** | — | Sweep only, findings written to files |
 
 ## Code hosts
 

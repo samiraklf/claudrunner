@@ -3,6 +3,13 @@
 ## Unreleased
 
 ### Added
+- All eleven board adapters now run from the orchestrator. The agent never holds a board
+  credential on any of them.
+- A session-start hook that loads the repository's crew context — its commands, its notes
+  and its gotchas catalog. Silent in repositories that do not use claudrunner, so
+  installing the plugin costs nothing elsewhere.
+- This repository's own `.claudrunner/gotchas.md` and `notes.md`, seeded with the four
+  failure modes that have already happened here.
 - Shell bindings for five more boards: GitLab Issues, Jira, Linear, Azure Boards and
   Trello. Six of eleven adapters now run from the orchestrator, so the agent never holds
   the board credential on those.

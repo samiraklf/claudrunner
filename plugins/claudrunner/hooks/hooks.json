@@ -1,0 +1,17 @@
+{
+  "description": "claudrunner — loads this repository's crew context at session start, and only when the repository actually uses claudrunner",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/session-context.sh\"",
+            "timeout": 10,
+            "statusMessage": "Loading claudrunner context"
+          }
+        ]
+      }
+    ]
+  }
+}

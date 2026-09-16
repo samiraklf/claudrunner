@@ -79,6 +79,22 @@ case "$adapter" in
     for role in claimed review parked; do
       [ -n "$(cr_get ".board.settings.transitions.$role" '')" ] || err "board.settings.transitions.$role is not set"
     done ;;
+  shortcut)
+    for role in ready claimed review parked; do
+      [ -n "$(cr_get ".board.settings.states.$role" '')" ] || err "board.settings.states.$role is not set"
+    done ;;
+  asana)
+    for role in ready claimed review parked; do
+      [ -n "$(cr_get ".board.settings.sections.$role" '')" ] || err "board.settings.sections.$role is not set"
+    done ;;
+  clickup)
+    [ -n "$(cr_get '.board.settings.list_id' '')" ] || err "board.settings.list_id is not set" ;;
+  monday)
+    for k in board_id status_column; do
+      [ -n "$(cr_get ".board.settings.$k" '')" ] || err "board.settings.$k is not set"
+    done ;;
+  notion)
+    [ -n "$(cr_get '.board.settings.database_id' '')" ] || err "board.settings.database_id is not set" ;;
   azure-boards)
     for k in organization project; do
       [ -n "$(cr_get ".board.settings.$k" '')" ] || err "board.settings.$k is not set"
