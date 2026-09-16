@@ -172,22 +172,24 @@
   @keyframes flame{0%{transform:scaleY(1)}100%{transform:scaleY(1.5)}}
   .flag{animation:flag 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:0 50%}
   @keyframes flag{0%,100%{transform:skewY(0)}50%{transform:skewY(-7deg)}}
+  .gatelight{animation:shaft 9s ease-in-out infinite}
   .shaft{animation:shaft 9s ease-in-out infinite}
   @keyframes shaft{0%,100%{opacity:.05}50%{opacity:.11}}
   .motes{animation:motes 14s ease-in-out infinite}
   @keyframes motes{0%{transform:translateY(0);opacity:.2}50%{opacity:.5}
     100%{transform:translateY(-60px);opacity:.15}}
   .lurk{animation:lurk 17s ease-in-out infinite}
-  @keyframes lurk{0%,72%{transform:translateY(40px);opacity:0}
-    82%{transform:translateY(0);opacity:.6}92%{transform:translateY(0);opacity:.6}
-    100%{transform:translateY(40px);opacity:0}}
+  @keyframes lurk{0%,70%{transform:translateY(150px);opacity:0}
+    80%{transform:translateY(0);opacity:1}92%{transform:translateY(0);opacity:1}
+    100%{transform:translateY(150px);opacity:0}}
   .wave{animation:wave 7s ease-in-out infinite}
   @keyframes wave{0%,100%{transform:translateX(0)}50%{transform:translateX(26px)}}
   .palm{animation:palm 5.5s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
   @keyframes palm{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
   .sat{animation:sat 34s linear infinite}
   @keyframes sat{from{transform:translate(-200px,60px)}to{transform:translate(1800px,-20px)}}
-  :root[data-theme="day"] .beam{display:none}
+  :root[data-theme="day"] .beam,
+  :root:not([data-scene="city"]) .beam{display:none}
   :root[data-theme="day"] #litwindows{opacity:.28}
   :root[data-theme="day"] .orb{filter:drop-shadow(0 0 40px var(--orb-glow))}
 
@@ -315,20 +317,20 @@
     <!-- palms -->
     <g transform="translate(180,762)">
       <path class="palm" d="M-9,0 q16,-130 6,-232 l16,0 q-8,104 8,232 z" fill="#7a4a24"/>
-      <g class="palm" transform="translate(9,-232)">
+      <g transform="translate(9,-232)"><g class="palm">
         <path d="M0,0 q-96,-26 -120,18 q66,12 120,-4 z" fill="#2e7d4f"/>
         <path d="M0,0 q92,-38 124,8 q-70,16 -124,-2 z" fill="#35945c"/>
         <path d="M0,0 q-30,-82 12,-102 q22,62 -12,102 z" fill="#2a7047"/>
         <path d="M0,0 q42,-74 84,-58 q-30,50 -84,58 z" fill="#31865a"/>
         <circle cx="-8" cy="10" r="8" fill="#8a5a2b"/>
-        <circle cx="8" cy="14" r="7" fill="#96642f"/></g>
+        <circle cx="8" cy="14" r="7" fill="#96642f"/></g></g>
     </g>
     <g transform="translate(1460,762)">
       <path class="palm" d="M-7,0 q13,-104 5,-186 l13,0 q-6,84 7,186 z" fill="#7a4a24"/>
-      <g class="palm" transform="translate(7,-186)">
+      <g transform="translate(7,-186)"><g class="palm">
         <path d="M0,0 q-80,-22 -100,16 q56,10 100,-4 z" fill="#2e7d4f"/>
         <path d="M0,0 q78,-32 104,8 q-58,14 -104,-2 z" fill="#35945c"/>
-        <path d="M0,0 q-24,-68 10,-84 q18,52 -10,84 z" fill="#2a7047"/></g>
+        <path d="M0,0 q-24,-68 10,-84 q18,52 -10,84 z" fill="#2a7047"/></g></g>
     </g>
     <g class="glitter" opacity=".5" fill="#ffffff">
       <ellipse cx="900" cy="596" rx="30" ry="3"/><ellipse cx="960" cy="622" rx="22" ry="2.5"/>
@@ -341,11 +343,11 @@
       <rect x="-54" y="-8" width="108" height="8" rx="4" fill="#e8657e" opacity=".9"/>
       <rect x="-54" y="-8" width="108" height="4" rx="2" fill="#ffffff" opacity=".55"/>
     </g>
-    <g class="ball" transform="translate(980,762)">
+    <g transform="translate(980,762)"><g class="ball">
       <circle cx="0" cy="-18" r="18" fill="#ffffff"/>
       <path d="M0,-36 a18,18 0 0,1 0,36 z" fill="#ff5a5a" opacity=".85"/>
       <path d="M-18,-18 a18,18 0 0,1 18,-18 z" fill="var(--neon)" opacity=".8"/>
-    </g>
+    </g></g>
     <g class="crab" transform="translate(300,762)">
       <ellipse cx="0" cy="-10" rx="13" ry="9" fill="#ef5f3c"/>
       <circle cx="-5" cy="-17" r="2.6" fill="var(--ink)"/><circle cx="5" cy="-17" r="2.6" fill="var(--ink)"/>
@@ -360,52 +362,123 @@
   </g>
 
   <g class="backdrop" id="sc-maze">
-    <!-- two enormous walls, and a long corridor between them -->
-    <g fill="var(--mid)">
-      <rect x="0" y="0" width="330" height="762"/>
-      <rect x="1270" y="0" width="330" height="762"/>
+    <!-- a stone corridor in one-point perspective, walls leaning away toward the gate -->
+
+    <!-- the far wall, with the gate cut into it -->
+    <rect x="470" y="150" width="660" height="612" fill="var(--far)"/>
+    <g stroke="var(--near)" stroke-width="2" opacity=".45">
+      <path d="M470,220 H1130 M470,290 H1130 M470,360 H1130 M470,430 H1130
+               M470,500 H1130 M470,570 H1130 M470,640 H1130 M470,710 H1130"/>
+      <path d="M580,150 V762 M690,150 V762 M910,150 V762 M1020,150 V762"/>
     </g>
-    <g fill="var(--far)">
-      <rect x="330" y="86" width="170" height="676"/>
-      <rect x="1100" y="86" width="170" height="676"/>
-    </g>
-    <g fill="var(--near)" opacity=".9">
-      <rect x="500" y="210" width="130" height="552"/>
-      <rect x="970" y="210" width="130" height="552"/>
-      <rect x="630" y="286" width="340" height="66"/>
-    </g>
-    <!-- block seams -->
-    <g stroke="var(--near)" stroke-width="3" opacity=".45">
-      <path d="M0,120 H500 M0,232 H500 M0,344 H500 M0,456 H500 M0,568 H500 M0,680 H500"/>
-      <path d="M1100,120 H1600 M1100,232 H1600 M1100,344 H1600 M1100,456 H1600 M1100,568 H1600 M1100,680 H1600"/>
-      <path d="M110,0 V762 M220,0 V762 M1380,0 V762 M1490,0 V762 M400,86 V762 M1180,86 V762"/>
-    </g>
-    <!-- ivy -->
-    <g fill="#3f6b45" opacity=".8">
-      <path d="M470,86 q22,70 -8,140 q-18,44 6,96 q18,40 -6,90 l40,0 q22,-90 4,-150
-               q-16,-56 8,-92 q22,-34 6,-84 z"/>
-      <path d="M1130,86 q-24,64 4,130 q20,48 -8,104 q-20,40 2,86 l-38,0 q-20,-84 -2,-146
-               q18,-58 -6,-90 q-22,-30 -4,-84 z"/>
-      <g opacity=".85">
-        <circle cx="458" cy="266" r="13"/><circle cx="492" cy="338" r="11"/>
-        <circle cx="470" cy="418" r="14"/><circle cx="498" cy="512" r="10"/>
-        <circle cx="1148" cy="296" r="12"/><circle cx="1120" cy="386" r="14"/>
-        <circle cx="1154" cy="486" r="11"/>
+
+    <!-- the gate: the only way out, and it is a long way off -->
+    <g>
+      <path d="M736,762 L736,330 q64,-62 128,0 L864,762 Z" fill="var(--sky-2)"/>
+      <path d="M736,762 L736,330 q64,-62 128,0 L864,762 Z" fill="#ffffff" opacity=".35"/>
+      <path class="gatelight" d="M752,762 L752,344 q48,-46 96,0 L848,762 Z" fill="#ffffff" opacity=".28"/>
+      <path d="M736,330 q64,-62 128,0" fill="none" stroke="var(--near)" stroke-width="9"/>
+      <g stroke="var(--near)" stroke-width="6" opacity=".9">
+        <path d="M770,762 V300 M800,762 V286 M830,762 V300"/>
       </g>
     </g>
-    <!-- light falling into the corridor -->
-    <path class="shaft" d="M660,0 L960,0 L1090,762 L540,762 Z" fill="#ffffff" opacity=".07"/>
-    <g class="motes" fill="#ffffff" opacity=".35">
-      <circle cx="700" cy="320" r="2.5"/><circle cx="820" cy="420" r="2"/>
-      <circle cx="900" cy="270" r="2.2"/><circle cx="760" cy="540" r="2.4"/>
-      <circle cx="960" cy="600" r="2"/>
+
+    <!-- left wall -->
+    <path d="M0,-40 L470,150 L470,762 L0,762 Z" fill="var(--mid)"/>
+    <g stroke="var(--near)" stroke-width="3" opacity=".5" fill="none">
+      <path d="M0,762 L470,470"/>
+      <path d="M0,690 L470,436"/>
+      <path d="M0,618 L470,402"/>
+      <path d="M0,546 L470,368"/>
+      <path d="M0,474 L470,334"/>
+      <path d="M0,402 L470,300"/>
+      <path d="M0,330 L470,266"/>
+      <path d="M0,258 L470,232"/>
+      <path d="M0,186 L470,198"/>
+      <path d="M0,114 L470,164"/>
+      <path d="M0,42 L470,130"/>
+      <path d="M0,-40.0 L0,762.0"/>
+      <path d="M120,34.400000000000006 L120,687.6"/>
+      <path d="M250,115.0 L250,607.0"/>
+      <path d="M380,195.6 L380,526.4"/>
+      <path d="M470,251.39999999999998 L470,470.6"/>
     </g>
-    <!-- something at the far end, which is not coming closer. probably. -->
-    <g class="lurk" opacity=".55">
-      <ellipse cx="800" cy="700" rx="52" ry="26" fill="var(--near)"/>
-      <circle cx="782" cy="690" r="4" fill="var(--hazard)"/>
-      <circle cx="814" cy="690" r="4" fill="var(--hazard)"/>
-      <path d="M760,714 l16,14 M840,714 l-16,14" stroke="var(--near)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M0,-40 L470,150 L470,190 L0,30 Z" fill="var(--near)" opacity=".55"/>
+
+    <!-- right wall -->
+    <path d="M1600,-40 L1130,150 L1130,762 L1600,762 Z" fill="var(--mid)"/>
+    <g stroke="var(--near)" stroke-width="3" opacity=".5" fill="none">
+      <path d="M1600,762 L1130,470"/>
+      <path d="M1600,690 L1130,436"/>
+      <path d="M1600,618 L1130,402"/>
+      <path d="M1600,546 L1130,368"/>
+      <path d="M1600,474 L1130,334"/>
+      <path d="M1600,402 L1130,300"/>
+      <path d="M1600,330 L1130,266"/>
+      <path d="M1600,258 L1130,232"/>
+      <path d="M1600,186 L1130,198"/>
+      <path d="M1600,114 L1130,164"/>
+      <path d="M1600,42 L1130,130"/>
+      <path d="M1600,-40.0 L1600,762.0"/>
+      <path d="M1480,34.400000000000006 L1480,687.6"/>
+      <path d="M1350,115.0 L1350,607.0"/>
+      <path d="M1220,195.6 L1220,526.4"/>
+      <path d="M1130,251.39999999999998 L1130,470.6"/>
+    </g>
+    <path d="M1600,-40 L1130,150 L1130,190 L1600,30 Z" fill="var(--near)" opacity=".55"/>
+
+    <!-- floor, its slabs running to the gate -->
+    <path d="M0,762 L470,762 L1130,762 L1600,762 Z" fill="var(--ground)"/>
+    <g stroke="var(--ground-top)" stroke-width="3" opacity=".35" fill="none">
+      <path d="M0,900 L690,762 M300,900 L760,762 M800,900 L800,762 M1300,900 L840,762
+               M1600,900 L910,762"/>
+    </g>
+
+    <!-- ivy, heavy on both walls -->
+    <g fill="#3f6b45" opacity=".85">
+      <path d="M150,-10 q28,120 -4,230 q-22,78 6,166 q22,70 -8,150 l54,0 q26,-150 4,-250
+               q-20,-96 10,-156 q26,-58 6,-140 z"/>
+      <path d="M392,96 q20,96 -4,180 q-16,60 4,128 l-38,0 q-18,-74 -2,-130 q16,-58 -6,-90
+               q-20,-30 -2,-88 z"/>
+      <path d="M1450,-10 q-30,120 2,232 q22,78 -8,164 q-24,68 4,150 l-54,0 q-24,-150 -2,-250
+               q22,-96 -8,-156 q-26,-58 -4,-140 z"/>
+      <path d="M1208,96 q-22,96 2,180 q16,60 -4,128 l38,0 q18,-74 2,-130 q-16,-58 6,-90
+               q20,-30 2,-88 z"/>
+      <g opacity=".9">
+        <circle cx="132" cy="210" r="17"/><circle cx="182" cy="330" r="14"/>
+        <circle cx="140" cy="450" r="19"/><circle cx="190" cy="592" r="13"/>
+        <circle cx="372" cy="250" r="12"/><circle cx="396" cy="360" r="10"/>
+        <circle cx="1468" cy="230" r="17"/><circle cx="1420" cy="350" r="15"/>
+        <circle cx="1462" cy="470" r="18"/><circle cx="1414" cy="600" r="12"/>
+        <circle cx="1228" cy="250" r="12"/><circle cx="1204" cy="366" r="10"/>
+      </g>
+    </g>
+
+    <!-- moss and loose stone where the walls meet the floor -->
+    <g fill="#3f6b45" opacity=".5">
+      <path d="M0,762 q70,-26 150,-8 q80,18 150,-6 l0,14 -300,0 z"/>
+      <path d="M1600,762 q-70,-26 -150,-8 q-80,18 -150,-6 l0,14 300,0 z"/>
+    </g>
+    <g fill="var(--near)" opacity=".8">
+      <path d="M330,762 l26,-14 24,14 z"/><path d="M1240,762 l-26,-14 -24,14 z"/>
+      <path d="M560,756 l18,-10 16,10 z"/>
+    </g>
+
+    <!-- dust in the light -->
+    <g class="motes" fill="#ffffff" opacity=".35">
+      <circle cx="700" cy="330" r="2.5"/><circle cx="820" cy="430" r="2"/>
+      <circle cx="900" cy="280" r="2.2"/><circle cx="760" cy="550" r="2.4"/>
+      <circle cx="960" cy="610" r="2"/>
+    </g>
+
+    <!-- something in the gate. it is not getting closer. -->
+    <g class="lurk">
+      <path d="M800,762 q-52,-24 -56,-96 q-2,-44 22,-70 q34,-34 68,0 q24,26 22,70
+               q-4,72 -56,96 z" fill="var(--ink)" opacity=".85"/>
+      <circle cx="786" cy="612" r="5" fill="var(--hazard)"/>
+      <circle cx="814" cy="612" r="5" fill="var(--hazard)"/>
+      <path d="M760,700 l-26,26 M840,700 l26,26 M770,660 l-30,10 M830,660 l30,10"
+            stroke="var(--ink)" stroke-width="7" stroke-linecap="round" opacity=".85"/>
     </g>
   </g>
 
@@ -468,7 +541,7 @@
     <g class="beam" opacity=".7"><path d="M-70,0 L10,-560 90,-560 40,0 Z" fill="url(#beamgrad)"/></g>
     <rect x="-56" y="-46" width="112" height="46" rx="6" fill="var(--near)"/>
     <rect x="-40" y="-84" width="80" height="40" rx="6" fill="var(--mid)"/>
-    <g class="bob" transform="translate(0,-84)">
+    <g transform="translate(0,-84)"><g class="bob">
       <path class="cape" d="M-18,-70 q-26,42 -20,70 l14,0 q-6,-38 10,-60 z" fill="var(--hazard)" opacity=".95"/>
       <rect x="-20" y="-72" width="40" height="50" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
       <path d="M0,-56 l9,13 -9,13 -9,-13 z" fill="var(--hazard)"/>
@@ -479,7 +552,7 @@
       <rect x="-30" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       <rect x="19" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       <g id="hero-costume"></g>
-    </g>
+    </g></g>
   </g>
 
   <!-- workers and idle props are built here -->
@@ -804,7 +877,7 @@ function render(d, live) {
   // the hero wears the local uniform too, shifted onto its slightly smaller head
   const hc = el('hero-costume');
   hc.innerHTML = `<g transform="translate(0,-8) scale(.92)">${(COSTUME[scene] || COSTUME.city)()}</g>`;
-  const pet = node('g', { transform: 'translate(0,762)', class: 'pet' });
+  const pet = node('g', { class: 'pet' });   // position comes from the trot keyframes
   pet.innerHTML = COMPANION[scene] || COMPANION.city;
   crew.appendChild(pet);
   if (idle) {
