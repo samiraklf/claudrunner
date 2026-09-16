@@ -103,6 +103,7 @@ board is not free. The install asks for a budget, the defaults are conservative,
 
 - [Getting started](docs/getting-started.md)
 - [Configuration reference](docs/configuration.md)
+- [How a run works](docs/how-a-run-works.md)
 - [Scheduling](docs/scheduling.md) · [Cost](docs/cost.md) · [Security model](docs/security.md)
 - [Write a stack pack](docs/writing-a-pack.md) · [Write a board adapter](docs/writing-an-adapter.md)
 
