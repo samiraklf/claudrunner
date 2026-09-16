@@ -1,6 +1,6 @@
 ---
 name: card-format
-description: "The house format for a finding card or issue: problem, evidence, impact, proposed fix, effort and risk, dependencies, source. Use whenever filing a bug, a finding, a ticket or an issue that another agent or engineer must be able to act on without asking a question."
+description: "House format for a finding card or issue: problem, evidence, impact, fix, effort, dependencies, source. Use when filing any bug, finding, ticket or issue."
 ---
 
 # Card format

@@ -1,6 +1,6 @@
 ---
 name: vk-review
-description: "Adversarial second-pass review of a finished change before it ships. Spawns a fresh reviewer with no memory of writing the code, optionally a second reviewer from another model vendor, and grades findings P0/P1/P2. Use before every pull request and before reporting any implementation finished — especially when the tests pass. Triggers on 'done', 'ready', 'review before PR', 'double-check this'."
+description: "Adversarial review before a change ships: a fresh reviewer, an optional second vendor, findings graded P0/P1/P2. Use before every pull request and before calling work done, especially when the tests pass. Triggers: done, ready, review before PR."
 ---
 
 # The review pass

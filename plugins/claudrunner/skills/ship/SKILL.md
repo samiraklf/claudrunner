@@ -1,6 +1,6 @@
 ---
 name: ship
-description: "Finish a change: format, verify, push within the autonomy level, open a pull request with the house body, move the board items and emit the machine-readable run summary. Use at the end of every unattended run. Triggers on 'ship it', 'open the PR', 'finish the run'."
+description: "Finish a run: format, push within the autonomy level, open the pull request, move the board items, emit the run summary. Triggers: ship it, open the PR, finish the run."
 ---
 
 # Ship

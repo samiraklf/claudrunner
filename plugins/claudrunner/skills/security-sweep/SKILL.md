@@ -1,6 +1,6 @@
 ---
 name: security-sweep
-description: "Language-agnostic security and vulnerability pass over a diff or a codebase. Covers injection, authorization, tenant isolation, secrets, deserialization, request forgery, output escaping and dependency risk. Use for a security review, a vulnerability hunt, or before exposing a new endpoint. Triggers on 'security', 'vulnerability', 'is this safe', 'audit'."
+description: "Security and vulnerability pass, any language: injection, authorization, tenant isolation, secrets, deserialization, request forgery, escaping. Triggers: security, vulnerability, is this safe, audit."
 ---
 
 # Security sweep

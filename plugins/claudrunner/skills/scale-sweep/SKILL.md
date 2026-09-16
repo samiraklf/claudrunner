@@ -1,6 +1,6 @@
 ---
 name: scale-sweep
-description: "Language-agnostic performance and scale pass: queries in loops, unbounded reads, missing indexes, memory-bound file and batch work, retry and timeout traps in background jobs. Use when hunting slow paths, memory pressure, or reviewing a change that touches a large table or a queue. Triggers on 'slow', 'timeout', 'N+1', 'out of memory', 'scale', 'performance'."
+description: "Performance and scale pass, any language: queries in loops, unbounded reads, missing indexes, memory-bound work, queue timeout traps. Triggers: slow, timeout, N+1, out of memory, scale."
 ---
 
 # Scale sweep

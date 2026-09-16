@@ -1,6 +1,6 @@
 ---
 name: verify-finding
-description: "Verify a reported finding against the real code before acting on it, then move its card to the state the evidence justifies. Use when checking whether reported issues are real or already fixed, closing review findings, or triaging a board of claims. Triggers on 'is this still an issue', 'verify these findings', 'close the fixed ones', 'triage the board'."
+description: "Verify a reported finding against the real code, then move its card to the state the evidence justifies. Triggers: is this still an issue, verify these findings, triage the board."
 ---
 
 # Verify a finding
