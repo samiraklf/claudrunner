@@ -136,9 +136,10 @@
   :root[data-scene="space"] .plane,
   :root[data-scene="space"] .car{display:none}
   :root[data-scene="space"] .stars{opacity:1}
-  #city-props,#city-fg,#city-road{display:none}
+  #city-props,#city-fg,#city-road,#city-shop{display:none}
   :root[data-scene="city"] .car,
   :root[data-scene="city"] #city-road,
+  :root[data-scene="city"] #city-shop,
   :root[data-scene="city"] #city-props,
   :root[data-scene="city"] #city-fg{display:block}
   :root[data-scene="beach"] .car,
@@ -156,6 +157,7 @@
   .blink{animation:blink2 1.8s steps(1) infinite}
   @keyframes blink2{0%,55%{opacity:1}56%,100%{opacity:.15}}
   .neon{animation:neon 4.5s steps(1) infinite}
+  [data-idle="1"] #shopsign{fill:#ff6b6b;animation:none;opacity:.7}
   @keyframes neon{0%,88%{opacity:1}89%,91%{opacity:.25}92%,96%{opacity:1}97%,99%{opacity:.3}}
   .lamp{filter:drop-shadow(0 0 16px var(--hazard))}
   /* the swing: across the sky on a line, then gone for a while */
@@ -304,11 +306,6 @@
     <g transform="translate(300,470)">
       <rect x="-3" y="-64" width="6" height="64" fill="var(--near)"/>
       <circle class="blink" cx="0" cy="-70" r="6" fill="#ff5a5a"/>
-    </g>
-    <g transform="translate(980,498)" opacity=".95">
-      <rect x="-64" y="-34" width="128" height="34" rx="4" fill="var(--near)"/>
-      <text class="neon" x="0" y="-11" text-anchor="middle" font-size="17"
-            font-family="var(--mono)" letter-spacing="3" fill="var(--neon)">OPEN</text>
     </g>
     <g class="swinger">
       <g class="swing">
@@ -579,6 +576,21 @@
     </g>
   </g>
 
+  <g id="city-shop">
+    <g transform="translate(1188,762)">
+      <rect x="-86" y="-118" width="172" height="118" fill="var(--near)"/>
+      <rect x="-60" y="-78" width="46" height="78" fill="var(--ink)" opacity=".6"/>
+      <rect x="4" y="-78" width="56" height="44" rx="3" fill="var(--body-2)" opacity=".35"/>
+      <path d="M-94,-118 l188,0 l-10,22 l-168,0 z" fill="var(--hazard)"/>
+      <g stroke="#ffffff" stroke-width="10" opacity=".35">
+        <path d="M-70,-118 l-6,22 M-34,-118 l-5,22 M2,-118 l-3,22 M38,-118 l-2,22 M74,-118 l0,22"/>
+      </g>
+      <rect x="-50" y="-150" width="100" height="30" rx="5" fill="var(--ink)"/>
+      <text id="shopsign" class="neon" x="0" y="-129" text-anchor="middle" font-size="15"
+            font-family="var(--mono)" letter-spacing="3" fill="var(--neon)">OPEN</text>
+    </g>
+  </g>
+
   <!-- a car on the near road -->
   <g class="car"><g transform="translate(0,834)">
     <rect x="0" y="-20" width="84" height="20" rx="8" fill="var(--hazard)"/>
@@ -615,17 +627,17 @@
     <path d="M0,0 l-10,-40 q16,-26 26,-6 q18,-16 22,10 l-8,36 z" fill="var(--near)"/>
   </g>
   <g id="city-fg">
-    <g transform="translate(1180,762)">
+    <g transform="translate(1540,762)">
       <rect x="-4" y="-150" width="8" height="150" fill="var(--near)"/>
-      <path d="M-4,-150 q0,-26 30,-26" fill="none" stroke="var(--near)" stroke-width="7"/>
-      <circle class="lamp" cx="30" cy="-170" r="10" fill="var(--hazard)"/>
+      <path d="M4,-150 q0,-26 -30,-26" fill="none" stroke="var(--near)" stroke-width="7"/>
+      <circle class="lamp" cx="-30" cy="-170" r="10" fill="var(--hazard)"/>
     </g>
     <g transform="translate(250,762)">
       <rect x="-9" y="-26" width="18" height="26" rx="4" fill="var(--near)"/>
       <rect x="-13" y="-30" width="26" height="6" rx="3" fill="var(--near)"/>
       <rect x="-5" y="-20" width="10" height="3" fill="var(--ground-top)" opacity=".5"/>
     </g>
-    <g transform="translate(1290,762)">
+    <g transform="translate(1466,762)">
       <rect x="-7" y="-30" width="14" height="30" rx="5" fill="#d2453f"/>
       <rect x="-14" y="-22" width="28" height="6" rx="3" fill="#d2453f"/>
       <circle cx="0" cy="-34" r="6" fill="#d2453f"/>
@@ -1007,6 +1019,8 @@ function render(d, live) {
   const runs = (d.runs || []).slice(0, 4);
   const idle = !runs.length;
   document.documentElement.dataset.idle = idle ? '1' : '0';
+  const sign = el('shopsign');
+  if (sign) sign.textContent = idle ? 'CLOSED' : 'OPEN';
 
   el('mode').textContent = live ? 'LIVE' : 'SIMULATION';
   el('q').textContent = d.queue ?? 0;
