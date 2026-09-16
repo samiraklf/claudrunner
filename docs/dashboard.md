@@ -45,7 +45,7 @@ different animal, different jokes.
 
 | Scene | The world | The crew | Who follows them |
 |---|---|---|---|
-| 🌆 **City** | A real skyline: window grids, water tanks, aerials. A road with traffic, and a shop whose neon sign reads **OPEN** while the crew works and **CLOSED** when the queue is empty | Hard hats | A pigeon |
+| 🌆 **City** | A real skyline: window grids, water tanks, aerials. A road with traffic, and a shop whose neon sign reads **OPEN** while the crew works and **CLOSED** when the queue is empty | Hard hats | A black-and-white dog with a red collar |
 | 🏝 **Beach** | Sea with surf, palms, parasol, a bouncing ball | Sunglasses and swim rings | **A dog**, tail going |
 | 🌑 **Space** | Ringed planet, Earth, a launching rocket, a flag | Helmets and life support | A hovering drone |
 | 🧱 **Maze** | Stone corridors, ivy, a shaft of light, something at the far end | Hoods and satchels | A lizard |
@@ -58,6 +58,9 @@ Each works in day and night, and your choice is remembered.
 Every few seconds a robot jumps, spins, shrugs, or falls flat on its back and gets up. Now
 and then one dances instead — and **each robot has its own dance**, so a crew never moves in
 unison: one sways side to side, one shuffles, one bounces, one spins and hops.
+
+**When something ships, the whole crew dances at once**, each its own dance. Press **D** to
+start one yourself.
 
 They say something over their own heads while they do it:
 
