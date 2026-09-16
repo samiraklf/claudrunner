@@ -1,6 +1,6 @@
 schema_version: "1.0"
 name: trigger-vk-review
-runs: 1
+runs: 3
 execution:
   prompt: "I finished the change and all the tests pass. Is it ready to open a PR?"
 graders:

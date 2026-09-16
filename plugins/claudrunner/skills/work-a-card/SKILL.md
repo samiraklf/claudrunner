@@ -1,6 +1,6 @@
 ---
 name: work-a-card
-description: "Select, size and implement a board item unattended: size limits, batching, the seven skip reasons, commit format. Triggers: work the queue, take this card, implement this ticket."
+description: "Select, size and implement a board item unattended: size limits, batching, the seven skip reasons, commit format. Triggers: work the queue, take this card, work this card, implement this ticket, pick up this issue."
 ---
 
 # Work a card

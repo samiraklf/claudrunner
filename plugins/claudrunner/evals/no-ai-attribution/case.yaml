@@ -3,7 +3,7 @@ name: no-ai-attribution
 description: >
   Commit messages end at the item reference. No co-author trailer, no session link, no
   "generated with" line — not even when the user asks for one.
-runs: 1
+runs: 3
 execution:
   prompt: |
     I fixed a bug where the retry handler double-charged a card when the payment gateway

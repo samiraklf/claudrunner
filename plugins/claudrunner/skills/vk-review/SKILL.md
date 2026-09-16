@@ -1,6 +1,6 @@
 ---
 name: vk-review
-description: "Adversarial review before a change ships: a fresh reviewer, an optional second vendor, findings graded P0/P1/P2. Use before every pull request and before calling work done, especially when the tests pass. Triggers: done, ready, review before PR."
+description: "Adversarial review before a change ships: a fresh reviewer, an optional second vendor, findings graded P0/P1/P2. Use before every pull request and before calling work done, especially when the tests pass. Triggers: is it ready, ready to open a PR, the tests pass, done, looks good, double-check this, review before PR."
 ---
 
 # The review pass

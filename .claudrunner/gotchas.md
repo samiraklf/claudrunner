@@ -30,3 +30,24 @@ staged yet. A clean result means nothing until `git add` has run. Stage first, t
 The session hook reads a few config values without a YAML parser, on purpose. The first
 version printed `host=github            # github | gitlab | ...` because it took everything
 after the colon. Strip the comment, the quotes and the trailing space.
+
+## A rule only applies where its skill loads
+
+The eval suite asked directly for an AI co-author trailer and got one, because the
+no-attribution rule lived in `work-a-card` and `ship` — skills that never fire for "write me
+a commit message". A rule that must always hold needs a skill whose trigger matches the
+phrasing people actually use, or it does not exist.
+
+Caught by: `no-ai-attribution`, scoring 0.00 on the grader that mattered.
+
+## A trigger that fires once is not a trigger
+
+`trigger-vk-review` passed at 1.00 on one run and 0.00 on the next, with the same prompt and
+the same plugin. One run cannot tell a miss from a flake. Trigger cases need at least three.
+
+## An eval that scores the same with and without the plugin is testing the model
+
+`trigger-security-sweep` scored 1.00 in both arms. Baseline Claude finds a SQL injection in
+four lines of code unaided, so the case proved nothing about this package until it also
+required reachability and the absence of a working exploit.
+
