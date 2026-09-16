@@ -301,6 +301,28 @@
   .crawl .gl2,.crawl .gl4{animation:gleg .22s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
   @keyframes gleg{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
   .geye{filter:drop-shadow(0 0 6px var(--hazard))}
+  .sprint .face-scared,.sprint .face-faint,.sprint .arms-flail,.sprint .yikes,.sprint .txt-l{display:none}
+  .sprint.faceleft .txt-r{display:none}
+  .sprint.faceleft .txt-l{display:block}
+  .sprint.scared .face-calm,.sprint.fainted .face-calm,.sprint.fainted .face-scared{display:none}
+  .sprint.scared .face-scared,.sprint.fainted .face-faint{display:block}
+  .sprint.scared .arms-run{display:none}
+  .sprint.scared .arms-flail{display:block}
+  .sprint.fainted .arms-flail{display:none}
+  .sprint.fainted .arms-run{display:block}
+  .sprint.yelp .yikes{display:block;animation:yikes .5s cubic-bezier(.2,1.6,.4,1) 1}
+  @keyframes yikes{from{transform:translateY(12px) scale(.2);opacity:0}}
+  .runlegs .belly{animation:jiggle .26s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes jiggle{from{transform:scale(1,1)}to{transform:scale(1.05,.93)}}
+  .runlegs .arm-b{animation:legA .26s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+  .sprint.scared .flail-a{animation:flail .16s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+  .sprint.scared .flail-b{animation:flail .16s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes flail{from{transform:rotate(-30deg)}to{transform:rotate(30deg)}}
+  .sprint.scared .drop1{animation:drop 0.5s ease-out infinite}
+  .sprint.scared .drop2{animation:drop 0.5s ease-out infinite .25s}
+  @keyframes drop{from{transform:translate(0,0);opacity:1}to{transform:translate(-10px,14px);opacity:0}}
+  .sprint.cower{animation:cower .07s linear infinite alternate}
+  @keyframes cower{from{transform:translateX(-2px)}to{transform:translateX(2px)}}
   .shake{animation:shake .12s linear 8}
   @keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
 
@@ -1660,17 +1682,65 @@ async function poopGag() {
 // The doors start closing. A runner bolts out of the gate with a map, and something with far too
 // many legs comes after him. He trips. It looms over him — and hands the map back. It has notes.
 const SPRINT = `
-  <ellipse cx="0" cy="2" rx="24" ry="5" fill="rgba(0,0,0,.22)"/>
-  <g class="leg-a"><rect x="-8" y="-28" width="9" height="28" rx="4" fill="#3f4a3a" stroke="var(--ink)" stroke-width="2.5"/></g>
-  <g class="leg-b"><rect x="0" y="-28" width="9" height="28" rx="4" fill="#4b5745" stroke="var(--ink)" stroke-width="2.5"/></g>
-  <rect x="-15" y="-64" width="30" height="40" rx="11" fill="#7d8c5f" stroke="var(--ink)" stroke-width="3"/>
-  <path d="M-12,-60 L14,-30" stroke="#6a4e2f" stroke-width="5" stroke-linecap="round"/>
-  <rect x="8" y="-38" width="14" height="12" rx="3" fill="#8a6a3f" stroke="var(--ink)" stroke-width="2"/>
-  <g class="arm-a"><rect x="-4" y="-60" width="8" height="26" rx="4" fill="#7d8c5f" stroke="var(--ink)" stroke-width="2.5"/></g>
-  <rect x="-13" y="-92" width="28" height="30" rx="11" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
-  <path d="M-15,-78 q4,-26 17,-26 q16,0 17,22 q-12,-10 -34,4 z" fill="#5d6b4e" stroke="var(--ink)" stroke-width="2.5"/>
-  <rect x="-2" y="-82" width="16" height="7" rx="3.5" fill="var(--hazard)"/>
-  <g class="sprint-map"><rect x="16" y="-56" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/></g>`;
+  <ellipse cx="4" cy="3" rx="34" ry="6" fill="rgba(0,0,0,.22)"/>
+  <!-- legs and trainers -->
+  <g class="leg-a"><rect x="-12" y="-40" width="13" height="36" rx="6" fill="#f1c27d" stroke="var(--ink)" stroke-width="2.5"/>
+    <ellipse cx="-3" cy="-2" rx="11" ry="6" fill="#ffffff" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <g class="leg-b"><rect x="6" y="-40" width="13" height="36" rx="6" fill="#e9b56f" stroke="var(--ink)" stroke-width="2.5"/>
+    <ellipse cx="15" cy="-2" rx="11" ry="6" fill="#ffffff" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <rect x="-16" y="-50" width="40" height="18" rx="7" fill="#2f4b7c" stroke="var(--ink)" stroke-width="2.5"/>
+  <!-- the gut: a shirt that lost the argument -->
+  <g class="belly">
+    <ellipse cx="6" cy="-74" rx="34" ry="32" fill="#e8543f" stroke="var(--ink)" stroke-width="3"/>
+    <ellipse cx="9" cy="-47" rx="24" ry="9" fill="#f1c27d" stroke="var(--ink)" stroke-width="2.5"/>
+    <circle cx="12" cy="-47" r="2" fill="#b5834a"/>
+    <text class="txt-r" x="6" y="-70" text-anchor="middle" font-size="8" font-weight="700"
+          font-family="var(--mono)" fill="#ffffff">I ♥ AGILE</text>
+    <text class="txt-l" x="6" y="-70" text-anchor="middle" font-size="8" font-weight="700"
+          font-family="var(--mono)" fill="#ffffff" transform="translate(12,0) scale(-1,1)">I ♥ AGILE</text>
+  </g>
+  <!-- arms: swinging while jogging, flailing when it goes wrong -->
+  <g class="arms-run">
+    <g class="arm-a"><rect x="-26" y="-94" width="11" height="34" rx="5.5" fill="#f1c27d" stroke="var(--ink)" stroke-width="2.5"/></g>
+    <g class="arm-b"><rect x="30" y="-94" width="11" height="34" rx="5.5" fill="#e9b56f" stroke="var(--ink)" stroke-width="2.5"/>
+      <g class="sprint-map"><rect x="28" y="-66" width="22" height="10" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/></g></g>
+  </g>
+  <g class="arms-flail">
+    <g class="flail-a"><rect x="-30" y="-140" width="11" height="40" rx="5.5" fill="#f1c27d" stroke="var(--ink)" stroke-width="2.5"/></g>
+    <g class="flail-b"><rect x="34" y="-140" width="11" height="40" rx="5.5" fill="#e9b56f" stroke="var(--ink)" stroke-width="2.5"/></g>
+  </g>
+  <!-- head, headband, three hairs -->
+  <circle cx="8" cy="-118" r="21" fill="#f1c27d" stroke="var(--ink)" stroke-width="3"/>
+  <path d="M-2,-138 q4,-10 8,0 M6,-139 q5,-12 10,0 M14,-138 q5,-9 9,0" fill="none" stroke="#5b3a22" stroke-width="3"/>
+  <rect x="-13" y="-131" width="42" height="7" rx="3" fill="#ffffff" stroke="var(--ink)" stroke-width="2"/>
+  <rect x="-13" y="-129" width="42" height="3" fill="var(--hazard)"/>
+  <ellipse cx="-12" cy="-116" rx="4" ry="6" fill="#f1c27d" stroke="var(--ink)" stroke-width="2"/>
+  <!-- face: calm -->
+  <g class="face-calm">
+    <circle cx="10" cy="-117" r="2.6" fill="var(--ink)"/><circle cx="22" cy="-117" r="2.6" fill="var(--ink)"/>
+    <path d="M12,-106 q5,4 10,0" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="4" cy="-108" rx="4" ry="2.5" fill="#f39a8a" opacity=".6"/>
+  </g>
+  <!-- face: terrified -->
+  <g class="face-scared">
+    <circle cx="9" cy="-118" r="7" fill="#ffffff" stroke="var(--ink)" stroke-width="2"/>
+    <circle cx="23" cy="-118" r="7" fill="#ffffff" stroke="var(--ink)" stroke-width="2"/>
+    <circle cx="10" cy="-117" r="2" fill="var(--ink)"/><circle cx="24" cy="-117" r="2" fill="var(--ink)"/>
+    <path d="M2,-131 l10,3 M30,-131 l-10,3" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="17" cy="-102" rx="6" ry="8" fill="#5a1f1f" stroke="var(--ink)" stroke-width="2"/>
+    <g class="sweat" fill="#8fd3f4" stroke="var(--ink)" stroke-width="1.5">
+      <path class="drop1" d="M-6,-134 q-4,7 0,9 q4,-2 0,-9 z"/>
+      <path class="drop2" d="M34,-128 q-4,7 0,9 q4,-2 0,-9 z"/>
+    </g>
+  </g>
+  <!-- face: fainted -->
+  <g class="face-faint">
+    <path d="M5,-122 l8,8 M13,-122 l-8,8 M19,-122 l8,8 M27,-122 l-8,8" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M10,-104 q7,-5 14,0" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+    <ellipse cx="18" cy="-100" rx="3.5" ry="5" fill="#f39a8a" stroke="var(--ink)" stroke-width="1.5"/>
+  </g>
+  <text class="yikes" x="8" y="-150" text-anchor="middle" font-size="30" font-weight="700"
+        font-family="var(--mono)" fill="var(--hazard)" stroke="var(--ink)" stroke-width="1.5">!</text>`;
 
 const CREEP = `
   <ellipse cx="0" cy="3" rx="64" ry="9" fill="rgba(0,0,0,.25)"/>
@@ -1740,8 +1810,10 @@ async function mazeGag() {
   const creep = node('g', { 'data-who': 'creep' });
   const creepBody = node('g', { class: 'crawl' }); creepBody.innerHTML = CREEP;
   creep.appendChild(creepBody);
-  const put = (g, x, y, sc, flip = false, rot = 0) =>
+  const put = (g, x, y, sc, flip = false, rot = 0) => {
     g.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${flip ? -sc : sc},${sc})`);
+    if (g === sprint) sprintBody.classList.toggle('faceleft', flip);
+  };
 
   try {
     // 1. the walls begin to close
@@ -1750,70 +1822,91 @@ async function mazeGag() {
     say('THE WALLS ARE CLOSING!', 2600 * SLOW);
     await tween(1300, t => setDoors(t * .55), E.io);
 
-    // 2. out of the gate: a runner, running left, towards us
-    put(sprint, 800, 770, .45, true); layer.appendChild(sprint);
-    const run1 = tween(1500, t => put(sprint, lerp(800, 560, t), lerp(770, FLOOR, t), lerp(.45, 1.05, t), true), E.lin);
-    await wait(450);
-    worldSay(layer, 560, FLOOR - 120, 'RUN! SCOPE CREEP IS LOOSE!', 1800);
+    // 2. out of the gate, at an unhurried jog, reading his map
+    sprint.setAttribute('data-who', 'sprint');
+    sprintBody.classList.add('sprint');
+    put(sprint, 800, 770, .4, true); layer.appendChild(sprint);
+    worldSay(layer, 800, 690, 'JUST A LIGHT JOG. CHECKING THE MAP.', 2000);
+    await tween(2300, t => put(sprint, lerp(800, 640, t), lerp(770, FLOOR, t), lerp(.4, 1, t), true), E.lin);
 
-    // 3. and after him, the thing
-    put(creep, 800, 770, .35, true); layer.insertBefore(creep, sprint);
-    const chase1 = tween(1600, t => put(creep, lerp(800, 760, t), lerp(770, FLOOR, t), lerp(.35, 1.1, t), true), E.lin);
-    await Promise.all([run1, chase1]);
-
-    // 4. across the floor
-    const run2 = tween(1500, t => put(sprint, lerp(560, 300, t), FLOOR, 1.05, true), E.lin);
-    const chase2 = tween(1500, t => put(creep, lerp(760, 470, t), FLOOR, 1.1, true), E.lin);
-    await run2;
-
-    // 5. he trips. the map goes flying.
+    // 3. he stops. something is behind him. he turns round, slowly.
     sprintBody.classList.remove('runlegs');
-    const map = sprint.querySelector('.sprint-map'); map.remove();
+    await wait(500);
+    await tween(260, t => put(sprint, 640, FLOOR, 1, t < .5), E.lin);
+
+    // 4. out comes Scope Creep
+    put(creep, 800, 770, .35, true); layer.insertBefore(creep, sprint);
+    await tween(1100, t => put(creep, lerp(800, 790, t), lerp(770, 790, t), lerp(.35, .8, t), true), E.out);
+
+    // 5. terror. a leap straight up, a scream, sweat everywhere
+    sprintBody.classList.add('scared', 'yelp');
+    await tween(420, (t, raw) => put(sprint, 640, FLOOR - Math.sin(raw * Math.PI) * 70, 1, false), E.lin);
+    worldSay(layer, 640, 520, 'AAAAAAAAAAAAH!', 1500);
+    sprintBody.classList.remove('yelp');
+
+    // 6. and he RUNS — arms everywhere, gut going, faster than he has moved in years
+    sprintBody.classList.add('runlegs');
+    const flee = tween(1900, t => put(sprint, lerp(640, 290, t), FLOOR, 1, true), E.in || (t => t * t));
+    await wait(250);
+    creepBody.classList.add('crawl');
+    const chase = tween(2000, t => put(creep, lerp(790, 480, t), lerp(790, FLOOR, t), lerp(.8, 1.1, t), true), E.lin);
+    await flee;
+
+    // 7. he trips over absolutely nothing. the map goes flying.
+    sprintBody.classList.remove('runlegs');
+    sprint.querySelector('.sprint-map')?.remove();
     const flyingMap = node('g'); flyingMap.innerHTML = '<rect x="-10" y="-5" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/>';
     layer.appendChild(flyingMap);
     const mapFly = tween(700, (t, raw) => flyingMap.setAttribute('transform',
-      `translate(${lerp(290, 380, t)},${FLOOR - 70 - Math.sin(raw * Math.PI) * 60 + raw * 64}) rotate(${raw * 540})`), E.lin);
-    await tween(420, t => put(sprint, lerp(300, 262, t), FLOOR, 1.05, true, lerp(0, -84, t)), E.out);
-    await Promise.all([chase2, mapFly]);
+      `translate(${lerp(280, 380, t)},${FLOOR - 80 - Math.sin(raw * Math.PI) * 60 + raw * 76}) rotate(${raw * 540})`), E.lin);
+    await tween(420, t => put(sprint, lerp(290, 252, t), FLOOR, 1, true, lerp(0, -84, t)), E.out);
+    sprintBody.classList.add('cower');
+    await Promise.all([chase, mapFly]);
 
-    // 6. it skids to a stop over him, and looms
+    // 8. Scope Creep skids to a stop over him, and looms
     creepBody.classList.remove('crawl');
-    await tween(260, (t, raw) => put(creep, 470 - Math.sin(raw * Math.PI) * 18, FLOOR, 1.1, true), E.out);
-    await tween(700, t => put(creep, 470, FLOOR, lerp(1.1, 1.38, t), true), E.back);
-    await wait(700);
+    await tween(260, (t, raw) => put(creep, 480 - Math.sin(raw * Math.PI) * 18, FLOOR, 1.1, true), E.out);
+    await tween(700, t => put(creep, 480, FLOOR, lerp(1.1, 1.38, t), true), E.back);
+    worldSay(layer, 252, 700, 'please no. i have a standup at nine.', 1600);
+    await wait(1100);
 
-    // 7. …and hands it back
+    // 9. …and hands it back
     flyingMap.remove();
     const claw = creep.querySelector('.creep-claw');
     const held = node('g'); held.innerHTML = '<rect x="86" y="-33" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/>';
     claw.appendChild(held);
-    worldSay(layer, 470, 532, 'YOU DROPPED YOUR MAP.', 1900);
+    worldSay(layer, 480, 532, 'YOU DROPPED YOUR MAP.', 1900);
     await wait(2000);
-    worldSay(layer, 470, 532, 'ALSO. ONE MORE SMALL FEATURE.', 2100);
+    worldSay(layer, 480, 532, 'ALSO. ONE MORE SMALL FEATURE.', 2100);
     await wait(2200);
 
-    // 8. he faints properly this time
-    await tween(300, t => put(sprint, 262, FLOOR, 1.05, true, lerp(-84, -92, t)), E.out);
+    // 10. that does it. he faints.
+    sprintBody.classList.remove('cower', 'scared');
+    sprintBody.classList.add('fainted');
+    await tween(300, t => put(sprint, 252, FLOOR, 1, true, lerp(-84, -92, t)), E.out);
     say('SPRINT HAS FAINTED. THE SPRINT IS OVER.', 4000 * SLOW);
     await wait(900);
 
-    // 9. it puts the map down gently, and goes home
+    // 11. it leaves the map beside him, a little hurt, and goes home
     held.remove();
     const leftMap = node('g', { transform: `translate(330,${FLOOR - 4})` });
     leftMap.innerHTML = '<rect x="-10" y="-5" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/>';
     layer.appendChild(leftMap);
-    worldSay(layer, 470, 532, 'I JUST WANTED TO ADD A BUTTON.', 1800);
+    worldSay(layer, 480, 532, 'I JUST WANTED TO ADD A BUTTON.', 1800);
     await wait(1400);
     creepBody.classList.add('crawl');
-    await tween(2200, t => put(creep, lerp(470, 800, t), lerp(FLOOR, 770, t), lerp(1.38, .35, t), false), E.io);
+    await tween(2200, t => put(creep, lerp(480, 800, t), lerp(FLOOR, 770, t), lerp(1.38, .35, t), false), E.io);
     creep.remove();
     await tween(1200, t => setDoors((1 - t) * .55), E.io);
 
-    // 10. he comes round, picks up the map, and limps off to find out what the button does
-    await tween(600, t => put(sprint, 262, FLOOR, 1.05, true, lerp(-92, 0, t)), E.back);
+    // 12. he comes round, remembers, screams again, and is gone
+    sprintBody.classList.remove('fainted');
+    await tween(500, t => put(sprint, 252, FLOOR, 1, true, lerp(-92, 0, t)), E.back);
+    sprintBody.classList.add('scared', 'yelp');
+    worldSay(layer, 252, 660, 'NOPE.', 1200);
     leftMap.remove();
     sprintBody.classList.add('runlegs');
-    await tween(1800, t => put(sprint, lerp(262, -120, t), FLOOR, 1.05, true), E.lin);
+    await tween(1300, t => put(sprint, lerp(252, -160, t), FLOOR, 1, true), E.lin);
   } finally {
     layer.textContent = '';
     setDoors(0);

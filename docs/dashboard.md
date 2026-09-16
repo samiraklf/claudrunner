@@ -71,11 +71,18 @@ add `?slow=4` to watch every beat at a quarter speed.
 
 ## Sprint and Scope Creep, in the maze
 
-Once a minute in the maze, the ground shakes and the gate doors start to close. **Sprint**, a
-runner, bolts out with a map — *"RUN! SCOPE CREEP IS LOOSE!"* — and **Scope Creep** comes out
-after him on far too many legs. Sprint trips. Scope Creep skids to a stop over him and looms.
-Then it hands the map back: *"YOU DROPPED YOUR MAP."* … *"ALSO. ONE MORE SMALL FEATURE."*
-Sprint faints. Scope Creep, a little hurt, goes home: *"I JUST WANTED TO ADD A BUTTON."*
+Once a minute in the maze, the ground shakes and the gate doors start to close. **Sprint** — a
+round, very out-of-shape jogger in an *I ♥ AGILE* shirt that lost the argument with his gut —
+jogs out of the gate reading his map: *"JUST A LIGHT JOG. CHECKING THE MAP."*
+
+He stops. Something is behind him. He turns round. **Scope Creep** crawls out of the gate.
+
+He leaps straight up — *"AAAAAAAAAAAAH!"* — and runs faster than he has moved in years, arms
+flailing, sweat flying, gut going. He trips over nothing. The map goes flying. He cowers:
+*"please no. i have a standup at nine."* Scope Creep looms over him… and hands the map back.
+*"YOU DROPPED YOUR MAP."* *"ALSO. ONE MORE SMALL FEATURE."* He faints, X-eyed. Scope Creep,
+a little hurt, goes home: *"I JUST WANTED TO ADD A BUTTON."* Sprint comes round, remembers,
+screams *"NOPE."* and is gone.
 
 `P` plays whichever scene's gag is on screen. `?gag=1` plays it as soon as the page loads — a
 link you can send someone.
