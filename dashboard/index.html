@@ -1,441 +1,423 @@
 <!doctype html>
-<html lang="en" data-scene="street">
+<html lang="en" data-theme="night" data-idle="0">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>claudrunner</title>
 <style>
   :root{
-    --night:#05070c; --hazard:#ff7a1a; --neon:#2bd9d9; --ash:#b8c4d9;
-    --dim:#1a2233; --glass:rgba(12,18,30,.72); --ok:#4ade80; --warn:#facc15;
-    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --hazard:#ff8a2b; --neon:#35e0e0; --ok:#5ddc8a; --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  /* NIGHT ------------------------------------------------------------------ */
+  :root[data-theme="night"]{
+    --sky-1:#0b1430; --sky-2:#152a53; --sky-3:#2b3f6b;
+    --far:#1b2a4d; --mid:#16233f; --near:#101a30;
+    --ground:#0d1526; --ground-top:#1b2b47;
+    --ink:#050912; --body:#e4ecf8; --body-2:#b9c8de; --trim:#7d93b5;
+    --text:#dbe6f5; --muted:#8fa3c0; --panel:rgba(10,17,30,.9);
+    --orb:#f4f1e4; --orb-glow:rgba(244,241,228,.30); --star:1;
+  }
+  /* DAY -------------------------------------------------------------------- */
+  :root[data-theme="day"]{
+    --sky-1:#8fd3f4; --sky-2:#cfeaf7; --sky-3:#ffe9c9;
+    --far:#a9c8dd; --mid:#7fa6c4; --near:#5b82a6; --ground:#7cc08a; --ground-top:#96d69f;
+    --ink:#123047; --body:#ffffff; --body-2:#dbe6f2; --trim:#3d6180;
+    --text:#123047; --muted:#40658a; --panel:rgba(255,255,255,.92);
+    --orb:#fff3b0; --orb-glow:rgba(255,222,120,.55); --star:0;
   }
   *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;background:var(--night);color:var(--ash);
-    font:14px/1.5 var(--mono);overflow:hidden;
-  }
-  canvas#rain{position:fixed;inset:0;z-index:0;opacity:.5}
-  .sky{position:fixed;inset:0;z-index:0;
-    background:
-      radial-gradient(120% 80% at 70% 10%, rgba(43,217,217,.10), transparent 60%),
-      radial-gradient(90% 60% at 20% 0%, rgba(255,122,26,.10), transparent 55%),
-      linear-gradient(180deg,#070b14 0%,#05070c 60%);
-  }
-  .scenes{position:fixed;left:0;right:0;bottom:0;height:min(56vh,420px);z-index:0;pointer-events:none}
-  .scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1.1s ease}
-  .scene.on{opacity:1}
+  html,body{height:100%;margin:0;overflow:hidden}
+  body{background:var(--sky-1);color:var(--text);font:13px/1.5 var(--mono)}
+  svg#stage{position:fixed;inset:0;width:100%;height:100%}
 
-  /* STREET: a car crosses now and then, and the lit window goes dark when the queue empties */
-  .spinner{transform:translate(-80px,150px);animation:cross 26s linear infinite}
-  @keyframes cross{
-    0%{transform:translate(-80px,150px) scale(.8);opacity:0}
-    6%{opacity:.9} 94%{opacity:.9}
-    100%{transform:translate(1280px,104px) scale(1);opacity:0}}
-  .lit{animation:flicker 7s ease-in-out infinite}
-  [data-idle="1"] .lit{animation:none;opacity:.12}
-  @keyframes flicker{0%,100%{opacity:.95}47%{opacity:.95}49%{opacity:.35}51%{opacity:.95}}
-
-  /* ROOFTOP: the cape moves, the signal breathes, the emblem answers to work */
-  .signal{animation:breathe 6s ease-in-out infinite;transform-origin:841px 64px}
-  @keyframes breathe{0%,100%{opacity:.75}50%{opacity:1}}
-  [data-idle="1"] .signal{opacity:.25;animation:none}
-  .cape{transform-origin:-4px -46px;animation:cape 4.5s ease-in-out infinite}
-  @keyframes cape{0%,100%{transform:skewX(0deg)}50%{transform:skewX(-9deg)}}
-  .hero .emblem,.crew .emblem{animation:pulse 2.6s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:.75}50%{opacity:1}}
-  .hero .arm{transform-origin:-18px -56px;transition:transform .5s ease}
-  .hero.point .arm{transform:rotate(-68deg)}
-
-  /* BREAK ROOM: steam, a slouch, and a clock nobody is watching */
-  .steam{animation:steam 3.4s ease-in-out infinite}
-  @keyframes steam{0%,100%{opacity:.2;transform:translateY(0)}50%{opacity:.6;transform:translateY(-5px)}}
-  .crew,.crew2{transform-origin:0 0;animation:slouch 9s ease-in-out infinite}
-  .crew2{animation-delay:-4s}
-  @keyframes slouch{0%,100%{transform:translate(-96px,-76px)}50%{transform:translate(-96px,-73px)}}
-  .clock .hand{transform-origin:0 0;animation:tick 60s steps(60) infinite}
-  @keyframes tick{to{transform:rotate(360deg)}}
-
-  .bubble{position:absolute;left:50%;bottom:74%;transform:translateX(-50%);
-    background:rgba(9,14,24,.92);color:#9fb0c8;font-size:11px;letter-spacing:.12em;
-    padding:7px 12px;border-radius:3px;max-width:min(560px,80vw);text-align:center;
-    box-shadow:0 0 0 1px rgba(184,196,217,.09);animation:say .4s ease}
-  @keyframes say{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translateX(-50%)}}
-  .scenebadge{font-size:10px;letter-spacing:.24em;color:#55637a;cursor:pointer;
-    background:none;border:0;font-family:inherit;padding:2px 0}
-  .scenebadge:hover{color:var(--neon)}
-  .wrap{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;
-    padding:20px;gap:16px;max-width:1180px;margin:0 auto}
-  header{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-  h1{font-size:15px;letter-spacing:.42em;margin:0;color:#fff;text-transform:uppercase}
-  h1 b{color:var(--hazard);font-weight:700}
-  .tag{font-size:11px;letter-spacing:.2em;padding:2px 8px;border-radius:2px;
-    background:rgba(43,217,217,.12);color:var(--neon)}
-  .tag.sim{background:rgba(250,204,21,.12);color:var(--warn)}
+  /* ---- HUD --------------------------------------------------------------- */
+  .hud{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;
+    gap:18px;padding:14px 18px;pointer-events:none}
+  .hud > *{pointer-events:auto}
+  .brand{font-size:15px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;
+    color:var(--text);text-shadow:0 2px 0 rgba(0,0,0,.25)}
+  .brand b{color:var(--hazard)}
+  .chip{font-size:11px;letter-spacing:.16em;padding:5px 10px;border-radius:99px;
+    background:var(--panel);color:var(--muted);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .chip b{color:var(--text)}
   .spacer{flex:1}
-  .stat{font-size:11px;letter-spacing:.14em;color:#6b7c96}
-  .stat b{color:var(--ash);font-weight:500}
-  main{flex:1 1 auto;max-height:46vh;display:grid;grid-template-columns:1fr 300px;gap:16px;min-height:0}
-  .gap{flex:1}
-  .panel{background:rgba(10,15,26,.82);backdrop-filter:blur(6px);border-radius:3px;
-    padding:14px 16px;min-height:0;display:flex;flex-direction:column;
-    box-shadow:0 0 0 1px rgba(184,196,217,.07), 0 20px 60px -30px #000}
-  .panel h2{font-size:10px;letter-spacing:.3em;color:#6b7c96;margin:0 0 12px;
+  button{font:inherit;cursor:pointer;border:0;border-radius:99px;padding:6px 14px;
+    background:var(--panel);color:var(--text);letter-spacing:.14em;font-size:11px;
+    box-shadow:0 2px 0 rgba(0,0,0,.18);transition:transform .12s ease}
+  button:hover{transform:translateY(-1px)}
+  button:active{transform:translateY(1px)}
+
+  /* ---- task drawer, hidden by default ------------------------------------ */
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,92vw);z-index:6;
+    background:var(--panel);backdrop-filter:blur(10px);padding:66px 18px 18px;
+    transform:translateX(102%);transition:transform .32s cubic-bezier(.3,.9,.3,1);
+    box-shadow:-20px 0 60px -30px #000;overflow:auto}
+  .drawer.open{transform:none}
+  .drawer h2{font-size:10px;letter-spacing:.3em;color:var(--muted);margin:0 0 12px;
     text-transform:uppercase;font-weight:500}
-  .units{overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:180px}
-  .unit{padding:11px 12px;border-radius:2px;background:rgba(255,255,255,.028);
-    box-shadow:inset 2px 0 0 var(--hazard)}
-  .unit.review{box-shadow:inset 2px 0 0 var(--neon)}
-  .unit .top{display:flex;gap:10px;align-items:baseline}
-  .unit .name{color:#e8eef7;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .unit .phase{font-size:10px;letter-spacing:.18em;color:var(--hazard)}
-  .unit.review .phase{color:var(--neon)}
-  .unit .meta{font-size:11px;color:#6b7c96;margin-top:3px}
-  .bar{height:2px;background:rgba(184,196,217,.12);margin-top:9px;border-radius:2px;overflow:hidden}
-  .bar i{display:block;height:100%;background:var(--hazard);transition:width .6s ease}
-  .unit.review .bar i{background:var(--neon)}
-  .empty{color:#455066;padding:22px 0;text-align:center;font-size:12px}
-  .side{display:flex;flex-direction:column;gap:16px}
-  .eye{display:grid;place-items:center;padding:6px 0 12px}
-  .eye svg{width:132px;height:132px}
-  .iris{transform-origin:center;animation:scan 5.5s ease-in-out infinite}
-  @keyframes scan{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
-  .vk{font-size:10px;letter-spacing:.24em;color:#6b7c96;text-align:center}
-  .vk b{color:var(--neon);font-weight:500}
-  .tally{display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start;overflow:auto}
-  .tally span{font-size:19px;line-height:1;opacity:.85;animation:fold .5s ease}
-  @keyframes fold{from{opacity:0;transform:translateY(-6px) rotate(-18deg)}to{opacity:.85}}
-  footer{height:22px;overflow:hidden;font-size:11px;letter-spacing:.16em;color:#55637a}
-  footer div{white-space:nowrap;animation:ticker 34s linear infinite}
-  @keyframes ticker{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
-  @media (max-width:820px){ main{grid-template-columns:1fr} .side{display:none} }
-  @media (prefers-reduced-motion:reduce){
-    *{animation:none!important;transition:none!important}
-    canvas#rain{display:none}
-  }
+  .task{padding:11px 12px;border-radius:8px;margin-bottom:9px;
+    background:rgba(127,127,127,.10);box-shadow:inset 3px 0 0 var(--hazard)}
+  .task.review{box-shadow:inset 3px 0 0 var(--neon)}
+  .task .t{display:flex;gap:8px;align-items:baseline}
+  .task .n{flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .task .p{font-size:10px;letter-spacing:.16em;color:var(--hazard)}
+  .task.review .p{color:var(--neon)}
+  .task .m{font-size:11px;color:var(--muted);margin-top:2px}
+  .bar{height:6px;border-radius:99px;background:rgba(127,127,127,.22);margin-top:8px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:99px;background:var(--hazard);transition:width .6s ease}
+  .task.review .bar i{background:var(--neon)}
+  .none{color:var(--muted);text-align:center;padding:28px 0}
+
+  /* ---- speech ------------------------------------------------------------ */
+  .say{position:fixed;left:50%;bottom:9%;transform:translateX(-50%);z-index:4;
+    background:var(--panel);color:var(--text);font-size:12px;letter-spacing:.06em;
+    padding:10px 16px;border-radius:14px;max-width:min(620px,86vw);text-align:center;
+    box-shadow:0 6px 0 rgba(0,0,0,.16);animation:pop .34s cubic-bezier(.2,1.3,.4,1)}
+  .say:after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-8px;
+    border:8px solid transparent;border-top-color:var(--panel);border-bottom:0}
+  @keyframes pop{from{opacity:0;transform:translate(-50%,10px) scale(.94)}}
+
+  /* ---- scene motion ------------------------------------------------------ */
+  .cloud{animation:drift 90s linear infinite}
+  .cloud.b{animation-duration:140s;animation-delay:-40s}
+  .cloud.c{animation-duration:190s;animation-delay:-90s}
+  @keyframes drift{from{transform:translateX(-420px)}to{transform:translateX(1900px)}}
+  .stars{opacity:var(--star);transition:opacity .6s ease}
+  .twinkle{animation:tw 3.4s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.25}50%{opacity:1}}
+  .orb{filter:drop-shadow(0 0 26px var(--orb-glow))}
+  .bob{animation:bob 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .hammer{animation:hammer .62s ease-in-out infinite;transform-box:fill-box;transform-origin:70% 20%}
+  @keyframes hammer{0%,100%{transform:rotate(-8deg)}45%{transform:rotate(46deg)}}
+  .spark{animation:spark .62s ease-in-out infinite}
+  @keyframes spark{0%,48%{opacity:0;transform:translate(0,0) scale(.6)}
+    52%{opacity:1}100%{opacity:0;transform:translate(14px,-18px) scale(1.2)}}
+  .cape{animation:cape 3.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+  @keyframes cape{0%,100%{transform:skewX(0)}50%{transform:skewX(-11deg)}}
+  .beam{animation:beam 5s ease-in-out infinite}
+  @keyframes beam{0%,100%{opacity:.5}50%{opacity:.95}}
+  .steam{animation:steam 3s ease-in-out infinite}
+  @keyframes steam{0%{opacity:0;transform:translateY(0)}35%{opacity:.75}100%{opacity:0;transform:translateY(-22px)}}
+  .zzz{animation:zzz 4s ease-in-out infinite}
+  @keyframes zzz{0%{opacity:0;transform:translate(0,0) scale(.7)}
+    30%{opacity:.9}100%{opacity:0;transform:translate(18px,-34px) scale(1.15)}}
+  .visor{animation:blink 6s steps(1) infinite}
+  @keyframes blink{0%,96%{opacity:1}97%,99%{opacity:.25}}
+  .car{animation:car 22s linear infinite}
+  @keyframes car{from{transform:translateX(-260px)}to{transform:translateX(1860px)}}
+  .plane{animation:plane 40s linear infinite}
+  @keyframes plane{from{transform:translate(-300px,0)}to{transform:translate(1900px,-40px)}}
+  .prog-bg{fill:rgba(0,0,0,.28)}
+  :root[data-theme="day"] .prog-bg{fill:rgba(18,48,71,.18)}
+
+  :root[data-theme="day"] .beam{display:none}
+  :root[data-theme="day"] #litwindows{opacity:.28}
+  :root[data-theme="day"] .orb{filter:drop-shadow(0 0 40px var(--orb-glow))}
+
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important} }
 </style>
 </head>
 <body>
-<div class="sky"></div>
-<canvas id="rain"></canvas>
-<div class="scenes">
 
-  <!-- STREET — the default. Work is happening somewhere out there. -->
-  <svg class="scene" data-scene="street" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet">
-    <defs><linearGradient id="b1" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0a1120"/><stop offset="1" stop-color="#05070c"/></linearGradient></defs>
-    <path fill="url(#b1)" d="M0,300 L0,190 40,190 40,160 90,160 90,205 150,205 150,136 210,136
-      210,180 265,180 265,110 300,80 335,110 335,190 400,190 400,158 470,158 470,198 540,198
-      540,128 600,128 600,172 670,172 670,200 740,200 740,145 800,145 800,185 870,185 870,114
-      930,114 930,190 1000,190 1000,164 1070,164 1070,202 1140,202 1140,178 1200,178 1200,300 Z"/>
-    <g class="windows" fill="#2bd9d9" opacity=".22"></g>
-    <rect class="lit" x="296" y="92" width="9" height="12" fill="#ff7a1a"/>
-    <g class="spinner"><ellipse cx="0" cy="0" rx="17" ry="4.5" fill="#0d1526"/>
-      <ellipse cx="0" cy="-2" rx="11" ry="3" fill="#16203a"/>
-      <circle cx="-13" cy="0" r="2.2" fill="#ff7a1a"/><circle cx="13" cy="0" r="2.2" fill="#2bd9d9"/></g>
-  </svg>
+<svg id="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-label="claudrunner status">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--sky-1)"/>
+      <stop offset=".62" stop-color="var(--sky-2)"/>
+      <stop offset="1" stop-color="var(--sky-3)"/>
+    </linearGradient>
+    <linearGradient id="beamgrad" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="var(--hazard)" stop-opacity=".34"/>
+      <stop offset="1" stop-color="var(--hazard)" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
 
-  <!-- ROOFTOP — someone is watching the city. The signal is up. -->
-  <svg class="scene" data-scene="rooftop" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet">
-    <defs>
-      <linearGradient id="b2" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#0b1222"/><stop offset="1" stop-color="#05070c"/></linearGradient>
-      <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0" stop-color="#ff7a1a" stop-opacity=".30"/>
-        <stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/></linearGradient>
-    </defs>
-    <g class="signal"><path d="M700,300 L806,26 L876,26 L804,300 Z" fill="url(#beam)"/>
-      <circle cx="841" cy="64" r="30" fill="none" stroke="#ff7a1a" stroke-width="2.5" opacity=".6"/>
-      <path d="M829,65 l8,9 l15,-18" fill="none" stroke="#ff7a1a" stroke-width="3.5"
-            stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g>
-    <path fill="url(#b2)" d="M0,300 L0,205 70,205 70,150 160,150 160,215 250,215 250,120 330,120
-      330,200 430,200 430,165 540,165 540,225 660,225 660,140 760,140 760,210 880,210 880,175
-      1000,175 1000,230 1200,230 1200,300 Z"/>
-    <g class="windows" fill="#2bd9d9" opacity=".13"></g>
-    <rect x="60" y="236" width="420" height="64" fill="#070c16"/>
-    <rect x="60" y="232" width="420" height="6" fill="#0e1729"/>
-    <g class="hero" transform="translate(236,236)">
-      <path class="cape" d="M-13,-74 q-34,40 -26,74 l22,0 q-8,-36 8,-64 z" fill="#0c1424"/>
-      <path class="cape" d="M13,-74 q34,40 26,74 l-22,0 q8,-36 -8,-64 z" fill="#0e1729"/>
-      <rect x="-14" y="-62" width="28" height="38" rx="8" fill="#16233c"/>
-      <path class="emblem" d="M0,-50 l6,9 -6,9 -6,-9 z" fill="#ff7a1a"/>
-      <circle cx="0" cy="-73" r="11" fill="#1a2942"/>
-      <path d="M-11,-77 q11,-10 22,0 l0,-5 q-11,-9 -22,0 z" fill="#24375a"/>
-      <rect class="arm" x="-22" y="-60" width="8" height="26" rx="4" fill="#16233c"/>
-      <rect x="14" y="-60" width="8" height="26" rx="4" fill="#16233c"/>
-      <rect x="-12" y="-25" width="9" height="25" rx="4" fill="#111c30"/>
-      <rect x="3" y="-25" width="9" height="25" rx="4" fill="#111c30"/>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+
+  <!-- sun or moon -->
+  <g class="orb"><circle cx="1290" cy="150" r="54" fill="var(--orb)"/></g>
+  <g class="stars" fill="#fff">
+    <g id="starfield"></g>
+  </g>
+
+  <!-- clouds (day) / high haze (night) -->
+  <g opacity=".55" fill="var(--far)">
+    <g class="cloud"><ellipse cx="200" cy="140" rx="86" ry="26"/><ellipse cx="250" cy="126" rx="58" ry="24"/></g>
+    <g class="cloud b"><ellipse cx="700" cy="96" rx="104" ry="24"/><ellipse cx="760" cy="84" rx="62" ry="22"/></g>
+    <g class="cloud c"><ellipse cx="1100" cy="190" rx="74" ry="20"/><ellipse cx="1146" cy="180" rx="48" ry="18"/></g>
+  </g>
+
+  <!-- a little plane, because the sky was empty -->
+  <g class="plane" opacity=".8"><g transform="translate(0,120)">
+    <path d="M0,0 l34,0 l10,-9 l9,0 l-4,9 l17,0 l9,-8 l7,0 l-4,8 l12,2 l-12,2 l4,8 l-7,0 l-9,-8 l-17,0 l4,9 l-9,0 l-10,-9 l-34,0 z"
+          fill="var(--body-2)"/></g></g>
+
+  <!-- far skyline -->
+  <g fill="var(--far)">
+    <path d="M0,560 L0,430 90,430 90,470 180,470 180,380 270,380 270,450 360,450 360,400 470,400
+             470,470 560,470 560,360 650,360 650,440 760,440 760,410 870,410 870,470 980,470
+             980,390 1080,390 1080,450 1190,450 1190,420 1300,420 1300,470 1420,470 1420,430
+             1600,430 1600,560 Z"/>
+  </g>
+  <!-- mid skyline -->
+  <g fill="var(--mid)">
+    <path d="M0,620 L0,500 120,500 120,540 240,540 240,470 360,470 360,530 500,530 500,490
+             640,490 640,550 780,550 780,500 920,500 920,545 1060,545 1060,480 1200,480
+             1200,540 1340,540 1340,510 1600,510 1600,620 Z"/>
+    <g id="litwindows" fill="var(--hazard)" opacity=".85"></g>
+  </g>
+  <!-- near buildings -->
+  <g fill="var(--near)">
+    <path d="M0,770 L0,640 150,640 150,690 300,690 300,620 430,620 430,700 600,700 600,660
+             1000,660 1000,712 1160,712 1160,644 1330,644 1330,700 1600,700 1600,770 Z"/>
+  </g>
+
+  <!-- ground -->
+  <rect y="762" width="1600" height="138" fill="var(--ground)"/>
+  <rect y="762" width="1600" height="12" fill="var(--ground-top)"/>
+  <g opacity=".35" stroke="var(--ground-top)" stroke-width="4" stroke-dasharray="34 30">
+    <line x1="0" y1="820" x2="1600" y2="820"/></g>
+
+  <!-- a car on the near road -->
+  <g class="car"><g transform="translate(0,748)">
+    <rect x="0" y="-16" width="62" height="16" rx="7" fill="var(--hazard)"/>
+    <rect x="12" y="-26" width="30" height="12" rx="5" fill="var(--body-2)"/>
+    <circle cx="14" cy="2" r="6" fill="var(--ink)"/><circle cx="48" cy="2" r="6" fill="var(--ink)"/>
+  </g></g>
+
+  <!-- the hero, on a crate stack at the right -->
+  <g id="hero" transform="translate(1350,762)">
+    <g class="beam" opacity=".7"><path d="M-70,0 L10,-560 90,-560 40,0 Z" fill="url(#beamgrad)"/></g>
+    <rect x="-56" y="-46" width="112" height="46" rx="6" fill="var(--near)"/>
+    <rect x="-40" y="-84" width="80" height="40" rx="6" fill="var(--mid)"/>
+    <g class="bob" transform="translate(0,-84)">
+      <path class="cape" d="M-18,-70 q-26,42 -20,70 l14,0 q-6,-38 10,-60 z" fill="var(--hazard)" opacity=".95"/>
+      <rect x="-20" y="-72" width="40" height="50" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
+      <path d="M0,-56 l9,13 -9,13 -9,-13 z" fill="var(--hazard)"/>
+      <rect x="-19" y="-104" width="38" height="34" rx="11" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
+      <rect class="visor" x="-12" y="-94" width="24" height="9" rx="4.5" fill="var(--neon)"/>
+      <rect x="-13" y="-22" width="11" height="22" rx="5" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
+      <rect x="2" y="-22" width="11" height="22" rx="5" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
+      <rect x="-30" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
+      <rect x="19" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
     </g>
-  </svg>
+  </g>
 
-  <!-- BREAK ROOM — nothing in the queue. Morale is stable. -->
-  <svg class="scene" data-scene="breakroom" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet">
-    <rect x="-500" y="252" width="2200" height="48" fill="#0b1220"/>
-    <g opacity=".5"><rect x="140" y="96" width="150" height="104" rx="3" fill="none"
-        stroke="#1a2536" stroke-width="2"/>
-      <path d="M150,190 l40,-52 28,32 22,-24 30,44 z" fill="#132033"/>
-      <circle cx="252" cy="122" r="11" fill="#1b2a44"/></g>
-    <g class="plant" transform="translate(1040,252)">
-      <path d="M-16,0 l5,-30 22,0 l5,30 z" fill="#132033"/>
-      <path d="M-2,-30 q-22,-24 -30,-8 q16,10 30,8 z" fill="#1c3a30"/>
-      <path d="M2,-30 q20,-30 32,-12 q-14,14 -32,12 z" fill="#20463a"/>
-      <path d="M0,-30 q2,-34 12,-38 q4,26 -12,38 z" fill="#1a3a31"/></g>
-    <g transform="translate(430,262)">
-      <rect x="-190" y="-56" width="380" height="56" rx="8" fill="#101a2c"/>
-      <rect x="-190" y="-76" width="380" height="26" rx="10" fill="#16223a"/>
-      <g class="crew" transform="translate(-96,-76)">
-        <circle cx="0" cy="-26" r="11" fill="#0c1426"/>
-        <rect x="-13" y="-16" width="26" height="24" rx="7" fill="#132038"/>
-        <path class="emblem" d="M0,-6 l4,6 -4,6 -4,-6 z" fill="#ff7a1a" opacity=".85"/></g>
-      <g class="crew2" transform="translate(84,-76)">
-        <circle cx="0" cy="-26" r="11" fill="#0c1426"/>
-        <rect x="-13" y="-16" width="26" height="24" rx="7" fill="#111d33"/>
-        <circle cx="0" cy="-3" r="4" fill="#2bd9d9" opacity=".7"/></g>
-      <g class="mug" transform="translate(-30,-84)">
-        <rect x="-8" y="0" width="16" height="13" rx="3" fill="#1d2b46"/>
-        <path d="M8,3 q7,3 0,7" fill="none" stroke="#1d2b46" stroke-width="2.5"/>
-        <path class="steam" d="M0,-4 q5,-7 0,-13" fill="none" stroke="#6b7c96"
-              stroke-width="1.6" stroke-linecap="round" opacity=".55"/></g>
-    </g>
-    <g class="clock" transform="translate(760,128)">
-      <circle r="26" fill="#0c1426" stroke="#1a2536" stroke-width="2"/>
-      <line class="hand" x1="0" y1="0" x2="0" y2="-16" stroke="#6b7c96" stroke-width="2"
-            stroke-linecap="round"/>
-      <circle r="2" fill="#6b7c96"/></g>
-  </svg>
+  <!-- workers and idle props are built here -->
+  <g id="crew"></g>
 
-  <div class="bubble" id="bubble" hidden></div>
+  <!-- foreground: a plant and a crate, for depth -->
+  <g transform="translate(1520,762)" opacity=".9">
+    <path d="M0,0 l-10,-40 q16,-26 26,-6 q18,-16 22,10 l-8,36 z" fill="var(--near)"/>
+  </g>
+  <g transform="translate(110,762)">
+    <rect x="-26" y="-34" width="52" height="34" rx="5" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5" opacity=".9"/>
+    <path d="M-26,-22 L26,-22" stroke="var(--ink)" stroke-width="2.5" opacity=".9"/>
+  </g>
+</svg>
+
+<div class="hud">
+  <span class="brand">claud<b>runner</b></span>
+  <span class="chip" id="mode">LIVE</span>
+  <span class="spacer"></span>
+  <span class="chip">QUEUE <b id="q">0</b></span>
+  <span class="chip">SHIPPED <b id="r">0</b></span>
+  <button id="theme">☾ NIGHT</button>
+  <button id="tasks">TASKS ▸</button>
 </div>
 
-<div class="wrap">
-  <header>
-    <h1>claud<b>runner</b></h1>
-    <span class="tag" id="mode">LIVE</span>
-    <span class="spacer"></span>
-    <span class="stat">QUEUE <b id="q">0</b></span>
-    <span class="stat">RETIRED <b id="r">0</b></span>
-    <span class="stat">INCEPT <b id="incept">—</b></span>
-    <button class="scenebadge" id="scenebadge" title="Change the scene">SCENE ▸</button>
-  </header>
-
-  <main>
-    <section class="panel">
-      <h2>Units in the field</h2>
-      <div class="units" id="units"></div>
-    </section>
-
-    <aside class="side">
-      <section class="panel">
-        <h2>Review</h2>
-        <div class="eye">
-          <svg viewBox="0 0 100 100" aria-hidden="true">
-            <ellipse cx="50" cy="50" rx="44" ry="30" fill="none" stroke="#1a2233" stroke-width="1.5"/>
-            <g class="iris">
-              <circle cx="50" cy="50" r="21" fill="none" stroke="#2bd9d9" stroke-width="1.2" opacity=".65"/>
-              <circle cx="50" cy="50" r="15" fill="none" stroke="#2bd9d9" stroke-width=".7" opacity=".4"/>
-              <circle cx="50" cy="50" r="7.5" fill="#ff7a1a" opacity=".92"/>
-              <circle cx="50" cy="50" r="28" fill="none" stroke="#2bd9d9" stroke-width=".4" opacity=".22"/>
-            </g>
-          </svg>
-        </div>
-        <div class="vk">FINDINGS <b id="findings">0</b> · FIXED <b id="fixed">0</b></div>
-      </section>
-
-      <section class="panel" style="flex:1">
-        <h2>Retired today</h2>
-        <div class="tally" id="tally"></div>
-      </section>
-    </aside>
-  </main>
-  <div class="gap"></div>
-
-  <footer><div id="ticker">THE MACHINE WAITS.</div></footer>
-</div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <h2>Units in the field</h2>
+  <div id="list"></div>
+</aside>
 
 <script>
-// ---------------------------------------------------------------- config
 const params = new URLSearchParams(location.search);
 const DATA_URL = params.get('data') || 'status.json';
 const POLL_MS  = Number(params.get('poll') || 10000);
+const el = id => document.getElementById(id);
+const SVGNS = 'http://www.w3.org/2000/svg';
+const node = (n, a = {}) => { const e = document.createElementNS(SVGNS, n);
+  for (const k in a) e.setAttribute(k, a[k]); return e; };
 
-// ---------------------------------------------------------------- rain
-(() => {
-  const c = document.getElementById('rain'), x = c.getContext('2d');
-  let drops = [], w, h;
-  const resize = () => {
-    w = c.width = innerWidth; h = c.height = innerHeight;
-    drops = Array.from({length: Math.min(260, Math.round(w / 6))}, () => ({
-      x: Math.random() * w, y: Math.random() * h,
-      l: 8 + Math.random() * 16, v: 5 + Math.random() * 7
-    }));
-  };
-  addEventListener('resize', resize); resize();
-  (function tick(){
-    x.clearRect(0, 0, w, h);
-    x.strokeStyle = 'rgba(140,170,205,.22)'; x.lineWidth = 1;
-    for (const d of drops) {
-      x.beginPath(); x.moveTo(d.x, d.y); x.lineTo(d.x - 1.4, d.y + d.l); x.stroke();
-      d.y += d.v; d.x -= .28;
-      if (d.y > h) { d.y = -d.l; d.x = Math.random() * w; }
-    }
-    requestAnimationFrame(tick);
-  })();
-})();
-
-// lit windows, scattered once per scene
-(() => {
-  for (const g of document.querySelectorAll('.windows')) {
-    for (let i = 0; i < 140; i++) {
-      const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      r.setAttribute('x', Math.round(Math.random() * 1190));
-      r.setAttribute('y', Math.round(110 + Math.random() * 170));
-      r.setAttribute('width', 3); r.setAttribute('height', 4);
-      r.setAttribute('opacity', (Math.random() * .8 + .2).toFixed(2));
-      g.appendChild(r);
-    }
-  }
-})();
-
-// ---------------------------------------------------------------- scenes
-const SCENES = ['street', 'rooftop', 'breakroom'];
-const CYCLE_MS = Number(params.get('cycle') || 90) * 1000;
-let forced = params.get('scene');            // ?scene=rooftop pins one
-let current = forced && SCENES.includes(forced) ? forced : 'street';
-
-function showScene(name) {
-  current = name;
-  for (const el of document.querySelectorAll('.scene')) {
-    el.classList.toggle('on', el.dataset.scene === name);
-  }
-  document.getElementById('scenebadge').textContent =
-    (forced ? name.toUpperCase() : 'AUTO') + ' ▸';
+// ---------------------------------------------------------------- theme
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  el('theme').textContent = t === 'day' ? '☀ DAY' : '☾ NIGHT';
+  try { localStorage.setItem('cr-theme', t); } catch {}
 }
-document.getElementById('scenebadge').onclick = () => {
-  const i = forced ? SCENES.indexOf(forced) : -1;
-  forced = i + 1 < SCENES.length ? SCENES[i + 1] : null;   // …then back to automatic
-  showScene(forced || current);
-  if (forced) say(pick(QUIPS[forced]));
-  document.getElementById('scenebadge').textContent =
-    (forced ? forced.toUpperCase() : 'AUTO') + ' ▸';
-};
+let theme = params.get('theme');
+if (!theme) { try { theme = localStorage.getItem('cr-theme'); } catch {} }
+if (!theme) { const h = new Date().getHours(); theme = (h >= 7 && h < 19) ? 'day' : 'night'; }
+setTheme(theme);
+el('theme').onclick = () => setTheme(document.documentElement.dataset.theme === 'day' ? 'night' : 'day');
 
-// Idle has its own scene, because a crew with nothing to do should look like one.
-function pickScene(d) {
-  if (forced) return forced;
-  const idle = !(d.runs || []).length && !(d.queue || 0);
-  if (idle) return 'breakroom';
-  if (current === 'breakroom') return 'street';
-  return current;
+// ---------------------------------------------------------------- drawer
+el('tasks').onclick = () => {
+  const d = el('drawer'); const open = d.classList.toggle('open');
+  d.setAttribute('aria-hidden', String(!open));
+  el('tasks').textContent = open ? 'TASKS ◂' : 'TASKS ▸';
+};
+addEventListener('keydown', e => { if (e.key === 't' || e.key === 'T') el('tasks').click(); });
+
+// ---------------------------------------------------------------- starfield
+(() => {
+  const g = el('starfield');
+  for (let i = 0; i < 90; i++) {
+    const s = node('circle', { cx: Math.round(Math.random() * 1600), cy: Math.round(Math.random() * 420),
+      r: (Math.random() * 1.6 + .6).toFixed(1), opacity: (Math.random() * .7 + .3).toFixed(2) });
+    if (Math.random() < .3) { s.setAttribute('class', 'twinkle');
+      s.style.animationDelay = (Math.random() * 3.4).toFixed(2) + 's'; }
+    g.appendChild(s);
+  }
+  const w = el('litwindows');
+  for (let i = 0; i < 70; i++) {
+    w.appendChild(node('rect', { x: Math.round(Math.random() * 1590), y: Math.round(490 + Math.random() * 60),
+      width: 4, height: 6, opacity: (Math.random() * .8 + .2).toFixed(2) }));
+  }
+})();
+
+// ---------------------------------------------------------------- the crew
+// One robot per active run, at its own bench. Idle robots sit down instead.
+function robot(x, phase, title, progress) {
+  const g = node('g', { transform: `translate(${x},762)` });
+  const review = /review/i.test(phase || '');
+  const accent = review ? 'var(--neon)' : 'var(--hazard)';
+
+  g.innerHTML = `
+    <ellipse cx="0" cy="2" rx="46" ry="7" fill="rgba(0,0,0,.20)"/>
+    <g class="bob">
+      <rect x="-24" y="-62" width="48" height="44" rx="13" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
+      <path d="M0,-46 l9,11 -9,11 -9,-11 z" fill="${accent}"/>
+      <rect x="-22" y="-98" width="44" height="38" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
+      <rect class="visor" x="-13" y="-86" width="26" height="10" rx="5" fill="${accent}"/>
+      <rect x="-2" y="-112" width="4" height="15" fill="var(--trim)"/>
+      <circle cx="0" cy="-114" r="5" fill="${accent}"/>
+      <rect x="-16" y="-18" width="13" height="18" rx="6" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
+      <rect x="3" y="-18" width="13" height="18" rx="6" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
+      <g class="hammer">
+        <rect x="22" y="-58" width="12" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
+        <rect x="24" y="-34" width="8" height="22" rx="3" fill="var(--trim)"/>
+        <rect x="16" y="-16" width="26" height="12" rx="3" fill="var(--ink)"/>
+      </g>
+      <rect x="-34" y="-58" width="12" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
+    </g>
+    <rect x="34" y="-16" width="62" height="16" rx="4" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5"/>
+    <g class="spark" fill="${accent}"><circle cx="46" cy="-18" r="3"/><circle cx="54" cy="-22" r="2"/></g>
+    <g transform="translate(0,-150)">
+      <rect class="prog-bg" x="-96" y="-30" width="192" height="44" rx="10"/>
+      <text x="0" y="-12" text-anchor="middle" font-size="12" fill="var(--text)"
+            font-family="var(--mono)" letter-spacing="0.5">${(title || '').slice(0, 26)}</text>
+      <rect x="-80" y="-2" width="160" height="8" rx="4" fill="rgba(255,255,255,.25)"/>
+      <rect x="-80" y="-2" width="${Math.max(4, Math.round((progress || 0) * 160))}" height="8" rx="4" fill="${accent}"/>
+      <text x="0" y="24" text-anchor="middle" font-size="9" fill="var(--muted)"
+            font-family="var(--mono)" letter-spacing="2">${(phase || 'WORKING').toUpperCase()}</text>
+    </g>`;
+  return g;
+}
+
+function idleRobot(x, flip) {
+  const g = node('g', { transform: `translate(${x},762) scale(${flip ? -1 : 1},1)` });
+  g.innerHTML = `
+    <ellipse cx="0" cy="2" rx="42" ry="7" fill="rgba(0,0,0,.20)"/>
+    <rect x="-52" y="-40" width="104" height="40" rx="10" fill="var(--mid)" stroke="var(--ink)" stroke-width="3"/>
+    <g class="bob">
+      <rect x="-22" y="-78" width="44" height="40" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
+      <rect x="-20" y="-112" width="40" height="36" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
+      <rect class="visor" x="-12" y="-100" width="24" height="9" rx="4.5" fill="var(--neon)"/>
+      <rect x="24" y="-72" width="12" height="26" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
+      <g transform="translate(40,-48)">
+        <rect x="-9" y="-12" width="18" height="15" rx="4" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2"/>
+        <path class="steam" d="M0,-16 q7,-9 0,-18" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </g>
+    <g class="zzz" fill="var(--muted)" font-family="var(--mono)" font-size="15">
+      <text x="26" y="-118">z</text></g>`;
+  return g;
 }
 
 // ---------------------------------------------------------------- quips
 const QUIPS = {
-  street: [
-    'UNBOUNDED QUERY SPOTTED THREE BLOCKS OVER.',
-    'THE BUG WAS COMING FROM INSIDE THE REPO.',
-    'I HAVE READ THIS FUNCTION FOUR TIMES. IT IS STILL LIKE THAT.',
-    'SOMEBODY CALLED THIS IN A LOOP AND WENT HOME.',
-    'IT RAINS HERE BECAUSE THE TESTS ARE SLOW.'
-  ],
-  rooftop: [
-    'THE SIGNAL IS UP. SOMEWHERE, A MISSING INDEX.',
-    'I DO NOT NEED SLEEP. I HAVE A TIMEOUT.',
-    'WITH GREAT ACCESS COMES A VERY SHORT ALLOWLIST.',
-    'I CANNOT FLY. I CAN OPEN A PULL REQUEST.',
-    'NOT THE REVIEWER THEY WANTED. THE ONE THEIR DIFF DESERVES.',
-    'MY ONE WEAKNESS: A CARD WITH NO ACCEPTANCE CRITERIA.'
-  ],
-  breakroom: [
-    'QUEUE EMPTY. I HAVE READ THE README TWICE.',
-    'NOBODY HAS PUSHED IN A WHILE. I AM FINE.',
-    'I FOLDED ANOTHER UNICORN. THAT IS THE NEWS.',
-    'THE COFFEE IS DECORATIVE. I APPRECIATE THE GESTURE.',
-    'I COULD REFACTOR SOMETHING. I WAS NOT ASKED TO.',
-    'ASK ME ABOUT THE TIME SOMEONE CAUGHT A P0 IN A ONE-LINE DIFF.'
-  ]
+  work: ['SOMEBODY CALLED THIS IN A LOOP AND WENT HOME.',
+         'THE BUG WAS COMING FROM INSIDE THE REPO.',
+         'I CANNOT FLY. I CAN OPEN A PULL REQUEST.',
+         'THIS FUNCTION HAS FOUR RESPONSIBILITIES. I COUNTED.',
+         'WITH GREAT ACCESS COMES A VERY SHORT ALLOWLIST.'],
+  idle: ['QUEUE EMPTY. I HAVE READ THE README TWICE.',
+         'NOBODY HAS PUSHED IN A WHILE. I AM FINE.',
+         'THE COFFEE IS DECORATIVE. I APPRECIATE THE GESTURE.',
+         'I COULD REFACTOR SOMETHING. I WAS NOT ASKED TO.',
+         'MY ONE WEAKNESS: A CARD WITH NO ACCEPTANCE CRITERIA.']
 };
 const pick = a => a[Math.floor(Math.random() * a.length)];
-const bubble = document.getElementById('bubble');
-let bubbleTimer;
+let bubble, bubbleTimer;
 function say(text) {
-  clearTimeout(bubbleTimer);
-  bubble.textContent = text; bubble.hidden = false;
-  bubbleTimer = setTimeout(() => { bubble.hidden = true; }, 7000);
+  bubble?.remove(); clearTimeout(bubbleTimer);
+  bubble = document.createElement('div');
+  bubble.className = 'say'; bubble.textContent = text;
+  document.body.appendChild(bubble);
+  bubbleTimer = setTimeout(() => bubble?.remove(), 8000);
 }
 
 // ---------------------------------------------------------------- render
-const el = id => document.getElementById(id);
-const since = t => {
-  const s = Math.max(0, (Date.now() - new Date(t)) / 1000);
-  return s < 60 ? Math.round(s) + 's' : Math.floor(s / 60) + 'm ' + Math.round(s % 60) + 's';
-};
-
-let lastRetired = 0;
+let lastShipped = 0;
 function render(d, live) {
+  const runs = (d.runs || []).slice(0, 4);
+  const idle = !runs.length;
+  document.documentElement.dataset.idle = idle ? '1' : '0';
+
   el('mode').textContent = live ? 'LIVE' : 'SIMULATION';
-  el('mode').className = 'tag' + (live ? '' : ' sim');
   el('q').textContent = d.queue ?? 0;
   el('r').textContent = d.retired_today ?? 0;
-  el('incept').textContent = d.incept || '—';
-  el('findings').textContent = d.review?.findings ?? 0;
-  el('fixed').textContent = d.review?.fixed ?? 0;
 
-  const units = el('units');
-  units.innerHTML = (d.runs || []).length ? '' : '<div class="empty">No units in the field. The queue is quiet.</div>';
-  for (const r of d.runs || []) {
+  const crew = el('crew'); crew.textContent = '';
+  if (idle) {
+    crew.appendChild(idleRobot(430, false));
+    crew.appendChild(idleRobot(620, true));
+  } else {
+    const step = 1100 / (runs.length + 1);
+    runs.forEach((r, i) => crew.appendChild(
+      robot(Math.round(160 + step * (i + 1)), r.phase, r.title || r.id, r.progress)));
+  }
+
+  const list = el('list');
+  list.innerHTML = runs.length ? '' : '<div class="none">Nothing in the field. The queue is quiet.</div>';
+  for (const r of runs) {
     const div = document.createElement('div');
-    div.className = 'unit' + (/review/i.test(r.phase || '') ? ' review' : '');
-    div.innerHTML = `<div class="top"><span class="name"></span><span class="phase"></span></div>
-      <div class="meta"></div><div class="bar"><i style="width:${Math.round((r.progress || 0) * 100)}%"></i></div>`;
-    div.querySelector('.name').textContent = r.title || r.id;
-    div.querySelector('.phase').textContent = (r.phase || 'working').toUpperCase();
-    div.querySelector('.meta').textContent =
-      `${r.id} · ${r.started_at ? since(r.started_at) : '—'}${r.board ? ' · ' + r.board : ''}`;
-    units.appendChild(div);
+    div.className = 'task' + (/review/i.test(r.phase || '') ? ' review' : '');
+    div.innerHTML = `<div class="t"><span class="n"></span><span class="p"></span></div>
+      <div class="m"></div><div class="bar"><i style="width:${Math.round((r.progress || 0) * 100)}%"></i></div>`;
+    div.querySelector('.n').textContent = r.title || r.id;
+    div.querySelector('.p').textContent = (r.phase || 'working').toUpperCase();
+    div.querySelector('.m').textContent = `${r.id}${r.board ? ' · ' + r.board : ''}`;
+    list.appendChild(div);
   }
 
-  document.documentElement.dataset.idle = (!(d.runs || []).length && !(d.queue || 0)) ? '1' : '0';
-  showScene(pickScene(d));
-
-  // The hero points when something has just been retired.
-  const hero = document.querySelector('.hero');
-  if (hero) hero.classList.toggle('point', (d.retired_today || 0) > lastRetired);
-  if ((d.retired_today || 0) > lastRetired) say(pick(QUIPS[current]));
-  lastRetired = d.retired_today || 0;
-
-  const tally = el('tally');
-  tally.innerHTML = '';
-  for (let i = 0; i < Math.min(60, d.retired_today || 0); i++) {
-    const s = document.createElement('span'); s.textContent = '🦄'; tally.appendChild(s);
-  }
-  if (d.ticker?.length) el('ticker').textContent = d.ticker.join('   ·   ');
+  if ((d.retired_today || 0) > lastShipped) say(pick(QUIPS.work));
+  lastShipped = d.retired_today || 0;
 }
 
 // ---------------------------------------------------------------- data
-// Simulation is the fallback whenever the feed is unreachable, so the page is never blank
-// and never lies about being live.
 const PHASES = ['selecting', 'implementing', 'testing', 'review', 'shipping'];
-let sim = { t: 0, retired: 3, runs: [{ id: '#412', title: 'Stream the CSV export instead of buffering it',
-  phase: 'implementing', progress: .25, started_at: new Date(Date.now() - 214000).toISOString(), board: 'github' }] };
-
+const TITLES = ['Stream the CSV export', 'Tenant id read from the URL',
+                'Retry handler double-charges', 'Nightly rollup locks the table',
+                'Cache key ignores the locale'];
+let sim = { shipped: 2, runs: [{ id: '#412', title: TITLES[0], phase: 'implementing',
+  progress: .3, board: 'github' }] };
 function simulate() {
-  sim.t++;
   for (const r of sim.runs) {
-    r.progress = Math.min(1, r.progress + .035);
-    r.phase = PHASES[Math.min(PHASES.length - 1, Math.floor(r.progress * PHASES.length))];
+    r.progress = Math.min(1, r.progress + .04);
+    r.phase = PHASES[Math.min(4, Math.floor(r.progress * 5))];
   }
-  if (sim.runs[0]?.progress >= 1) { sim.runs.shift(); sim.retired++; }
-  if (!sim.runs.length && sim.t % 4 === 0) {
-    sim.runs.push({ id: '#' + (410 + Math.floor(Math.random() * 40)),
-      title: ['Retry handler double-charges on gateway timeout',
-              'Tenant id read from the URL instead of the session',
-              'Nightly rollup locks the orders table'][Math.floor(Math.random() * 3)],
-      phase: 'selecting', progress: 0, started_at: new Date().toISOString(), board: 'github' });
+  if (sim.runs[0] && sim.runs[0].progress >= 1) { sim.runs.shift(); sim.shipped++; }
+  if (sim.runs.length < 3 && Math.random() < .5) {
+    const taken = sim.runs.map(r => r.title);
+    const free = TITLES.filter(t => !taken.includes(t));
+    if (free.length) sim.runs.push({ id: '#' + (400 + Math.floor(Math.random() * 99)),
+      title: pick(free), phase: 'selecting', progress: 0, board: 'github' });
   }
-  return { queue: 2, retired_today: sim.retired, incept: '2026-09-16',
-           review: { findings: 4, fixed: 4 }, runs: sim.runs,
-           ticker: ['UNIT RETIRED: STREAM THE CSV EXPORT.', 'THE MACHINE WAITS.'] };
+  return { queue: 2, retired_today: sim.shipped, runs: sim.runs };
 }
 
 async function poll() {
@@ -443,19 +425,12 @@ async function poll() {
     const res = await fetch(DATA_URL, { cache: 'no-store' });
     if (!res.ok) throw new Error(res.status);
     render(await res.json(), true);
-  } catch {
-    render(simulate(), false);
-  }
+  } catch { render(simulate(), false); }
 }
 poll(); setInterval(poll, POLL_MS);
-showScene(current);
 setInterval(() => {
-  if (forced) return;
-  const next = current === 'breakroom' ? 'breakroom'
-             : SCENES[(SCENES.indexOf(current) + 1) % 2];   // street <-> rooftop
-  showScene(next);
-}, CYCLE_MS);
-setInterval(() => { if (Math.random() < .5) say(pick(QUIPS[current])); }, 47000);
+  if (Math.random() < .55) say(pick(document.documentElement.dataset.idle === '1' ? QUIPS.idle : QUIPS.work));
+}, 24000);
 </script>
 </body>
 </html>

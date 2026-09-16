@@ -1,14 +1,45 @@
 # The status page
 
-A single HTML file. No build, no dependencies, no network calls except to its own data file.
+A full-screen scene showing what the crew is doing. One HTML file, no build, no
+dependencies, and no network calls except to its own data file.
 
 ```
 python3 -m http.server -d dashboard 8787
 ```
 
-Then open `http://localhost:8787`. Anything that serves a directory works: your editor's
-preview, a static host, GitHub Pages pointed at `dashboard/`, or a path on a server you
-already run.
+Open `http://localhost:8787`. Anything that serves a directory works: your editor's preview,
+a static host, a path on a server you already run.
+
+## What you are looking at
+
+**Every active run is a robot at a bench**, hammering, with its task and progress on a card
+above its head. The colour follows the phase — orange while it works, cyan once it reaches
+review. When the queue empties the robots sit down with a coffee and start snoring, so you
+can tell from across the room whether anything is happening without reading a number.
+
+The caped one on the crates at the right is the review pass. At night the signal above it
+burns; in daylight it does not, because a signal beam in sunshine looks like a smudge.
+
+## Day and night
+
+The page picks from your clock — daylight from 07:00 to 19:00, night otherwise — and
+remembers whatever you choose after that.
+
+| | Day | Night |
+|---|---|---|
+| Sky | Blue into warm haze, drifting clouds | Deep navy, moon, ninety stars, a third of them twinkling |
+| City | Pale, windows mostly dark | Silhouettes with lit windows |
+| Ground | Grass | Asphalt with a centre line |
+| Robots | White with dark outlines | The same white with dark outlines |
+
+The robots are deliberately the same in both. A dark scene where you cannot find the
+characters is a wallpaper, not a status page.
+
+## The task list is hidden
+
+The scene is the default view. Press **T** or click **TASKS** to slide the list in from the
+right, with the full title, phase, id and progress of every run. Press T again to send it
+away.
 
 ## Live data
 
@@ -23,57 +54,34 @@ Put that on a timer — a minute is plenty — or write it at the end of each ru
 
 ```json
 {
-  "generated_at": "2026-09-16T10:38:15Z",
-  "incept": "2026-09-16",
   "queue": 2,
   "retired_today": 3,
-  "review": { "findings": 4, "fixed": 4 },
   "runs": [
     { "id": "#412", "title": "Stream the CSV export", "phase": "implementing",
-      "progress": 0.4, "started_at": "2026-09-16T10:31:00Z", "board": "github" }
-  ],
-  "ticker": ["UNIT RETIRED: STREAM THE CSV EXPORT."]
+      "progress": 0.4, "board": "github" }
+  ]
 }
 ```
 
-Every field is optional. A missing one renders as empty, never as an error.
+Every field is optional. A missing one renders as empty, never as an error. Up to four runs
+appear in the scene at once; the drawer lists them all.
 
-## When the feed is unreachable
-
-The page falls back to a simulation and **says so** — the badge switches from `LIVE` to
-`SIMULATION`. It is never blank, and it never shows invented numbers while claiming they are
-real. That distinction matters on a screen somebody leaves running.
-
-## The scenes
-
-Three backdrops. The page picks one from what the crew is actually doing, and cycles between
-the first two while work is running.
-
-| Scene | When | What happens in it |
-|---|---|---|
-| **Street** | Work is running | Rain over the skyline, one window lit orange, a car crossing now and then. The window goes dark when the queue empties |
-| **Rooftop** | Work is running | A caped figure on a ledge under a signal beam. The signal dims when there is nothing to do, and the figure points when something is retired |
-| **Break room** | Queue empty, nothing running | The crew on a couch with a decorative coffee, a plant, and a clock nobody is watching |
-
-The break room is not decoration. **A crew with nothing to do should look like one** — you can
-tell from the far side of the room whether anything is happening, without reading a number.
-
-Every scene has an iris that widens while a review runs, and a folded figure for each item
-retired today. Click the scene name in the header to change it by hand.
-
-Characters say something occasionally, and when an item is retired. The lines are deadpan:
-
-> I CANNOT FLY. I CAN OPEN A PULL REQUEST.
-> QUEUE EMPTY. I HAVE READ THE README TWICE.
-> THE BUG WAS COMING FROM INSIDE THE REPO.
+**With no `status.json` the page simulates and says so** — the chip reads `SIMULATION`
+instead of `LIVE`. It is never blank, and it never shows invented numbers while implying
+they are real.
 
 ## Options
 
 | Query parameter | Default | Meaning |
 |---|---|---|
+| `?theme=day` / `?theme=night` | from your clock | Force one |
 | `?data=<url>` | `status.json` | Poll a different feed |
 | `?poll=<ms>` | `10000` | Polling interval |
-| `?scene=<name>` | auto | Pin one scene: `street`, `rooftop` or `breakroom` |
-| `?cycle=<seconds>` | `90` | How long before the backdrop changes |
 
-It respects `prefers-reduced-motion`: the rain stops, and every animation holds still.
+Characters speak occasionally, and whenever something ships. The lines are deadpan:
+
+> I CANNOT FLY. I CAN OPEN A PULL REQUEST.
+> QUEUE EMPTY. I HAVE READ THE README TWICE.
+> THE COFFEE IS DECORATIVE. I APPRECIATE THE GESTURE.
+
+Everything stops under `prefers-reduced-motion`.
