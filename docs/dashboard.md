@@ -49,7 +49,7 @@ different animal, different jokes.
 |---|---|---|---|
 | 🌆 **City** | A real skyline: window grids, water tanks, aerials. A road with traffic, and a brick corner shop whose neon sign — and the sign on its door — reads **OPEN** while the crew works and **CLOSED** when the queue is empty. Its windows go dark when it closes | Hard hats | **Sir Wigglebutt** — black and white, red collar, leaves things behind |
 | 🏝 **Beach** | Sea with surf, palms, a sandcastle, bucket and spade, a starfish, a striped towel, a crab, and a lifeguard hut for the reviewer | Sunglasses and real inflatable rings | **Sandbox** — golden, fetches everything, returns nothing |
-| 🌑 **Space** | Ringed planet, Earth, a launching rocket, a flag | Helmets and life support | A hovering drone |
+| 🌑 **Space** | Black sky with the galaxy band, a ringed planet, Earth with its atmosphere, craters, boulders, a lunar base, a rocket on its pad. The sun only by day | Helmets and life support | A hovering drone |
 | 🧱 **Maze** | Stone corridors, ivy, a shaft of light, something at the far end | Hoods and satchels | A lizard |
 
 Each works in day and night, and your choice is remembered.
@@ -99,6 +99,19 @@ Sandbox back under one arm: *"HOLD ON, BUDDY. ROLLING YOU BACK."* Sandbox shakes
 all over him. *"ROLLED BACK TO LAST KNOWN GOOD STATE."* Then Sandbox notices the ball is still
 out there. Rollback puts his face in his hand: *"NO. NO NO NO NO."*
 
+## Captain Latency, in space
+
+Every half minute or so in space, **the Intern** — first day on the moon, still onboarding —
+steps out of the base. *"LOW GRAVITY. DAY ONE. WHEEE!"* Three hops, each bigger than he meant.
+The fourth goes up and keeps going. *"…uh."* *"GRAVITY? HELLO? GRAVITY?"*
+
+A streak across the sky: **Captain Latency** catches him and flies him back down in under a
+second. Not a word is said. They stand there. Then his messages arrive, one at a time, each
+marked with when he sent it: *"HOLD ON!"* *(sent 6 seconds ago)*, *"I'M COMING!"*, *"GOT YOU!"*
+The Intern: *"…thanks? your messages are only arriving now."* Captain Latency: *"YES. THEY DO
+THAT."* *"also, why does your cape stick out? there is no air up here."* *"BRAND
+CONSISTENCY."* He leaves in a streak. His *"BYE!"* arrives a second later.
+
 ## Crawler, saviour of the city
 
 Crawler patrols the skyline to protect the city from its own code, and often announces
@@ -116,6 +129,8 @@ thought changes every time.
 | | Who | Thinking, for example |
 |---|---|---|
 | **Sir Wigglebutt** | the city dog · very good boy · leaves things behind | *my full name is Sir Wigglebutt the Third. the first two also did this.* |
+| **The Intern** | astronaut · first day on the moon · still onboarding | *they said low gravity. they did not say how low.* |
+| **Captain Latency** | space superhero · always arrives, eventually | *i travel at the speed of light. my messages do not.* |
 | **Rollback** | lifeguard · superhero · rolls back anything that goes under | *i have never walked anywhere. only run. in slow motion.* |
 | **Sandbox** | the beach dog · fetches everything, returns nothing | *the crab owes me money.* |
 | **Crawler** | saviour of the city · protects you from your own code | *tonight i hunt the most dangerous villain of all: works on my machine.* |

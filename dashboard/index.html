@@ -30,14 +30,15 @@
     --far:#93c9d8;--mid:#3fa3bd;--near:#2b86a3;--ground:#f0d9a7;--ground-top:#ffeec4}
   :root[data-scene="beach"][data-theme="night"]{--sky-1:#0a1730;--sky-2:#10304f;--sky-3:#1d4a63;
     --far:#12354f;--mid:#0f3d54;--near:#0b2c3f;--ground:#2a2740;--ground-top:#3b3757}
-  :root[data-scene="space"][data-theme="day"]{--sky-1:#1a1040;--sky-2:#3a1f63;--sky-3:#6b3a7a;
-    --far:#43305e;--mid:#33254a;--near:#261b38;--ground:#6e6480;--ground-top:#8a7e9c;--star:1}
+  :root[data-scene="space"][data-theme="day"]{--sky-1:#010208;--sky-2:#040a18;--sky-3:#0b1830;
+    --far:#4a4f5a;--mid:#8a8e96;--near:#a9adb4;--ground:#9fa3aa;--ground-top:#c4c7cc;--star:1;
+    --text:#123047;--muted:#40658a}
   :root[data-scene="maze"][data-theme="day"]{--sky-1:#cfe3ef;--sky-2:#e7f0f3;--sky-3:#dfe6dc;
     --far:#8d9a8a;--mid:#6f7d6e;--near:#57624f;--ground:#6a6a5c;--ground-top:#7d7d6c}
   :root[data-scene="maze"][data-theme="night"]{--sky-1:#0a1018;--sky-2:#121c24;--sky-3:#1b2a2a;
     --far:#25352c;--mid:#1b2a23;--near:#131e19;--ground:#20241f;--ground-top:#2e342b}
-  :root[data-scene="space"][data-theme="night"]{--sky-1:#05030f;--sky-2:#0c0a22;--sky-3:#141033;
-    --far:#1c1636;--mid:#141029;--near:#0d0a1d;--ground:#2a2540;--ground-top:#3b3457;--star:1}
+  :root[data-scene="space"][data-theme="night"]{--sky-1:#000003;--sky-2:#02040b;--sky-3:#060b18;
+    --far:#2c313b;--mid:#4d525b;--near:#5f646d;--ground:#555a63;--ground-top:#6e737b;--star:1}
 
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;overflow:hidden}
@@ -149,7 +150,8 @@
   :root[data-scene="space"] .plane,
   :root[data-scene="space"] .car{display:none}
   :root[data-scene="space"] .stars{opacity:1}
-  #city-props,#city-fg,#city-road,#city-shop,#maze-floor,#beach-floor{display:none}
+  #city-props,#city-fg,#city-road,#city-shop,#maze-floor,#beach-floor,#space-floor{display:none}
+  :root[data-scene="space"] #space-floor{display:block}
   :root[data-scene="beach"] #beach-floor{display:block}
   :root[data-scene="maze"] #maze-floor{display:block}
   :root[data-scene="city"] .car,
@@ -211,7 +213,7 @@
   @keyframes rock{from{transform:translate(-140px,240px) rotate(0)}
     to{transform:translate(1740px,300px) rotate(360deg)}}
   .rocket{animation:launch 26s ease-in infinite}
-  @keyframes launch{0%,62%{transform:translate(120px,762px)}
+  @keyframes launch{0%,62%{transform:translate(120px,852px)}
     100%{transform:translate(190px,-300px)}}
   .flame{animation:flame .18s steps(2) infinite;transform-box:fill-box;transform-origin:50% 0}
   @keyframes flame{0%{transform:scaleY(1)}100%{transform:scaleY(1.5)}}
@@ -233,7 +235,11 @@
   @keyframes palm{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
   .sat{animation:sat 34s linear infinite}
   @keyframes sat{from{transform:translate(-200px,60px)}to{transform:translate(1800px,-20px)}}
-  .lifeguard-hut{display:none}
+  .lifeguard-hut,.comms-dish{display:none}
+  :root[data-scene="space"] .comms-dish{display:block}
+  :root[data-scene="space"][data-theme="night"] .orb{display:none}
+  :root[data-scene="space"][data-theme="day"] .orb circle{fill:#fff8e1}
+  :root[data-scene="space"][data-theme="day"] .orb{filter:drop-shadow(0 0 30px #fff3c4) drop-shadow(0 0 70px #ffd54f)}
   :root[data-scene="beach"] .lifeguard-hut{display:block}
   :root[data-scene="beach"] #hero g[stroke="var(--ink)"] path{stroke:#8a5a2b}
   :root[data-theme="day"] .beam,
@@ -351,9 +357,18 @@
   .dog-shake{animation:dogshake .09s linear infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
   @keyframes dogshake{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
 
+  /* the space rescue */
+  .flail .in-arm-a{animation:flail .22s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+  .flail .in-arm-b{animation:flail .22s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+  .flail .in-leg-a{animation:legA .3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+  .flail .in-leg-b{animation:legA .3s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+  .intern .in-face-worried{display:none}
+  .intern.worried .in-face-happy{display:none}
+  .intern.worried .in-face-worried{display:block}
+  .jetflame{animation:flame .14s steps(2) infinite;transform-box:fill-box;transform-origin:50% 0}
+
   /* the gag */
   [data-gag="1"] .swinger{display:none}
-  :root[data-scene="space"] #gag{display:none}
   .stk{animation:stk 1.5s ease-out infinite}
   @keyframes stk{0%{opacity:0;transform:translateY(6px)}30%{opacity:.95}100%{opacity:0;transform:translateY(-16px)}}
   .fly{animation:fly 1.1s linear infinite;transform-box:view-box}
@@ -433,11 +448,6 @@
     <g class="birds" opacity=".65" fill="none" stroke="var(--near)" stroke-width="3" stroke-linecap="round">
       <path d="M0,0 q9,-9 18,0 M22,4 q8,-8 16,0 M-24,7 q7,-7 14,0"/>
     </g>
-  </g>
-  <!-- near buildings -->
-  <g fill="var(--near)">
-    <path d="M0,770 L0,640 150,640 150,690 300,690 300,620 430,620 430,700 600,700 600,660
-             1000,660 1000,712 1160,712 1160,644 1330,644 1330,700 1600,700 1600,770 Z"/>
   </g>
 
   </g>
@@ -630,43 +640,87 @@
   </g>
 
   <g class="backdrop" id="sc-space">
-    <!-- a planet, quietly minding its business -->
-    <g opacity=".9">
-      <circle cx="270" cy="230" r="130" fill="var(--far)"/>
-      <ellipse cx="270" cy="230" rx="190" ry="26" fill="none" stroke="var(--mid)" stroke-width="10" opacity=".8"/>
-      <circle cx="225" cy="196" r="26" fill="var(--mid)" opacity=".7"/>
-      <circle cx="315" cy="270" r="18" fill="var(--mid)" opacity=".6"/>
+    <defs>
+      <radialGradient id="earthGlow" cx="50%" cy="50%" r="50%">
+        <stop offset=".72" stop-color="#6fb7ff" stop-opacity=".55"/><stop offset="1" stop-color="#6fb7ff" stop-opacity="0"/></radialGradient>
+      <radialGradient id="earthBody" cx="38%" cy="35%" r="70%">
+        <stop offset="0" stop-color="#4fa3e0"/><stop offset=".7" stop-color="#1f5f9c"/><stop offset="1" stop-color="#0b2748"/></radialGradient>
+      <radialGradient id="planetBody" cx="35%" cy="30%" r="75%">
+        <stop offset="0" stop-color="#e3b98a"/><stop offset=".6" stop-color="#b07a4d"/><stop offset="1" stop-color="#4a2e1c"/></radialGradient>
+      <linearGradient id="milky" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#9fb4ff" stop-opacity="0"/><stop offset=".5" stop-color="#c8b8ff" stop-opacity=".16"/>
+        <stop offset="1" stop-color="#9fb4ff" stop-opacity="0"/></linearGradient>
+    </defs>
+
+    <!-- the galaxy, edge on, and a faint nebula -->
+    <ellipse cx="800" cy="300" rx="980" ry="46" fill="url(#milky)" opacity=".5" transform="rotate(-12 800 300)"/>
+    <ellipse cx="420" cy="330" rx="220" ry="90" fill="#7a4fbf" opacity=".08"/>
+    <ellipse cx="1180" cy="190" rx="260" ry="70" fill="#3fb2c9" opacity=".06"/>
+
+    <!-- a ringed planet: the back of the ring, the planet, then the front of the ring -->
+    <g transform="translate(330,300) rotate(-16)">
+      <ellipse cx="0" cy="0" rx="150" ry="26" fill="none" stroke="#d9c3a0" stroke-width="10" opacity=".55"/>
+      <circle cx="0" cy="0" r="92" fill="url(#planetBody)"/>
+      <path d="M-86,-24 q86,16 172,0 M-90,8 q90,14 180,0 M-80,36 q80,12 160,0" fill="none" stroke="#7a4d2c" stroke-width="7" opacity=".35"/>
+      <path d="M-150,0 a150,26 0 0,0 300,0" fill="none" stroke="#e8d4b0" stroke-width="10" opacity=".85"/>
+      <path d="M-150,0 a150,26 0 0,0 300,0" fill="none" stroke="#9c8565" stroke-width="3" opacity=".6" transform="translate(0,4)"/>
     </g>
-    <g class="sat" opacity=".9"><g transform="translate(0,150)">
-      <rect x="-9" y="-7" width="18" height="14" rx="3" fill="var(--body-2)"/>
-      <rect x="-32" y="-4" width="20" height="8" rx="2" fill="var(--neon)" opacity=".8"/>
-      <rect x="12" y="-4" width="20" height="8" rx="2" fill="var(--neon)" opacity=".8"/>
+
+    <!-- Earth, with atmosphere, clouds and the night side -->
+    <g transform="translate(1010,330)">
+      <circle r="74" fill="url(#earthGlow)"/>
+      <circle r="58" fill="url(#earthBody)"/>
+      <path d="M-40,-18 q14,-18 34,-8 q16,8 12,26 q-6,18 -26,16 q-18,-2 -22,-16 z M16,-38 q16,-6 26,8 q-8,10 -22,6 z
+               M18,14 q18,-4 24,12 q-10,14 -24,6 z" fill="#4c9a57" opacity=".9"/>
+      <path d="M-50,-2 q20,-10 40,0 t40,0 M-30,-40 q16,-8 32,0 M-10,34 q20,-8 40,0" fill="none" stroke="#ffffff"
+            stroke-width="5" stroke-linecap="round" opacity=".55"/>
+      <path d="M0,-58 a58,58 0 0,1 0,116 a40,58 0 0,0 0,-116 z" fill="#000a1a" opacity=".55"/>
+    </g>
+
+    <g class="sat" opacity=".95"><g transform="translate(0,120)">
+      <rect x="-9" y="-7" width="18" height="14" rx="3" fill="#d6d9de" stroke="#1d2533" stroke-width="1.5"/>
+      <rect x="-40" y="-5" width="28" height="10" rx="1" fill="#2f5d9b" stroke="#1d2533" stroke-width="1.5"/>
+      <rect x="12" y="-5" width="28" height="10" rx="1" fill="#2f5d9b" stroke="#1d2533" stroke-width="1.5"/>
+      <path d="M0,-7 v-10" stroke="#d6d9de" stroke-width="2"/><circle cx="0" cy="-18" r="2.5" class="blink" fill="#ff5a5a"/>
     </g></g>
-    <g opacity=".95" transform="translate(1180,300)">
-      <circle r="46" fill="#2f6fb0"/>
-      <path d="M-34,-14 q18,-10 34,2 q16,10 32,-4 q-6,20 -30,22 q-26,2 -36,-20 z" fill="#4f9a5e"/>
-      <path d="M-18,22 q16,-6 30,4 q-14,12 -30,-4 z" fill="#4f9a5e"/>
-      <circle r="46" fill="none" stroke="#9fd0ff" stroke-width="2" opacity=".5"/>
+    <g class="rock" opacity=".9" transform="translate(640,240)">
+      <path d="M0,0 l18,-9 16,11 -7,18 -20,5 -13,-14 z" fill="#5d5f66" stroke="#1d2533" stroke-width="1.5"/>
+      <circle cx="10" cy="4" r="3" fill="#44464c"/>
     </g>
-    <g class="rock" opacity=".85" transform="translate(640,240)">
-      <path d="M0,0 l16,-8 14,10 -6,16 -18,4 -12,-12 z" fill="var(--far)"/>
-    </g>
-    <g class="rocket" transform="translate(120,762)">
-      <path d="M0,-120 q14,-34 0,-62 q-14,28 0,62 z" fill="var(--body)"/>
-      <path d="M-13,-120 l-10,20 10,-4 z M13,-120 l10,20 -10,-4 z" fill="var(--hazard)"/>
-      <circle cx="0" cy="-152" r="6" fill="var(--neon)"/>
-      <path class="flame" d="M0,-116 q10,20 0,34 q-10,-14 0,-34 z" fill="var(--hazard)"/>
-    </g>
-    <g transform="translate(1520,762)">
-      <rect x="-2" y="-74" width="4" height="74" fill="var(--body-2)"/>
-      <path class="flag" d="M2,-74 l44,10 -44,12 z" fill="var(--hazard)"/>
-    </g>
-    <!-- crater rim -->
+
+    <!-- far ridges -->
+    <path d="M0,700 L0,640 q90,-40 190,-18 q70,14 140,-24 q110,-50 220,-6 q80,30 180,-4 q120,-40 240,8
+             q90,34 200,-10 q120,-44 230,4 q70,30 200,-2 L1600,700 Z" fill="var(--far)"/>
+    <!-- near ridge -->
     <path d="M0,762 L0,700 q120,-40 240,-6 q120,34 250,-10 q130,-44 260,0 q140,44 280,-6
-             q140,-50 280,4 q150,54 290,18 L1600,762 Z" fill="var(--near)"/>
-    <g fill="var(--mid)" opacity=".7">
-      <ellipse cx="420" cy="812" rx="54" ry="13"/><ellipse cx="900" cy="842" rx="78" ry="16"/>
-      <ellipse cx="1330" cy="806" rx="44" ry="11"/>
+             q140,-50 280,4 q150,54 290,18 L1600,762 Z" fill="var(--mid)"/>
+
+    <!-- a lunar base module with solar panels and a dish -->
+    <g transform="translate(1508,700)" stroke="#1d2533" stroke-width="2.5" stroke-linejoin="round">
+      <rect x="-54" y="-40" width="92" height="40" rx="18" fill="#dfe3e8"/>
+      <circle cx="-26" cy="-20" r="8" fill="#6fb7ff"/><circle cx="4" cy="-20" r="8" fill="#6fb7ff"/>
+      <rect x="-98" y="-34" width="34" height="22" fill="#2f5d9b"/>
+      <path d="M-86,-34 v22 M-75,-34 v22" stroke-width="1.5"/>
+      <path d="M-64,-23 h10" />
+      <path d="M22,-40 v-20" fill="none"/>
+      <path d="M6,-74 q16,-18 34,0 q-18,10 -34,0 z" fill="#dfe3e8"/>
+      <circle class="blink" cx="23" cy="-74" r="3" fill="#ff5a5a" stroke="none"/>
+    </g>
+
+    <!-- the rocket, on a proper launch pad -->
+    <g transform="translate(120,762)">
+      <rect x="-40" y="-8" width="80" height="8" fill="#6b6f77" stroke="#1d2533" stroke-width="2"/>
+      <path d="M-30,-8 v-60 M30,-8 v-60 M-30,-40 h60" stroke="#6b6f77" stroke-width="4" fill="none"/>
+    </g>
+    <g class="rocket">
+      <path d="M0,-120 q16,-40 0,-72 q-16,32 0,72 z" fill="#f2f4f7" stroke="#1d2533" stroke-width="2.5"/>
+      <path d="M-14,-122 l-12,24 12,-5 z M14,-122 l12,24 -12,-5 z" fill="#e53935" stroke="#1d2533" stroke-width="2"/>
+      <circle cx="0" cy="-156" r="7" fill="#6fb7ff" stroke="#1d2533" stroke-width="2"/>
+      <path class="flame" d="M0,-118 q12,24 0,40 q-12,-16 0,-40 z" fill="#ffb300"/>
+    </g>
+    <g transform="translate(1568,762)">
+      <rect x="-2" y="-80" width="4" height="80" fill="#c4c7cc"/>
+      <path class="flag" d="M2,-80 l46,10 -46,12 z" fill="var(--hazard)"/>
     </g>
   </g>
 
@@ -764,6 +818,34 @@
             stroke-width="4" stroke-linecap="round" fill="none"/>
       <circle cx="-30" cy="-28" r="5" fill="#ef5f3c" stroke="var(--ink)" stroke-width="1.5"/>
       <circle cx="30" cy="-28" r="5" fill="#ef5f3c" stroke="var(--ink)" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <g id="space-floor">
+    <rect y="762" width="1600" height="138" fill="var(--ground)"/>
+    <g>
+      <g transform="translate(300,860)"><ellipse rx="90" ry="20" fill="#000" opacity=".22"/>
+        <ellipse rx="90" ry="20" fill="none" stroke="var(--ground-top)" stroke-width="5" opacity=".8"/>
+        <ellipse cx="6" cy="4" rx="70" ry="13" fill="#000" opacity=".18"/></g>
+      <g transform="translate(1040,880)"><ellipse rx="130" ry="24" fill="#000" opacity=".22"/>
+        <ellipse rx="130" ry="24" fill="none" stroke="var(--ground-top)" stroke-width="6" opacity=".8"/>
+        <ellipse cx="8" cy="5" rx="100" ry="16" fill="#000" opacity=".18"/></g>
+      <g transform="translate(700,812)"><ellipse rx="44" ry="9" fill="#000" opacity=".2"/>
+        <ellipse rx="44" ry="9" fill="none" stroke="var(--ground-top)" stroke-width="3" opacity=".8"/></g>
+      <g transform="translate(1420,826)"><ellipse rx="54" ry="11" fill="#000" opacity=".2"/>
+        <ellipse rx="54" ry="11" fill="none" stroke="var(--ground-top)" stroke-width="3" opacity=".8"/></g>
+    </g>
+    <g fill="#6d7179" stroke="#1d2533" stroke-width="1.5">
+      <path d="M520,874 l14,-12 18,4 6,12 z"/><path d="M880,826 l10,-8 12,3 4,8 z"/>
+      <path d="M1250,890 l18,-14 22,6 8,10 z"/><path d="M150,812 l8,-7 10,2 3,6 z"/>
+    </g>
+    <g fill="#000" opacity=".16">
+      <rect x="600" y="872" width="12" height="7" rx="3"/><rect x="620" y="860" width="12" height="7" rx="3"/>
+      <rect x="642" y="876" width="12" height="7" rx="3"/><rect x="662" y="864" width="12" height="7" rx="3"/>
+      <rect x="684" y="880" width="12" height="7" rx="3"/>
+    </g>
+    <g class="motes" fill="#ffffff" opacity=".35">
+      <circle cx="420" cy="800" r="1.8"/><circle cx="780" cy="840" r="1.5"/><circle cx="1160" cy="810" r="1.8"/>
     </g>
   </g>
 
@@ -926,6 +1008,12 @@
       <path d="M-33,-24 L31,-54 M33,-24 L-31,-54" fill="none" opacity=".6"/>
       <rect x="-50" y="-92" width="100" height="10" rx="3" fill="var(--mid)"/>
       <path d="M-46,-92 v-22 M46,-92 v-22 M-46,-112 h92" fill="none"/>
+    </g>
+    <g class="comms-dish" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round">
+      <path d="M0,-112 v-120" fill="none"/>
+      <path d="M-34,-250 q34,-40 68,0 q-34,20 -68,0 z" fill="#dfe3e8"/>
+      <path d="M0,-238 l0,-26" fill="none"/>
+      <circle class="blink" cx="0" cy="-266" r="4" fill="#ff5a5a" stroke="none"/>
     </g>
     <g class="lifeguard-hut" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round">
       <path d="M-58,-232 L0,-262 L58,-232 Z" fill="#e53935"/>
@@ -2216,12 +2304,178 @@ async function beachGag() {
   }
 }
 
+// ---------------------------------------------------------------- the space rescue
+// The intern discovers low gravity, hops once too many, and drifts off into space. Captain
+// Latency arrives instantly and saves him. His messages arrive afterwards, one at a time.
+const INTERN = `
+  <ellipse cx="0" cy="3" rx="26" ry="5" fill="rgba(0,0,0,.25)"/>
+  <rect x="-24" y="-80" width="20" height="40" rx="6" fill="#c9ced6" stroke="var(--ink)" stroke-width="2.5"/>
+  <g class="in-leg-a"><rect x="-15" y="-40" width="14" height="38" rx="6" fill="#eef1f5" stroke="var(--ink)" stroke-width="2.5"/>
+    <rect x="-17" y="-8" width="18" height="10" rx="4" fill="#8e96a3" stroke="var(--ink)" stroke-width="2"/></g>
+  <g class="in-leg-b"><rect x="3" y="-40" width="14" height="38" rx="6" fill="#e3e7ec" stroke="var(--ink)" stroke-width="2.5"/>
+    <rect x="1" y="-8" width="18" height="10" rx="4" fill="#8e96a3" stroke="var(--ink)" stroke-width="2"/></g>
+  <rect x="-18" y="-84" width="38" height="50" rx="14" fill="#f4f6f9" stroke="var(--ink)" stroke-width="3"/>
+  <rect x="-6" y="-72" width="16" height="12" rx="2" fill="#4a90d9" stroke="var(--ink)" stroke-width="1.5"/>
+  <circle cx="14" cy="-50" r="4" fill="var(--hazard)"/>
+  <g class="in-arm-a"><rect x="-26" y="-82" width="12" height="34" rx="6" fill="#eef1f5" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <g class="in-arm-b"><rect x="18" y="-82" width="12" height="34" rx="6" fill="#e3e7ec" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <circle cx="1" cy="-106" r="24" fill="#f4f6f9" stroke="var(--ink)" stroke-width="3"/>
+  <circle cx="3" cy="-106" r="17" fill="#1b2a44" stroke="var(--ink)" stroke-width="2"/>
+  <circle cx="3" cy="-104" r="13" fill="#f1c27d"/>
+  <g class="in-face-happy">
+    <circle cx="-2" cy="-106" r="2" fill="var(--ink)"/><circle cx="8" cy="-106" r="2" fill="var(--ink)"/>
+    <path d="M-2,-99 q5,5 10,0" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g class="in-face-worried">
+    <circle cx="-2" cy="-106" r="3.4" fill="#fff" stroke="var(--ink)" stroke-width="1.2"/>
+    <circle cx="8" cy="-106" r="3.4" fill="#fff" stroke="var(--ink)" stroke-width="1.2"/>
+    <circle cx="-2" cy="-106" r="1.2" fill="var(--ink)"/><circle cx="8" cy="-106" r="1.2" fill="var(--ink)"/>
+    <ellipse cx="3" cy="-97" rx="3" ry="3.5" fill="#5a1f1f"/>
+  </g>
+  <path d="M-12,-118 q8,-8 18,-4" fill="none" stroke="#ffffff" stroke-width="3" opacity=".7" stroke-linecap="round"/>`;
+
+const LATENCY = `
+  <path d="M-10,-84 L-92,-96 L-86,-76 L-10,-66 z" fill="#d32f2f" stroke="var(--ink)" stroke-width="2.5"/>
+  <rect x="-30" y="-86" width="16" height="42" rx="5" fill="#8e96a3" stroke="var(--ink)" stroke-width="2.5"/>
+  <path class="jetflame" d="M-26,-44 q4,20 4,34 q4,-14 4,-34 z" fill="#ffb300"/>
+  <rect x="-14" y="-42" width="13" height="40" rx="6" fill="#1e4e9c" stroke="var(--ink)" stroke-width="2.5"/>
+  <rect x="3" y="-42" width="13" height="40" rx="6" fill="#1a4590" stroke="var(--ink)" stroke-width="2.5"/>
+  <rect x="-16" y="-8" width="18" height="10" rx="4" fill="#c0c7d2" stroke="var(--ink)" stroke-width="2"/>
+  <rect x="1" y="-8" width="18" height="10" rx="4" fill="#c0c7d2" stroke="var(--ink)" stroke-width="2"/>
+  <path d="M-20,-92 q20,-8 42,0 l-4,52 h-34 z" fill="#2360c2" stroke="var(--ink)" stroke-width="3"/>
+  <path d="M-20,-60 h42" stroke="#c0c7d2" stroke-width="5"/>
+  <g transform="translate(1,-78)" fill="none" stroke="#ffd54f" stroke-width="3" stroke-linecap="round">
+    <path d="M-10,0 q10,-10 20,0"/><path d="M-6,5 q6,-6 12,0"/><circle cx="0" cy="9" r="1.8" fill="#ffd54f"/>
+  </g>
+  <rect x="-28" y="-90" width="12" height="34" rx="6" fill="#2360c2" stroke="var(--ink)" stroke-width="2.5"/>
+  <rect x="18" y="-90" width="12" height="34" rx="6" fill="#1e4e9c" stroke="var(--ink)" stroke-width="2.5"/>
+  <circle cx="1" cy="-114" r="23" fill="#dff1ff" fill-opacity=".35" stroke="var(--ink)" stroke-width="3"/>
+  <rect x="-10" y="-126" width="24" height="26" rx="9" fill="#f1c27d" stroke="var(--ink)" stroke-width="2"/>
+  <path d="M-10,-120 q12,-16 24,-4 l0,-6 q-12,-8 -24,2 z" fill="#3b2a1a"/>
+  <path d="M-4,-116 h6 M6,-116 h6" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M-2,-106 q6,4 12,0" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M-8,-102 q10,10 20,0" fill="none" stroke="#c98b58" stroke-width="2"/>
+  <path d="M-14,-128 q8,-10 20,-6" fill="none" stroke="#ffffff" stroke-width="3" opacity=".7" stroke-linecap="round"/>`;
+
+WHO.intern = { name: 'The Intern', role: 'astronaut · first day on the moon · still onboarding', thoughts: [
+  'they said low gravity. they did not say how low.',
+  'is floating away covered in the onboarding docs?',
+  'i pushed to main, and then i pushed off the ground.',
+  'my manager says this is a growth opportunity.' ] };
+WHO.latency = { name: 'Captain Latency', role: 'space superhero · always arrives, eventually', thoughts: [
+  'i travel at the speed of light. my messages do not.',
+  'ping me. i will reply. at some point.',
+  'the cape does nothing up here. it is about brand consistency.',
+  'i have saved 4,000 astronauts. i have told 3,000 of them so far.',
+  'if you can read this, i sent it a while ago.' ] };
+
+// Speech that was sent a while ago, and says so.
+function lateSay(layer, x, y, text, ago, ms = 1600) {
+  const w = Math.min(420, 36 + text.length * 8.2);
+  const b = node('g', { transform: `translate(${x},${y})` });
+  b.innerHTML = `<rect class="prog-bg" x="${-w / 2}" y="-34" width="${w}" height="46" rx="10"/>
+    <path class="prog-bg" d="M-8,12 l8,11 l8,-11 z"/>
+    <text x="0" y="-12" text-anchor="middle" font-size="13" font-weight="700" font-family="var(--mono)"
+          fill="var(--text)">${text}</text>
+    <text x="0" y="6" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--muted)"
+          letter-spacing=".5">📡 sent ${ago} ago</text>`;
+  layer.appendChild(b);
+  setTimeout(() => b.remove(), ms * SLOW);
+}
+
+async function spaceGag() {
+  const root = document.documentElement;
+  if (gagRunning || root.dataset.scene !== 'space' || document.hidden) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  gagRunning = true;
+  root.dataset.gag = '1';
+  const layer = el('gag'); layer.textContent = '';
+  const G = 846, HOP_X = 1210;
+
+  const intern = node('g', { 'data-who': 'intern' });
+  const ib = node('g', { class: 'intern' }); ib.innerHTML = INTERN; intern.appendChild(ib);
+  const cap = node('g', { 'data-who': 'latency' });
+  const cb = node('g'); cb.innerHTML = LATENCY; cap.appendChild(cb);
+  const trail = node('path', { fill: '#9fd4ff', opacity: .6 });
+  const place = (g, x, y, sc = 1, flip = false, rot = 0) =>
+    g.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${flip ? -sc : sc},${sc})`);
+  const streak = (x, y, fromX, fromY) => trail.setAttribute('d',
+    `M${x},${y - 40} L${fromX},${fromY - 30} L${fromX},${fromY - 90} L${x},${y - 90} Z`);
+
+  try {
+    // 1. out of the base for a walk, delighted with the gravity
+    place(intern, 1640, G, 1, true); layer.appendChild(intern);
+    worldSay(layer, 1300, 700, 'LOW GRAVITY. DAY ONE. WHEEE!', 2000);
+    await tween(1800, (t, raw) => place(intern, lerp(1640, HOP_X, t), G - Math.abs(Math.sin(raw * Math.PI * 4)) * 14, 1, true), E.lin);
+
+    // 2. three hops, each one bigger than he meant
+    for (const h of [60, 110, 170]) {
+      await tween(900, (t, raw) => place(intern, HOP_X, G - Math.sin(raw * Math.PI) * h, 1, true), E.lin);
+    }
+
+    // 3. the fourth goes up, and keeps going
+    ib.classList.add('worried', 'flail');
+    worldSay(layer, HOP_X, 640, '…uh.', 1200);
+    await tween(3200, (t, raw) => {
+      place(intern, lerp(HOP_X, 1140, t), lerp(G, 330, E.out(t)), 1, true, raw * 200);
+      if (raw > .5 && !intern.dataset.said) { intern.dataset.said = '1'; worldSay(layer, 1140, 250, 'GRAVITY? HELLO? GRAVITY?', 1800); }
+    }, E.lin);
+
+    // 4. a streak from the far side of the sky, and he is caught. not a word is said.
+    layer.insertBefore(trail, intern);
+    place(cap, -220, 140, 1, false, 20); layer.appendChild(cap);
+    await tween(650, t => {
+      const x = lerp(-220, 1080, t), y = lerp(140, 350, t);
+      place(cap, x, y, 1, false, 20); streak(x, y, -220, 140);
+      place(intern, 1140, 330, 1, true, 640 + t * 40);
+    }, E.out);
+    trail.remove();
+    ib.classList.remove('flail');
+
+    // 5. flown back down and set on his feet
+    await tween(1600, t => {
+      place(cap, lerp(1080, 1320, t), lerp(350, G, t), 1, t > .5, lerp(20, 0, t));
+      place(intern, lerp(1140, HOP_X, t), lerp(330, G, t), 1, true, lerp(680, 720, t));
+    }, E.io);
+    ib.classList.remove('worried');
+    await wait(1300);                                  // an awkward, silent moment
+
+    // 6. his messages arrive
+    lateSay(layer, 1320, 640, 'HOLD ON!', '6 seconds', 1400); await wait(1500);
+    lateSay(layer, 1320, 640, "I'M COMING!", '5 seconds', 1400); await wait(1500);
+    lateSay(layer, 1320, 640, 'GOT YOU!', '4 seconds', 1600); await wait(1700);
+
+    // 7. the conversation, such as it is
+    worldSay(layer, HOP_X, 670, '…thanks? your messages are only arriving now.', 2300); await wait(2400);
+    worldSay(layer, 1320, 640, 'YES. THEY DO THAT.', 1700); await wait(1800);
+    worldSay(layer, HOP_X, 670, 'also, why does your cape stick out? there is no air up here.', 2600); await wait(2700);
+    worldSay(layer, 1320, 640, 'BRAND CONSISTENCY.', 1800); await wait(1900);
+
+    // 8. and he is gone. his goodbye takes a little longer.
+    layer.insertBefore(trail, cap);
+    await tween(700, t => {
+      const x = lerp(1320, 1900, t), y = lerp(G, -200, t);
+      place(cap, x, y, 1, false, lerp(0, 28, t)); streak(x, y, 1320, G);
+    }, E.in || (t => t * t));
+    trail.remove(); cap.remove();
+    await wait(1200);
+    lateSay(layer, 1320, 640, 'BYE!', '1 second', 1600);
+    await wait(900);
+    await tween(1500, (t, raw) => place(intern, lerp(HOP_X, 1640, t), G - Math.abs(Math.sin(raw * Math.PI * 3)) * 10, 1, false), E.lin);
+  } finally {
+    layer.textContent = '';
+    delete root.dataset.gag;
+    gagRunning = false;
+  }
+}
+
 // P plays whichever scene's gag is on screen; the timer does the same.
 function sceneGag() {
   const scene = document.documentElement.dataset.scene;
   if (scene === 'city') return poopGag();
   if (scene === 'maze') return mazeGag();
   if (scene === 'beach') return beachGag();
+  if (scene === 'space') return spaceGag();
 }
 addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') sceneGag(); });
 
@@ -2265,7 +2519,7 @@ document.querySelector('.swinger')?.addEventListener('animationiteration', e => 
 })();
 // Each scene has its own rhythm, counted from the end of the last gag so they never overlap.
 // The beach rescue comes round often; the others are rarer, so they stay a surprise.
-const GAG_GAP = { beach: 10000, city: 40000, maze: 40000 };
+const GAG_GAP = { beach: 10000, city: 40000, maze: 40000, space: 30000 };
 (async function gagLoop() {
   // ?gag=1 plays the current scene's gag straight away — a link you can send someone
   await new Promise(r => setTimeout(r, params.get('gag') ? 600 : 5000));
