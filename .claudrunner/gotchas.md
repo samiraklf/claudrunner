@@ -61,3 +61,22 @@ finding, then stop".
 An ablation arm is the only way this is visible. A suite that only runs the with-plugin arm
 would have shown a passing security skill.
 
+## In SVG, the order of elements is the depth
+
+There is no z-index. Whatever comes later in the document paints on top. The street
+furniture was written after the crew, so a bin drew over the dog every time he walked past
+it. Anything standing on the same ground line as the characters must come before them.
+
+## A CSS transform animation deletes the transform attribute
+
+An element positioned with `transform="translate(…)"` and animated with CSS `transform`
+loses its position the moment the animation runs, and jumps to the origin. This put palm
+fronds at the base of the trunk, hid the beach ball, sat the hero at the foot of its crates,
+and dropped speech bubbles to the floor. Put the position on an outer group and the
+animation on an inner one — always.
+
+## Re-rendering on every poll deletes whatever the element was doing
+
+The dashboard rebuilt every robot on each poll, so every dance was killed mid-move and none
+was ever seen. Reconcile by id; only rebuild when the shape genuinely changes.
+
