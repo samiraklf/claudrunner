@@ -64,14 +64,14 @@ unison: one sways side to side, one shuffles, one bounces, one spins and hops.
 **When something ships, the whole crew dances at once**, each its own dance. Press **D** to
 start one yourself.
 
-**Once a minute in the city**, Sir Wigglebutt stops, has a look around, squats, and leaves
+**Every minute or so in the city**, Sir Wigglebutt stops, has a look around, squats, and leaves
 something steaming on the pavement. He walks off without looking back. A masked figure swings
 in on a line, webs it, and carries it off into the sky. Press **P** to see it on demand, or
 add `?slow=4` to watch every beat at a quarter speed.
 
 ## Sprint and Scope Creep, in the maze
 
-Once a minute in the maze, the ground shakes and the gate doors start to close. **Sprint** — a
+Every minute or so in the maze, the ground shakes and the gate doors start to close. **Sprint** — a
 round, very out-of-shape jogger in a **404: CARDIO NOT FOUND** shirt that lost the argument with his gut —
 jogs out of the gate reading his map: *"JUST A LIGHT JOG. CHECKING THE MAP."*
 
@@ -89,7 +89,7 @@ link you can send someone.
 
 ## Rollback, on the beach
 
-Once a minute on the beach, Sandbox chases the ball — *"BALL. BALL. BALL. BALL."* — straight
+Every half minute or so on the beach, Sandbox chases the ball — *"BALL. BALL. BALL. BALL."* — straight
 into the sea, and discovers he cannot swim. *"BLUB. HELP. BLUB."* *"I AM A RETRIEVER. I FORGOT
 THE RETURN STATEMENT."*
 

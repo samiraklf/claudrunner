@@ -2076,6 +2076,16 @@ async function beachGag() {
   const layer = el('gag'); layer.textContent = '';
   const inner = pet.firstElementChild;
   const SAND = 782, WATER = 652;
+  // Robots stand at x and their workbench runs to x+100. Drown where none of them is, or the
+  // dog vanishes behind a head — which is exactly what happened with three tasks running.
+  const taken = [...document.querySelectorAll('#crew .unit')].map(u =>
+    Number(u.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]));
+  let SPOT = 700, best = -1;
+  for (let x = 240; x <= 1120; x += 10) {
+    const clear = taken.length ? Math.min(...taken.map(r => x < r - 50 ? r - 50 - x : x > r + 110 ? x - r - 110 : -1)) : 999;
+    if (clear > best) { best = clear; SPOT = x; }
+  }
+  const DS = .95;                                   // dog scale in the water: big enough to see
 
   const dog = (x, y, sc = 1, flip = false, rot = 0) => {
     if (pet.isConnected) pet.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${flip ? -sc : sc},${sc})`);
@@ -2103,99 +2113,99 @@ async function beachGag() {
     // 1. the ball gets away from him, and bounces into the sea
     pet.style.animation = 'none';
     layer.appendChild(ball);
-    worldSay(layer, 460, 700, 'BALL. BALL. BALL. BALL.', 1600);
-    const ballGo = tween(1500, (t, raw) => at(ball, lerp(470, 760, t), lerp(SAND, WATER - 4, t) - Math.abs(Math.sin(raw * Math.PI * 3)) * 60), E.lin);
-    await tween(1500, t => dog(lerp(260, 600, t), SAND), E.lin);
+    worldSay(layer, Math.max(200, SPOT - 240), 700, 'BALL. BALL. BALL. BALL.', 1600);
+    const ballGo = tween(1500, (t, raw) => at(ball, lerp(SPOT - 230, SPOT + 40, t), lerp(SAND, WATER - 4, t) - Math.abs(Math.sin(raw * Math.PI * 3)) * 60), E.lin);
+    await tween(1500, t => dog(lerp(SPOT - 440, SPOT - 120, t), SAND), E.lin);
     await ballGo;
 
     // 2. straight in after it, getting smaller as he swims out
-    splash(640, WATER + 20);
+    splash(SPOT - 80, WATER + 20);
     await tween(1100, t => {
-      dog(lerp(600, 720, t), lerp(SAND, WATER + 22, t), lerp(1, .78, t));
-      at(ball, lerp(760, 800, t), WATER - 4 + Math.sin(t * 6) * 2);
+      dog(lerp(SPOT - 120, SPOT, t), lerp(SAND, WATER + 26, t), lerp(1, DS, t));
+      at(ball, lerp(SPOT + 40, SPOT + 80, t), WATER - 4 + Math.sin(t * 6) * 2);
     }, E.out);
     layer.appendChild(underwater);
     underwater.appendChild(pet);          // from here on, only what is above the surface shows
 
     // 3. he cannot, in fact, swim
     if (inner) inner.style.animation = 'none';
-    const bubbles = node('g', { transform: `translate(726,${WATER - 4})` });
+    const bubbles = node('g', { transform: `translate(${SPOT + 8},${WATER - 4})` });
     bubbles.innerHTML = `<g fill="none" stroke="#ffffff" stroke-width="2">
       <circle class="bubble-up" cx="-6" cy="0" r="4"/><circle class="bubble-up" style="animation-delay:.4s" cx="6" cy="0" r="3"/>
       <circle class="bubble-up" style="animation-delay:.8s" cx="0" cy="0" r="5"/></g>`;
     layer.appendChild(bubbles);
-    worldSay(layer, 720, 560, 'BLUB. HELP. BLUB.', 1500);
+    worldSay(layer, SPOT, 560, 'BLUB. HELP. BLUB.', 1500);
     const flail = (raw, beats) => {
       const dip = Math.max(0, Math.sin(raw * Math.PI * beats)) * 24;   // head goes under on each beat
-      dog(720 + Math.sin(raw * 30) * 3, WATER + 20 + dip, .78, false, Math.sin(raw * 22) * 12);
+      dog(SPOT + Math.sin(raw * 30) * 3, WATER + 26 + dip, DS, false, Math.sin(raw * 22) * 12);
     };
-    await tween(2600, (t, raw) => { flail(raw, 3); at(ball, lerp(800, 860, t), WATER - 4 + Math.sin(raw * 12) * 2); }, E.lin);
-    worldSay(layer, 720, 560, 'I AM A RETRIEVER. I FORGOT THE RETURN STATEMENT.', 2200);
+    await tween(2600, (t, raw) => { flail(raw, 3); at(ball, lerp(SPOT + 80, SPOT + 150, t), WATER - 4 + Math.sin(raw * 12) * 2); }, E.lin);
+    worldSay(layer, Math.min(1180, Math.max(360, SPOT)), 560, 'I AM A RETRIEVER. I FORGOT THE RETURN STATEMENT.', 2200);
 
     // 4. a whistle. and then, from the right, in slow motion
     say('FWEEEEEEEEEEEET!', 1400 * SLOW);
     heroBody.classList.add('rb-run');
     hput(1700, SAND, 1.05, true);
     layer.insertBefore(hero, underwater);
-    worldSay(layer, 1150, 560, '* slow-motion running *', 2600);
+    worldSay(layer, Math.min(1300, SPOT + 420), 500, '* slow-motion running *', 2600);
     const dogStruggle = tween(3000, (t, raw) => flail(raw, 4), E.lin);
-    await tween(3000, (t, raw) => hput(lerp(1700, 960, t), SAND - Math.abs(Math.sin(raw * Math.PI * 5)) * 8, 1.05, true), E.lin);
+    await tween(3000, (t, raw) => hput(lerp(1700, SPOT + 240, t), SAND - Math.abs(Math.sin(raw * Math.PI * 5)) * 8, 1.05, true), E.lin);
     await dogStruggle;
 
     // 5. the dive
     heroBody.classList.remove('rb-run');
-    await tween(700, (t, raw) => hput(lerp(960, 800, t), lerp(SAND, WATER + 40, t) - Math.sin(raw * Math.PI) * 110, lerp(1.05, .86, t), true, lerp(0, -70, t)), E.lin);
-    splash(800, WATER + 10);
+    await tween(700, (t, raw) => hput(lerp(SPOT + 240, SPOT + 80, t), lerp(SAND, WATER + 40, t) - Math.sin(raw * Math.PI) * 110, lerp(1.05, .86, t), true, lerp(0, -70, t)), E.lin);
+    splash(SPOT + 80, WATER + 10);
     heroBody.classList.add('rb-swim');
     underwater.appendChild(hero);
 
     // 6. swims out, grabs him
     await tween(900, t => {
-      hput(lerp(800, 752, t), WATER + 40, .86, true, -70);
-      dog(720 + Math.sin(t * 30) * 3, WATER + 20, .78, false, Math.sin(t * 22) * 12);
+      hput(lerp(SPOT + 80, SPOT + 36, t), WATER + 40, .86, true, -70);
+      dog(SPOT + Math.sin(t * 30) * 3, WATER + 26, DS, false, Math.sin(t * 22) * 12);
     }, E.lin);
     bubbles.remove();
-    worldSay(layer, 740, 540, 'HOLD ON, BUDDY. ROLLING YOU BACK.', 2000);
+    worldSay(layer, Math.min(1180, Math.max(300, SPOT + 20)), 520, 'HOLD ON, BUDDY. ROLLING YOU BACK.', 2000);
 
     // 7. back to shore, dog under one arm
     await tween(1000, t => {
-      hput(lerp(752, 790, t), lerp(WATER + 40, WATER + 12, t), lerp(.86, .95, t), true, lerp(-70, -10, t));
-      dog(lerp(720, 770, t), lerp(WATER + 20, WATER - 30, t), lerp(.78, .86, t), false, lerp(12, 0, t));
+      hput(lerp(SPOT + 36, SPOT + 70, t), lerp(WATER + 40, WATER + 12, t), lerp(.86, .95, t), true, lerp(-70, -10, t));
+      dog(lerp(SPOT, SPOT + 50, t), lerp(WATER + 26, WATER - 30, t), lerp(DS, .9, t), false, lerp(12, 0, t));
     }, E.io);
     layer.appendChild(hero);              // out of the water: nothing is clipped any more
     layer.appendChild(pet);
     heroBody.classList.remove('rb-swim');
     await tween(700, t => {
-      hput(lerp(790, 820, t), lerp(WATER + 12, SAND, t), lerp(.95, 1.05, t), true, lerp(-10, 0, t));
-      dog(lerp(770, 800, t), lerp(WATER - 30, SAND - 64, t), lerp(.86, .9, t));
+      hput(lerp(SPOT + 70, SPOT + 100, t), lerp(WATER + 12, SAND, t), lerp(.95, 1.05, t), true, lerp(-10, 0, t));
+      dog(lerp(SPOT + 50, SPOT + 80, t), lerp(WATER - 30, SAND - 64, t), .9);
     }, E.out);
     underwater.remove();
 
     // 8. set down on the sand. he shakes himself dry. all over the lifeguard.
-    await tween(500, t => dog(lerp(800, 740, t), lerp(SAND - 64, SAND, t), .95), E.out);
+    await tween(500, t => dog(lerp(SPOT + 80, SPOT + 20, t), lerp(SAND - 64, SAND, t), 1), E.out);
     if (inner) inner.classList.add('dog-shake');
-    const spray = node('g', { transform: `translate(760,${SAND - 30})` });
+    const spray = node('g', { transform: `translate(${SPOT + 40},${SAND - 30})` });
     spray.innerHTML = `<g class="splash" fill="#8fd3f4" stroke="var(--ink)" stroke-width="1.2">
       <circle cx="20" cy="-10" r="4"/><circle cx="40" cy="-24" r="3"/><circle cx="58" cy="-8" r="4"/>
       <circle cx="30" cy="-36" r="3"/><circle cx="70" cy="-30" r="3"/><circle cx="-20" cy="-18" r="3"/></g>`;
     layer.appendChild(spray);
-    worldSay(layer, 740, 690, 'shake shake shake shake', 1400);
+    worldSay(layer, Math.max(220, SPOT + 20), 690, 'shake shake shake shake', 1400);
     await wait(1500);
     spray.remove();
     if (inner) inner.classList.remove('dog-shake');
-    worldSay(layer, 840, 560, 'ROLLED BACK TO LAST KNOWN GOOD STATE.', 2000);
+    worldSay(layer, Math.min(1160, Math.max(340, SPOT + 120)), 520, 'ROLLED BACK TO LAST KNOWN GOOD STATE.', 2000);
     await wait(2000);
 
     // 9. the dog notices the ball is still out there
-    worldSay(layer, 740, 690, '…ball.', 1100);
+    worldSay(layer, Math.max(220, SPOT + 20), 690, '…ball.', 1100);
     await wait(900);
     heroBody.classList.add('facepalm');
-    worldSay(layer, 840, 560, 'NO. NO NO NO NO.', 1700);
+    worldSay(layer, Math.min(1200, Math.max(300, SPOT + 120)), 520, 'NO. NO NO NO NO.', 1700);
     if (inner) inner.style.animation = '';
-    await tween(1300, t => dog(lerp(740, 700, t), lerp(SAND, WATER + 30, t), lerp(.95, .8, t)), E.in || (t => t * t));
+    await tween(1300, t => dog(lerp(SPOT + 20, SPOT - 20, t), lerp(SAND, WATER + 30, t), lerp(1, DS, t)), E.in || (t => t * t));
     heroBody.classList.remove('facepalm');
     heroBody.classList.add('rb-run');
-    await tween(900, t => hput(lerp(820, 760, t), SAND, 1.05, true), E.lin);
+    await tween(900, t => hput(lerp(SPOT + 100, SPOT + 40, t), SAND, 1.05, true), E.lin);
   } finally {
     home.appendChild(pet);
     layer.textContent = '';
@@ -2253,9 +2263,18 @@ document.querySelector('.swinger')?.addEventListener('animationiteration', e => 
     tag.hidden = true;
   });
 })();
-// ?gag=1 plays the current scene's gag straight away — a link you can send someone
-setTimeout(sceneGag, params.get('gag') ? 600 : 12000);
-setInterval(sceneGag, 60000);
+// Each scene has its own rhythm, counted from the end of the last gag so they never overlap.
+// The beach rescue comes round often; the others are rarer, so they stay a surprise.
+const GAG_GAP = { beach: 10000, city: 40000, maze: 40000 };
+(async function gagLoop() {
+  // ?gag=1 plays the current scene's gag straight away — a link you can send someone
+  await new Promise(r => setTimeout(r, params.get('gag') ? 600 : 5000));
+  for (;;) {
+    await sceneGag();
+    const scene = document.documentElement.dataset.scene;
+    await new Promise(r => setTimeout(r, GAG_GAP[scene] || 40000));
+  }
+})();
 </script>
 </body>
 </html>
