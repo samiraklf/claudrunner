@@ -1,0 +1,70 @@
+---
+name: ship
+description: "Finish a change: format, verify, push within the autonomy level, open a pull request with the house body, move the board items and emit the machine-readable run summary. Use at the end of every unattended run. Triggers on 'ship it', 'open the PR', 'finish the run'."
+---
+
+# Ship
+
+The last step is where unattended runs go wrong. Follow it exactly.
+
+## 1 — Clean
+
+Run the configured format command on the changed files. Run the configured lint command and
+fix what it reports. Check the diff for leftovers: debug prints, commented-out blocks,
+temporary files, stray test fixtures.
+
+## 2 — Respect the autonomy level
+
+Read `autonomy` from `.claudrunner/config.yml`:
+
+- `suggest` — push nothing. Write the report and stop.
+- `pr-only` — push the working branch, open a pull request.
+- `push` — push to the branch named in the config, and only that branch.
+
+**Never push to the default branch at any level. Never merge. Never force-push.**
+
+## 3 — The pull request body
+
+Five sections. No more.
+
+**What** — one short paragraph per item, linking the item.
+**Why** — the problem each change solves, from the item's perspective. Not a restatement
+of the diff; the reviewer can read the diff.
+**Tests** — which tests ran and what they returned. Real outcomes. Never ask the reviewer
+to run them for you.
+**Reviews** — one line per reviewer: findings count, and what was fixed.
+**Known minor findings** — the P2 list, if any.
+
+Add nothing else. No attribution trailer, no session link, no "generated with" line.
+
+## 4 — Close the loop on the board
+
+For each item: move it to the review queue and post the pull request link back to it. For
+each skipped item: post the note and move it to the queue its reason dictates —
+`not-needed` and `better-approach` go to human review, everything else goes to the parked
+queue. An item that leaves with no disposition will be re-analyzed every night forever.
+
+## 5 — Emit the run summary
+
+End with exactly one fenced JSON block. The orchestrator parses it, and it is the only
+part of your output that is machine-read:
+
+```json
+{
+  "done": ["<item id>"],
+  "skipped": [{"id": "<item id>", "reason": "unclear|too-large|wrong-place|suspicious|failed-review|not-needed|better-approach", "note": "<written for the human who will act on it>"}],
+  "pr": "<url or null>",
+  "reviews": {"inspector": "<n findings, n fixed>", "second_vendor": "<n findings, n fixed | failed | disabled>"},
+  "tests": "<one-line result summary>"
+}
+```
+
+Keep it valid JSON. An unparseable block means no item moves, and the whole run has to be
+repeated by a human.
+
+## Writing style
+
+Every human-facing string — pull request title and body, item comments, questions, split
+proposals — is written in short, plain, active sentences. One instruction per sentence.
+One name for one thing. No filler, no idioms, no humor. Code and code comments follow the
+repository's own conventions instead.

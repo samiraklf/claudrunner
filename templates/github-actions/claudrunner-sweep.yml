@@ -1,0 +1,43 @@
+# Slow loop: sweep the codebase and file what it finds.
+# Copied and filled in by /claudrunner:init.
+name: claudrunner sweep
+
+on:
+  schedule:
+    - cron: "0 2 * * 1-5"   # 02:00 UTC on weekdays; use "0 2 * * 1" for weekly
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "security | scale | correctness | tests | all"
+        default: all
+
+concurrency:
+  group: claudrunner-sweep
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install the agent
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Sweep
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          claude -p "/claudrunner:sweep ${{ inputs.scope || 'all' }}" \
+            --permission-mode acceptEdits \
+            --max-turns 120 \
+            --output-format json > sweep.json
+          jq -e '.is_error == false' sweep.json

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claudrunner",
+  "description": "An autonomous dev crew for your repository. Picks work off your board, fixes it, proves the fix, opens the pull request.",
+  "owner": {
+    "name": "samiraklf"
+  },
+  "plugins": [
+    {
+      "name": "claudrunner",
+      "description": "Rules, skills, review gates and scheduled routines that turn a coding agent into a teammate that ships. Any language, any stack, any task board.",
+      "author": { "name": "samiraklf" },
+      "category": "development",
+      "source": "./plugins/claudrunner",
+      "homepage": "https://github.com/samiraklf/claudrunner"
+    }
+  ]
+}
