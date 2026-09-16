@@ -1,9 +1,25 @@
-# Cost
+# What it costs to run
 
-An agent that works while you sleep bills while you sleep. Read this before you schedule
-anything.
+**claudrunner is free.** MIT licensed, no account, no sign-up, no telemetry, no paid tier.
+Nobody is billing you for this package, and it has no way to.
 
-## What drives the bill
+What it consumes is your own agent usage, exactly as if you had typed the work yourself. An
+agent that works while you sleep uses your allowance while you sleep, so read this before
+you schedule anything.
+
+| | Who this is between | Free? |
+|---|---|---|
+| claudrunner | Nobody | ✅ Always |
+| Running it by hand | You and your existing plan | ✅ The allowance you already pay for |
+| Running it on a schedule | You and your provider, via the credential in your CI | ➖ Usage-based |
+| CI minutes | You and your git host | ✅ Free on public repos · quota on private |
+
+A scheduled run is the only part needing its own credential: a machine cannot use your
+interactive session. Whether that is an API key or a subscription credential your plan
+allows is between you and your provider. claudrunner never sees it, stores it, or sends it
+anywhere.
+
+## What drives the usage
 
 1. **How often the fast loop looks.** A poll that finds nothing is cheap but not free. At
    ten minutes that is 144 checks a day.

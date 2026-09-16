@@ -142,11 +142,27 @@ It writes a config and a schedule. Nothing runs until you say so.
 | `/claudrunner:sweep` | Run one slow-loop sweep now. Takes a scope. |
 | `/claudrunner:status` | Config, schedule, queue and recent runs. Changes nothing. |
 
-## Cost
+## What it costs to run
 
-An agent that works while you sleep bills while you sleep. A ten-minute poll on a busy
-board is not free. The install asks for a budget, the defaults are conservative, and
-[docs/cost.md](docs/cost.md) shows how to estimate yours before you turn anything on.
+**claudrunner is free.** MIT licensed, no account, no sign-up, no telemetry, no paid tier,
+and nothing is sold to you here. It is a set of instructions and small shell scripts.
+
+What it consumes is your own agent usage, exactly as if you had typed the work yourself.
+
+| | Who this is between | Free? |
+|---|---|---|
+| claudrunner itself | Nobody. It is MIT on GitHub | ✅ Always |
+| Running it by hand in your session | You and your existing Claude plan | ✅ Uses the allowance you already pay for |
+| Running it on a schedule | You and Anthropic, through the credential you give your CI | ➖ Usage-based, on your own plan or key |
+| CI minutes | You and your git host | ✅ Free on public repos · quota on private |
+
+A scheduled run is the only part that needs its own credential, because a machine cannot
+use your interactive session. Which one you use — an API key, or a subscription credential
+where your plan allows it — is between you and your provider. claudrunner never sees it.
+
+**Keeping it small:** poll less often, sweep weekly instead of nightly, write specific
+items, and keep the diff ceiling low. [docs/cost.md](docs/cost.md) shows how to measure one
+cycle before you schedule anything, so you are never surprised.
 
 ## Documentation
 
@@ -156,7 +172,7 @@ board is not free. The install asks for a budget, the defaults are conservative,
 | [How a run works](docs/how-a-run-works.md) | You want to know what it does to your repo |
 | [Configuration](docs/configuration.md) | Tuning anything |
 | [Scheduling](docs/scheduling.md) | Choosing a cadence and a target |
-| [Cost](docs/cost.md) | Before the first schedule |
+| [What it costs to run](docs/cost.md) | Before the first schedule |
 | [Security model](docs/security.md) | Before letting it run unattended |
 | [Write a stack pack](docs/writing-a-pack.md) | Your stack is not listed |
 | [Write a board adapter](docs/writing-an-adapter.md) | Your board is not listed |
