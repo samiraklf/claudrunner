@@ -45,8 +45,8 @@ different animal, different jokes.
 
 | Scene | The world | The crew | Who follows them |
 |---|---|---|---|
-| 🌆 **City** | A real skyline: window grids, water tanks, aerials. A road with traffic, and a shop whose neon sign reads **OPEN** while the crew works and **CLOSED** when the queue is empty | Hard hats | A black-and-white dog with a red collar |
-| 🏝 **Beach** | Sea with surf, palms, parasol, a bouncing ball | Sunglasses and swim rings | **A dog**, tail going |
+| 🌆 **City** | A real skyline: window grids, water tanks, aerials. A road with traffic, and a shop whose neon sign reads **OPEN** while the crew works and **CLOSED** when the queue is empty | Hard hats | **Stash** — black and white, red collar, leaves things behind |
+| 🏝 **Beach** | Sea with surf, palms, parasol, a bouncing ball | Sunglasses and swim rings | **Sandbox** — golden, fetches everything, returns nothing |
 | 🌑 **Space** | Ringed planet, Earth, a launching rocket, a flag | Helmets and life support | A hovering drone |
 | 🧱 **Maze** | Stone corridors, ivy, a shaft of light, something at the far end | Hoods and satchels | A lizard |
 
@@ -62,10 +62,12 @@ unison: one sways side to side, one shuffles, one bounces, one spins and hops.
 **When something ships, the whole crew dances at once**, each its own dance. Press **D** to
 start one yourself.
 
-**Once a minute in the city**, the dog stops, has a look around, squats, and leaves
+**Once a minute in the city**, Stash stops, has a look around, squats, and leaves
 something steaming on the pavement. He walks off without looking back. A masked figure swings
 in on a line, webs it, and carries it off into the sky. Press **P** to see it on demand, or
 add `?slow=4` to watch every beat at a quarter speed.
+
+Hover over Stash or Sandbox to see who they are.
 
 They say something over their own heads while they do it:
 
