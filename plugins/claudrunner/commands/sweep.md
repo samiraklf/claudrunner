@@ -21,6 +21,12 @@ consumers were never updated, and drift between a producer and its consumers.
 **tests** — behavior that would ship broken in silence: untested calculations, untested money
 or billing paths, untested authorization.
 
+## Never pause
+
+Nobody is watching. Do not ask a question, do not wait for confirmation, and do not stop
+half-finished. Anything that needs a person is parked on the human queue with the question
+in its note, and the run carries on and finishes.
+
 ## Rules
 
 - **Evidence or it is not filed.** Every finding names a file, a line range, and quotes the

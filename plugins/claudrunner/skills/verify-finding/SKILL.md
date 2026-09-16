@@ -37,8 +37,10 @@ whole files. A finding is often answered by a single schema line.
 ## Then move the card
 
 1. Read the board's real shape first. Never hardcode queue names — match by meaning.
-2. **Report the classification to the user before writing anything**, especially for
-   anything headed to won't-fix. Closing a Critical on one agent's reading is a big call.
+2. **Never pause to ask.** Closing a Critical on one agent's reading is a big call, so make
+   it visible rather than blocking on it: move that card to the parked queue, with your
+   evidence in the note and a `needs-human` label where the board has one. A human reads the queue when they choose
+   to; nobody has to be watching now.
 3. Move, then label.
 
 - **Fixed** → the done queue, with the evidence.

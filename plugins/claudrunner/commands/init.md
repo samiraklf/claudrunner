@@ -9,6 +9,9 @@ Set this repository up. Detect what you can. Ask only what you cannot infer.
 
 ## Rules for this command
 
+This is the **only** command that asks questions. The user is here, setting things up. Every
+other command runs unattended and parks what it cannot decide.
+
 - Never guess a command you have not seen in the repository. Propose, then confirm.
 - Write nothing outside `.claudrunner/`, `.github/workflows/`, and the schedule files the
   user approves.

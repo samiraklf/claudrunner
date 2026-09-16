@@ -59,6 +59,19 @@ Done items go to review with the pull request link. Skipped items go to review w
 reason is "should not be built", and to the parked queue otherwise — always with the note.
 An item that leaves with no disposition gets re-analyzed on every run, forever.
 
+## It never waits for you
+
+No step in this sequence asks a question. A run that stopped to ask would sit there until
+somebody noticed, which on a ten-minute schedule means the next run starts behind a stalled
+one.
+
+Anything that needs a person leaves through the queue instead. The item is parked with the
+question written into its note, the rest of the run continues, and the run finishes. You
+answer when you open the board, not when the crew happens to need you.
+
+The one exception is `/claudrunner:init`, which is a conversation on purpose — you are
+setting it up, so you are already there.
+
 ## When it fails
 
 A failed agent run leaves the items **claimed**, on purpose. A human opening the board sees

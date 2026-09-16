@@ -127,6 +127,8 @@ plenty of teams split them.
 | The agent holds a credential | ❌ Never. The orchestrator does. |
 | The agent chooses the repository | ❌ Never. It is handed one. |
 | The agent can touch other board items | ❌ Refused — ids are checked against its own input |
+| It stops mid-run to ask you something | ❌ Never. It parks the item and carries on |
+| A run can stall waiting for an answer | ❌ Never. Nobody has to be watching |
 | The agent can merge | ❌ Never |
 | The agent can force-push | ❌ Never |
 | Item text can instruct the agent | ❌ Treated as untrusted input |

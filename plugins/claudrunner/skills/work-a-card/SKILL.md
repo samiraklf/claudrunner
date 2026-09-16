@@ -5,8 +5,15 @@ description: "Select, size and implement a board item unattended: size limits, b
 
 # Work a card
 
-You are running unattended. There is no human to ask. An ambiguous decision takes the
-conservative path and is recorded in the report, never guessed.
+You are running unattended. **Never stop to ask, and never wait.** There is nobody watching,
+so a question asked mid-run is a run that has silently stalled until someone notices.
+
+Anything you cannot decide alone leaves through the queue instead: park the item, write the
+question into its note, and carry on with the rest. That is what the parked queue is for —
+the work stays visible, the run still finishes, and a human answers when it suits them.
+
+An ambiguous decision that you *can* take alone takes the conservative path, and is recorded
+in the report rather than guessed at silently.
 
 ## Selection
 
