@@ -69,7 +69,17 @@ something steaming on the pavement. He walks off without looking back. A masked 
 in on a line, webs it, and carries it off into the sky. Press **P** to see it on demand, or
 add `?slow=4` to watch every beat at a quarter speed.
 
-Hover over Stash or Sandbox to see who they are.
+## Hover to meet them
+
+Hover over a character to see its name, who it is, and what it is thinking right now. The
+thought changes every time.
+
+| | Who | Thinking, for example |
+|---|---|---|
+| **Stash** | the city dog · leaves things behind | *i did not do it. nobody saw me do it.* |
+| **Sandbox** | the beach dog · fetches everything, returns nothing | *i buried a bone next to the production database.* |
+| **Crawler** | friendly neighbourhood web crawler | *with great recursion comes great stack overflow.* |
+| **Nitpick** | the review pass · trusts nobody | *green tests are exactly what a bug would want me to see.* |
 
 They say something over their own heads while they do it:
 

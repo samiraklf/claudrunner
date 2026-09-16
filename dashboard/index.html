@@ -88,9 +88,12 @@
     box-shadow:0 5px 0 rgba(0,0,0,.16);animation:pop .22s cubic-bezier(.2,1.3,.4,1);white-space:nowrap}
   .nametag b{display:block;font-size:14px;letter-spacing:.14em;color:var(--hazard)}
   .nametag span{display:block;font-size:10px;letter-spacing:.06em;color:var(--muted);margin-top:1px}
+  .nametag i{display:block;font-style:normal;font-size:12px;margin-top:7px;max-width:280px;
+    white-space:normal;line-height:1.35;color:var(--text)}
+  .nametag i:before{content:"💭 "}
   .nametag:after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;
     border:7px solid transparent;border-top-color:var(--panel);border-bottom:0}
-  .pet[data-name]{cursor:pointer}
+  [data-who]{cursor:pointer}
 
   /* ---- speech ------------------------------------------------------------ */
   .say{position:fixed;left:50%;bottom:9%;transform:translateX(-50%);z-index:4;
@@ -336,8 +339,10 @@
       <rect x="-3" y="-64" width="6" height="64" fill="var(--near)"/>
       <circle class="blink" cx="0" cy="-70" r="6" fill="#ff5a5a"/>
     </g>
-    <g class="swinger">
+    <g class="swinger" data-who="crawler">
       <g class="swing">
+        <rect x="-34" y="-46" width="72" height="96" fill="none" pointer-events="all"/>
+        <title>Crawler</title>
         <line x1="0" y1="-560" x2="0" y2="-14" stroke="#ffffff" stroke-width="2.5" opacity=".75"/>
         <g transform="translate(0,-2)">
           <path d="M-3,-14 l-17,-22" stroke="#c9352f" stroke-width="7" stroke-linecap="round"/>
@@ -630,7 +635,8 @@
   </g></g>
 
   <!-- the hero, on a crate stack at the right -->
-  <g id="hero" transform="translate(1350,762)">
+  <g id="hero" data-who="nitpick" transform="translate(1350,762)">
+    <title>Nitpick</title>
     <g class="beam" opacity=".7"><path d="M-70,0 L10,-560 90,-560 40,0 Z" fill="url(#beamgrad)"/></g>
     <g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round">
       <path d="M-36,0 L-26,-84 M36,0 L26,-84" fill="none"/>
@@ -641,6 +647,7 @@
     <rect x="-18" y="-26" width="36" height="7" rx="2" fill="var(--hazard)" opacity=".9"/>
     <text x="0" y="-8" text-anchor="middle" font-size="9" font-family="var(--mono)"
           letter-spacing="2" fill="var(--muted)">REVIEW</text>
+    <rect x="-44" y="-212" width="88" height="124" fill="none" pointer-events="all"/>
     <g transform="translate(0,-92)"><g class="bob hero-body">
       <path class="cape" d="M-18,-70 q-26,42 -20,70 l14,0 q-6,-38 10,-60 z" fill="var(--hazard)" opacity=".95"/>
       <rect x="-20" y="-72" width="40" height="50" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
@@ -701,7 +708,7 @@
   <button id="tasks">TASKS ▸</button>
 </div>
 
-<div class="nametag" id="nametag" hidden><b></b><span></span></div>
+<div class="nametag" id="nametag" hidden><b></b><span></span><i></i></div>
 
 <aside class="drawer" id="drawer" aria-hidden="true">
   <h2>Units in the field</h2>
@@ -938,10 +945,33 @@ function idleRobot(x, flip) {
   return g;
 }
 
-// Names for the companions that have them. Shown on hover, and used in their lines.
-const PET_NAMES = {
-  city:  { name: 'Stash',   line: 'good boy · leaves things behind' },
-  beach: { name: 'Sandbox', line: 'fetches everything, returns nothing' }
+// Everyone you can hover: a name, who they are, and what is on their mind right now.
+const WHO = {
+  stash: { name: 'Stash', role: 'good boy · leaves things behind', thoughts: [
+    'i did not do it. nobody saw me do it.',
+    'that robot has been hammering for an hour. respect.',
+    'is the car a friend.',
+    'git stash. git stash pop. that one is my favourite.',
+    'i can hear the build failing from here.' ] },
+  sandbox: { name: 'Sandbox', role: 'fetches everything, returns nothing', thoughts: [
+    'ball. BALL. where did the ball go.',
+    'the crab and i have an understanding.',
+    'nothing leaves the sandbox. that is the rule.',
+    'i buried a bone next to the production database.' ] },
+  crawler: { name: 'Crawler', role: 'friendly neighbourhood web crawler', thoughts: [
+    'i index everything. i understand nothing.',
+    'with great recursion comes great stack overflow.',
+    'i respect robots.txt. mostly.',
+    '404: responsibility not found.',
+    'that dog again. every single minute.',
+    'i was promised a sitemap.' ] },
+  nitpick: { name: 'Nitpick', role: 'the review pass · trusts nobody', thoughts: [
+    'LGTM. just kidding. 14 comments.',
+    'green tests are exactly what a bug would want me to see.',
+    'this diff is three lines. i have concerns about all three.',
+    'have you considered… a second pass?',
+    'i found a race condition. it was me, racing to find it.',
+    'approved. with nine nits. and one P1.' ] }
 };
 
 // A companion per scene. The dog is the important one.
@@ -1172,11 +1202,12 @@ function render(d, live) {
   let pet = crew.querySelector('.pet');
   if (!pet) {
     pet = node('g', { class: 'pet' });   // position comes from the trot keyframes
-    const who = PET_NAMES[scene];
+    const key = { city: 'stash', beach: 'sandbox' }[scene];
+    const who = WHO[key];
     pet.innerHTML = (COMPANION[scene] || COMPANION.city) +
-      (who ? `<rect class="pethit" x="-40" y="-64" width="96" height="76" fill="none"
+      (who ? `<rect x="-40" y="-64" width="96" height="76" fill="none"
                     pointer-events="all"/><title>${who.name}</title>` : '');
-    if (who) pet.dataset.name = scene;
+    if (who) pet.dataset.who = key;
   }
   crew.appendChild(pet);
 
@@ -1361,7 +1392,8 @@ async function poopGag() {
     // 6. the swing in, on a line from somewhere above the rooftops
     const swingLine = node('line', { stroke: '#ffffff', 'stroke-width': 2.5, opacity: .8 });
     const webLine = node('line', { stroke: '#ffffff', 'stroke-width': 3.5, 'stroke-linecap': 'round' });
-    const hero = node('g'); hero.innerHTML = SPIDEY;
+    const hero = node('g', { 'data-who': 'crawler' });
+    hero.innerHTML = SPIDEY + '<rect x="-34" y="-46" width="72" height="96" fill="none" pointer-events="all"/>';
     layer.append(swingLine, webLine, hero);
     const HX = PX - 44, HY = 400, AX = PX + 40, AY = -80;
     const place = (x, y, r) => {
@@ -1409,25 +1441,34 @@ async function poopGag() {
 
 addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') poopGag(); });
 
-// Hover a named companion to see who he is. The tag follows the pointer, since he keeps moving.
+// Hover anyone with a name to see who they are and what they are thinking. The tag follows
+// the pointer, since none of them stand still, and the thought changes on every new hover.
 (() => {
   const tag = el('nametag');
-  const crew = el('crew');
-  crew.addEventListener('pointerover', e => {
-    const pet = e.target.closest('.pet[data-name]');
-    if (!pet) return;
-    const who = PET_NAMES[pet.dataset.name];
-    tag.querySelector('b').textContent = who.name;
-    tag.querySelector('span').textContent = who.line;
+  const stage = el('stage');
+  let current = null;
+  stage.addEventListener('pointerover', e => {
+    const who = e.target.closest('[data-who]');
+    if (!who || who === current) return;
+    current = who;
+    const w = WHO[who.dataset.who];
+    tag.querySelector('b').textContent = w.name;
+    tag.querySelector('span').textContent = w.role;
+    tag.querySelector('i').textContent = pick(w.thoughts);
+    tag.style.left = e.clientX + 'px';
+    tag.style.top = e.clientY + 'px';
     tag.hidden = false;
   });
-  crew.addEventListener('pointermove', e => {
+  addEventListener('pointermove', e => {
     if (tag.hidden) return;
     tag.style.left = e.clientX + 'px';
     tag.style.top = e.clientY + 'px';
   });
-  crew.addEventListener('pointerout', e => {
-    if (e.target.closest('.pet[data-name]') && !e.relatedTarget?.closest?.('.pet[data-name]')) tag.hidden = true;
+  stage.addEventListener('pointerout', e => {
+    if (!current) return;
+    if (e.relatedTarget && current.contains(e.relatedTarget)) return;
+    current = null;
+    tag.hidden = true;
   });
 })();
 setTimeout(poopGag, 12000);
