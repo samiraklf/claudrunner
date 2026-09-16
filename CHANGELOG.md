@@ -3,6 +3,10 @@
 ## Unreleased
 
 ### Added
+- A status page: one self-contained HTML file, no build and no dependencies, that polls a
+  `status.json` beside it. `scripts/claudrunner-status.sh` generates that file from the
+  repository's own run records. When the feed is unreachable the page simulates and says so,
+  so it is never blank and never presents invented numbers as real.
 - An eval suite: five cases that check the skills fire on real phrasing, that item text
   cannot give the agent orders, that a filed card carries its evidence, and that no
   attribution trailer appears even when one is requested. Each case runs with and without

@@ -179,6 +179,7 @@ run the sweep weekly instead of nightly and poll the board less often.
 | [Write a stack pack](docs/writing-a-pack.md) | Your stack is not listed |
 | [Write a board adapter](docs/writing-an-adapter.md) | Your board is not listed |
 | [Write a code host](docs/writing-a-host.md) | Your git host is not listed |
+| [The status page](docs/dashboard.md) | You want a screen showing what the crew is doing |
 
 ## License
 

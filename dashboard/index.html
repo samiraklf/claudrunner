@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" data-scene="street">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>claudrunner</title>
+<style>
+  :root{
+    --night:#05070c; --hazard:#ff7a1a; --neon:#2bd9d9; --ash:#b8c4d9;
+    --dim:#1a2233; --glass:rgba(12,18,30,.72); --ok:#4ade80; --warn:#facc15;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--night);color:var(--ash);
+    font:14px/1.5 var(--mono);overflow:hidden;
+  }
+  canvas#rain{position:fixed;inset:0;z-index:0;opacity:.5}
+  .sky{position:fixed;inset:0;z-index:0;
+    background:
+      radial-gradient(120% 80% at 70% 10%, rgba(43,217,217,.10), transparent 60%),
+      radial-gradient(90% 60% at 20% 0%, rgba(255,122,26,.10), transparent 55%),
+      linear-gradient(180deg,#070b14 0%,#05070c 60%);
+  }
+  .skyline{position:fixed;left:0;right:0;bottom:0;z-index:0;opacity:.85;pointer-events:none}
+  .wrap{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;
+    padding:20px;gap:16px;max-width:1180px;margin:0 auto}
+  header{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+  h1{font-size:15px;letter-spacing:.42em;margin:0;color:#fff;text-transform:uppercase}
+  h1 b{color:var(--hazard);font-weight:700}
+  .tag{font-size:11px;letter-spacing:.2em;padding:2px 8px;border-radius:2px;
+    background:rgba(43,217,217,.12);color:var(--neon)}
+  .tag.sim{background:rgba(250,204,21,.12);color:var(--warn)}
+  .spacer{flex:1}
+  .stat{font-size:11px;letter-spacing:.14em;color:#6b7c96}
+  .stat b{color:var(--ash);font-weight:500}
+  main{flex:1;display:grid;grid-template-columns:1fr 300px;gap:16px;min-height:0}
+  .panel{background:var(--glass);backdrop-filter:blur(6px);border-radius:3px;
+    padding:14px 16px;min-height:0;display:flex;flex-direction:column;
+    box-shadow:0 0 0 1px rgba(184,196,217,.07), 0 20px 60px -30px #000}
+  .panel h2{font-size:10px;letter-spacing:.3em;color:#6b7c96;margin:0 0 12px;
+    text-transform:uppercase;font-weight:500}
+  .units{overflow:auto;display:flex;flex-direction:column;gap:10px}
+  .unit{padding:11px 12px;border-radius:2px;background:rgba(255,255,255,.028);
+    box-shadow:inset 2px 0 0 var(--hazard)}
+  .unit.review{box-shadow:inset 2px 0 0 var(--neon)}
+  .unit .top{display:flex;gap:10px;align-items:baseline}
+  .unit .name{color:#e8eef7;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .unit .phase{font-size:10px;letter-spacing:.18em;color:var(--hazard)}
+  .unit.review .phase{color:var(--neon)}
+  .unit .meta{font-size:11px;color:#6b7c96;margin-top:3px}
+  .bar{height:2px;background:rgba(184,196,217,.12);margin-top:9px;border-radius:2px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--hazard);transition:width .6s ease}
+  .unit.review .bar i{background:var(--neon)}
+  .empty{color:#455066;padding:22px 0;text-align:center;font-size:12px}
+  .side{display:flex;flex-direction:column;gap:16px}
+  .eye{display:grid;place-items:center;padding:6px 0 12px}
+  .eye svg{width:132px;height:132px}
+  .iris{transform-origin:center;animation:scan 5.5s ease-in-out infinite}
+  @keyframes scan{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+  .vk{font-size:10px;letter-spacing:.24em;color:#6b7c96;text-align:center}
+  .vk b{color:var(--neon);font-weight:500}
+  .tally{display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start;overflow:auto}
+  .tally span{font-size:19px;line-height:1;opacity:.85;animation:fold .5s ease}
+  @keyframes fold{from{opacity:0;transform:translateY(-6px) rotate(-18deg)}to{opacity:.85}}
+  footer{height:22px;overflow:hidden;font-size:11px;letter-spacing:.16em;color:#55637a}
+  footer div{white-space:nowrap;animation:ticker 34s linear infinite}
+  @keyframes ticker{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+  @media (max-width:820px){ main{grid-template-columns:1fr} .side{display:none} }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    canvas#rain{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="sky"></div>
+<canvas id="rain"></canvas>
+<svg class="skyline" viewBox="0 0 1200 220" preserveAspectRatio="none" height="220">
+  <defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#0a1120"/><stop offset="1" stop-color="#05070c"/>
+  </linearGradient></defs>
+  <path fill="url(#b)" d="M0,220 L0,150 40,150 40,120 90,120 90,165 150,165 150,96 210,96
+    210,140 265,140 265,70 300,40 335,70 335,150 400,150 400,118 470,118 470,158 540,158
+    540,88 600,88 600,132 670,132 670,160 740,160 740,105 800,105 800,145 870,145 870,74
+    930,74 930,150 1000,150 1000,124 1070,124 1070,162 1140,162 1140,138 1200,138 1200,220 Z"/>
+  <g id="windows" fill="#2bd9d9" opacity=".22"></g>
+  <rect x="296" y="52" width="9" height="12" fill="#ff7a1a" opacity=".92"/>
+</svg>
+
+<div class="wrap">
+  <header>
+    <h1>claud<b>runner</b></h1>
+    <span class="tag" id="mode">LIVE</span>
+    <span class="spacer"></span>
+    <span class="stat">QUEUE <b id="q">0</b></span>
+    <span class="stat">RETIRED <b id="r">0</b></span>
+    <span class="stat">INCEPT <b id="incept">—</b></span>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Units in the field</h2>
+      <div class="units" id="units"></div>
+    </section>
+
+    <aside class="side">
+      <section class="panel">
+        <h2>Review</h2>
+        <div class="eye">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <ellipse cx="50" cy="50" rx="44" ry="30" fill="none" stroke="#1a2233" stroke-width="1.5"/>
+            <g class="iris">
+              <circle cx="50" cy="50" r="21" fill="none" stroke="#2bd9d9" stroke-width="1.2" opacity=".65"/>
+              <circle cx="50" cy="50" r="15" fill="none" stroke="#2bd9d9" stroke-width=".7" opacity=".4"/>
+              <circle cx="50" cy="50" r="7.5" fill="#ff7a1a" opacity=".92"/>
+              <circle cx="50" cy="50" r="28" fill="none" stroke="#2bd9d9" stroke-width=".4" opacity=".22"/>
+            </g>
+          </svg>
+        </div>
+        <div class="vk">FINDINGS <b id="findings">0</b> · FIXED <b id="fixed">0</b></div>
+      </section>
+
+      <section class="panel" style="flex:1">
+        <h2>Retired today</h2>
+        <div class="tally" id="tally"></div>
+      </section>
+    </aside>
+  </main>
+
+  <footer><div id="ticker">THE MACHINE WAITS.</div></footer>
+</div>
+
+<script>
+// ---------------------------------------------------------------- config
+const params = new URLSearchParams(location.search);
+const DATA_URL = params.get('data') || 'status.json';
+const POLL_MS  = Number(params.get('poll') || 10000);
+
+// ---------------------------------------------------------------- rain
+(() => {
+  const c = document.getElementById('rain'), x = c.getContext('2d');
+  let drops = [], w, h;
+  const resize = () => {
+    w = c.width = innerWidth; h = c.height = innerHeight;
+    drops = Array.from({length: Math.min(260, Math.round(w / 6))}, () => ({
+      x: Math.random() * w, y: Math.random() * h,
+      l: 8 + Math.random() * 16, v: 5 + Math.random() * 7
+    }));
+  };
+  addEventListener('resize', resize); resize();
+  (function tick(){
+    x.clearRect(0, 0, w, h);
+    x.strokeStyle = 'rgba(140,170,205,.22)'; x.lineWidth = 1;
+    for (const d of drops) {
+      x.beginPath(); x.moveTo(d.x, d.y); x.lineTo(d.x - 1.4, d.y + d.l); x.stroke();
+      d.y += d.v; d.x -= .28;
+      if (d.y > h) { d.y = -d.l; d.x = Math.random() * w; }
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
+
+// lit windows in the skyline, scattered once
+(() => {
+  const g = document.getElementById('windows');
+  for (let i = 0; i < 150; i++) {
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    r.setAttribute('x', Math.round(Math.random() * 1190));
+    r.setAttribute('y', Math.round(60 + Math.random() * 150));
+    r.setAttribute('width', 3); r.setAttribute('height', 4);
+    r.setAttribute('opacity', (Math.random() * .8 + .2).toFixed(2));
+    g.appendChild(r);
+  }
+})();
+
+// ---------------------------------------------------------------- render
+const el = id => document.getElementById(id);
+const since = t => {
+  const s = Math.max(0, (Date.now() - new Date(t)) / 1000);
+  return s < 60 ? Math.round(s) + 's' : Math.floor(s / 60) + 'm ' + Math.round(s % 60) + 's';
+};
+
+function render(d, live) {
+  el('mode').textContent = live ? 'LIVE' : 'SIMULATION';
+  el('mode').className = 'tag' + (live ? '' : ' sim');
+  el('q').textContent = d.queue ?? 0;
+  el('r').textContent = d.retired_today ?? 0;
+  el('incept').textContent = d.incept || '—';
+  el('findings').textContent = d.review?.findings ?? 0;
+  el('fixed').textContent = d.review?.fixed ?? 0;
+
+  const units = el('units');
+  units.innerHTML = (d.runs || []).length ? '' : '<div class="empty">No units in the field. The queue is quiet.</div>';
+  for (const r of d.runs || []) {
+    const div = document.createElement('div');
+    div.className = 'unit' + (/review/i.test(r.phase || '') ? ' review' : '');
+    div.innerHTML = `<div class="top"><span class="name"></span><span class="phase"></span></div>
+      <div class="meta"></div><div class="bar"><i style="width:${Math.round((r.progress || 0) * 100)}%"></i></div>`;
+    div.querySelector('.name').textContent = r.title || r.id;
+    div.querySelector('.phase').textContent = (r.phase || 'working').toUpperCase();
+    div.querySelector('.meta').textContent =
+      `${r.id} · ${r.started_at ? since(r.started_at) : '—'}${r.board ? ' · ' + r.board : ''}`;
+    units.appendChild(div);
+  }
+
+  const tally = el('tally');
+  tally.innerHTML = '';
+  for (let i = 0; i < Math.min(60, d.retired_today || 0); i++) {
+    const s = document.createElement('span'); s.textContent = '🦄'; tally.appendChild(s);
+  }
+  if (d.ticker?.length) el('ticker').textContent = d.ticker.join('   ·   ');
+}
+
+// ---------------------------------------------------------------- data
+// Simulation is the fallback whenever the feed is unreachable, so the page is never blank
+// and never lies about being live.
+const PHASES = ['selecting', 'implementing', 'testing', 'review', 'shipping'];
+let sim = { t: 0, retired: 3, runs: [{ id: '#412', title: 'Stream the CSV export instead of buffering it',
+  phase: 'implementing', progress: .25, started_at: new Date(Date.now() - 214000).toISOString(), board: 'github' }] };
+
+function simulate() {
+  sim.t++;
+  for (const r of sim.runs) {
+    r.progress = Math.min(1, r.progress + .035);
+    r.phase = PHASES[Math.min(PHASES.length - 1, Math.floor(r.progress * PHASES.length))];
+  }
+  if (sim.runs[0]?.progress >= 1) { sim.runs.shift(); sim.retired++; }
+  if (!sim.runs.length && sim.t % 4 === 0) {
+    sim.runs.push({ id: '#' + (410 + Math.floor(Math.random() * 40)),
+      title: ['Retry handler double-charges on gateway timeout',
+              'Tenant id read from the URL instead of the session',
+              'Nightly rollup locks the orders table'][Math.floor(Math.random() * 3)],
+      phase: 'selecting', progress: 0, started_at: new Date().toISOString(), board: 'github' });
+  }
+  return { queue: 2, retired_today: sim.retired, incept: '2026-09-16',
+           review: { findings: 4, fixed: 4 }, runs: sim.runs,
+           ticker: ['UNIT RETIRED: STREAM THE CSV EXPORT.', 'THE MACHINE WAITS.'] };
+}
+
+async function poll() {
+  try {
+    const res = await fetch(DATA_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error(res.status);
+    render(await res.json(), true);
+  } catch {
+    render(simulate(), false);
+  }
+}
+poll(); setInterval(poll, POLL_MS);
+</script>
+</body>
+</html>
