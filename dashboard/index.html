@@ -270,6 +270,15 @@
   .tail{animation:tail .4s ease-in-out infinite;transform-box:fill-box;transform-origin:100% 100%}
   @keyframes tail{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(20deg)}}
 
+  /* the reviewer: looks around when idle, scans whoever is in review */
+  .hero-body.lookout{animation:lookout 7s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes lookout{0%,100%{transform:rotate(0)}20%{transform:rotate(-7deg)}
+    45%{transform:rotate(-7deg)}65%{transform:rotate(7deg)}85%{transform:rotate(7deg)}}
+  .scan-cone{animation:scanpulse 1.6s ease-in-out infinite}
+  @keyframes scanpulse{0%,100%{opacity:.16}50%{opacity:.34}}
+  .scan-bar{animation:scanbar 1.4s ease-in-out infinite alternate}
+  @keyframes scanbar{from{transform:translateY(0)}to{transform:translateY(96px)}}
+
   /* the gag */
   [data-gag="1"] .swinger{display:none}
   :root:not([data-scene="city"]) #gag{display:none}
@@ -623,9 +632,16 @@
   <!-- the hero, on a crate stack at the right -->
   <g id="hero" transform="translate(1350,762)">
     <g class="beam" opacity=".7"><path d="M-70,0 L10,-560 90,-560 40,0 Z" fill="url(#beamgrad)"/></g>
-    <rect x="-56" y="-46" width="112" height="46" rx="6" fill="var(--near)"/>
-    <rect x="-40" y="-84" width="80" height="40" rx="6" fill="var(--mid)"/>
-    <g transform="translate(0,-84)"><g class="bob">
+    <g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round">
+      <path d="M-36,0 L-26,-84 M36,0 L26,-84" fill="none"/>
+      <path d="M-33,-24 L31,-54 M33,-24 L-31,-54" fill="none" opacity=".6"/>
+      <rect x="-50" y="-92" width="100" height="10" rx="3" fill="var(--mid)"/>
+      <path d="M-46,-92 v-22 M46,-92 v-22 M-46,-112 h92" fill="none"/>
+    </g>
+    <rect x="-18" y="-26" width="36" height="7" rx="2" fill="var(--hazard)" opacity=".9"/>
+    <text x="0" y="-8" text-anchor="middle" font-size="9" font-family="var(--mono)"
+          letter-spacing="2" fill="var(--muted)">REVIEW</text>
+    <g transform="translate(0,-92)"><g class="bob hero-body">
       <path class="cape" d="M-18,-70 q-26,42 -20,70 l14,0 q-6,-38 10,-60 z" fill="var(--hazard)" opacity=".95"/>
       <rect x="-20" y="-72" width="40" height="50" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
       <path d="M0,-56 l9,13 -9,13 -9,-13 z" fill="var(--hazard)"/>
@@ -670,6 +686,7 @@
     <rect x="30" y="-46" width="6" height="46" rx="2" fill="var(--near)"/>
   </g>
   <g id="crew"></g>
+  <g id="scan"></g>
   <g id="gag"></g>
 </svg>
 
@@ -975,6 +992,45 @@ const COMPANION = {
                  stroke-linecap="round"/></g>`
 };
 
+// ---------------------------------------------------------------- the reviewer
+// The caped one on the tower is the review pass. With nothing in review it keeps watch;
+// when a unit reaches review it points its visor at that unit and scans it top to bottom.
+const HERO_X = 1350, HERO_VISOR_Y = 762 - 92 - 90;
+const REVIEW_LINES = ['checking for race conditions…', 'any P0s in here?', 'reading the raw diff.',
+                      'this comparison fires on no change?', 'contract still holds.', 'clean. ship it.'];
+let scanning = null, heroTalk = 0;
+
+function reviewScan() {
+  const layer = el('scan');
+  const body = document.querySelector('#hero .hero-body');
+  const target = document.querySelector('#crew .unit.review');
+  const id = target ? target.dataset.id : null;
+
+  body?.classList.toggle('lookout', !target);
+  if (id === scanning) return;          // same target as last poll: leave the scan running
+  scanning = id;
+  layer.textContent = '';
+  if (!target) return;
+
+  const x = Number(target.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]);
+  const top = 762 - 118, bottom = 762;
+  const g = node('g');
+  g.innerHTML = `
+    <path class="scan-cone" d="M${HERO_X - 8},${HERO_VISOR_Y} L${x - 52},${top} L${x + 52},${bottom} Z"
+          fill="var(--neon)"/>
+    <path class="scan-cone" d="M${HERO_X - 8},${HERO_VISOR_Y} L${x + 52},${top} L${x - 52},${bottom} Z"
+          fill="var(--neon)" style="animation-delay:.8s"/>
+    <g class="scan-bar"><rect x="${x - 50}" y="${top}" width="100" height="4" rx="2"
+          fill="var(--neon)" opacity=".85"/></g>
+    <circle cx="${HERO_X - 8}" cy="${HERO_VISOR_Y}" r="7" fill="var(--neon)" opacity=".9"/>`;
+  layer.appendChild(g);
+
+  if (Date.now() - heroTalk > 12000) {
+    heroTalk = Date.now();
+    miniSay(document.querySelector('#hero'), pick(REVIEW_LINES));
+  }
+}
+
 // ---------------------------------------------------------------- quips
 const QUIPS = {
   work: ['SOMEBODY CALLED THIS IN A LOOP AND WENT HOME.',
@@ -1109,6 +1165,8 @@ function render(d, live) {
       updateUnit(unit, r, x, i);
     });
   }
+
+  reviewScan();
 
   // the companion goes in last so it walks in front of the crew, and is made once per scene
   let pet = crew.querySelector('.pet');

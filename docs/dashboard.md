@@ -17,8 +17,10 @@ above its head. The colour follows the phase — orange while it works, cyan onc
 review. When the queue empties the robots sit down with a coffee and start snoring, so you
 can tell from across the room whether anything is happening without reading a number.
 
-The caped one on the crates at the right is the review pass. At night the signal above it
-burns; in daylight it does not, because a signal beam in sunshine looks like a smudge.
+**The caped one on the lookout tower is the review pass.** With nothing in review it keeps
+watch, turning its head slowly left and right. When a unit reaches review, it points its
+visor at that unit and scans it — a cyan beam, and a bar sweeping down over the robot — and
+now and then says what it is looking for: *any P0s in here?*
 
 ## Day and night
 
