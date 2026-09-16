@@ -55,8 +55,11 @@ Each works in day and night, and your choice is remembered.
 
 ## They do things
 
-Every few seconds a robot jumps, spins, shrugs, or falls flat on its back and gets up, and
-says something over its own head:
+Every few seconds a robot jumps, spins, shrugs, or falls flat on its back and gets up. Now
+and then one dances instead — and **each robot has its own dance**, so a crew never moves in
+unison: one sways side to side, one shuffles, one bounces, one spins and hops.
+
+They say something over their own heads while they do it:
 
 > this test was green yesterday.
 > who wrote this? …oh.

@@ -122,8 +122,10 @@
   @keyframes car{from{transform:translateX(-260px)}to{transform:translateX(1860px)}}
   .plane{animation:plane 40s linear infinite}
   @keyframes plane{from{transform:translate(-300px,0)}to{transform:translate(1900px,-40px)}}
-  .prog-bg{fill:rgba(0,0,0,.28)}
-  :root[data-theme="day"] .prog-bg{fill:rgba(18,48,71,.18)}
+  .prog-bg{fill:rgba(6,12,24,.66)}
+  .track{fill:rgba(255,255,255,.22)}
+  :root[data-theme="day"] .track{fill:rgba(18,48,71,.16)}
+  :root[data-theme="day"] .prog-bg{fill:rgba(255,255,255,.82)}
 
   .backdrop{display:none}
   :root[data-scene="city"]  #sc-city,
@@ -134,7 +136,9 @@
   :root[data-scene="space"] .plane,
   :root[data-scene="space"] .car{display:none}
   :root[data-scene="space"] .stars{opacity:1}
-  #city-props,#city-fg{display:none}
+  #city-props,#city-fg,#city-road{display:none}
+  :root[data-scene="city"] .car,
+  :root[data-scene="city"] #city-road,
   :root[data-scene="city"] #city-props,
   :root[data-scene="city"] #city-fg{display:block}
   :root[data-scene="beach"] .car,
@@ -220,14 +224,30 @@
   .act-faint{animation:faint 2.2s ease-in-out 1;transform-box:fill-box;transform-origin:50% 100%}
   @keyframes faint{0%{transform:rotate(0)}30%{transform:rotate(-88deg)}
     72%{transform:rotate(-88deg)}100%{transform:rotate(0)}}
+  /* four dances, one per unit, so a crew never moves in unison */
+  .dance-a{animation:danceA 2.2s ease-in-out 2;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes danceA{0%,100%{transform:translateY(0) rotate(0)}
+    25%{transform:translateY(-16px) rotate(-10deg)}75%{transform:translateY(-16px) rotate(10deg)}}
+  .dance-b{animation:danceB 1.6s linear 3;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes danceB{0%,100%{transform:translateX(0) skewX(0)}
+    25%{transform:translateX(-14px) skewX(7deg)}50%{transform:translateX(0) skewX(0)}
+    75%{transform:translateX(14px) skewX(-7deg)}}
+  .dance-c{animation:danceC 1.1s ease-in-out 4;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes danceC{0%,100%{transform:scaleY(1) translateY(0)}
+    40%{transform:scaleY(.82) translateY(6px)}70%{transform:scaleY(1.08) translateY(-18px)}}
+  .dance-d{animation:danceD 2.6s ease-in-out 2;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes danceD{0%,100%{transform:rotate(0) translateY(0)}
+    20%{transform:rotate(-360deg) translateY(-8px)}
+    60%{transform:rotate(-360deg) translateY(0)}
+    80%{transform:rotate(-360deg) translateY(-22px)}}
   .minisay{animation:mini 5.5s ease-out 1 forwards}
   @keyframes mini{0%{opacity:0;transform:translateY(8px)}8%{opacity:1;transform:none}
     86%{opacity:1}100%{opacity:0}}
 
   .pet{animation:trot 26s ease-in-out infinite}
-  @keyframes trot{0%{transform:translate(240px,762px)}
-    46%{transform:translate(1180px,762px)}50%{transform:translate(1180px,762px) scaleX(-1)}
-    96%{transform:translate(260px,762px) scaleX(-1)}100%{transform:translate(240px,762px)}}
+  @keyframes trot{0%{transform:translate(240px,782px)}
+    46%{transform:translate(1180px,782px)}50%{transform:translate(1180px,782px) scaleX(-1)}
+    96%{transform:translate(260px,788px) scaleX(-1)}100%{transform:translate(240px,782px)}}
   .pet-bob{animation:bob 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
   .pet-hover{animation:hover 3s ease-in-out infinite}
   @keyframes hover{0%,100%{transform:translateY(-34px)}50%{transform:translateY(-52px)}}
@@ -551,11 +571,21 @@
   <g class="road" opacity=".35" stroke="var(--ground-top)" stroke-width="4" stroke-dasharray="34 30">
     <line x1="0" y1="820" x2="1600" y2="820"/></g>
 
+  <g id="city-road">
+    <rect y="790" width="1600" height="110" fill="#2f3743"/>
+    <rect y="786" width="1600" height="6" fill="var(--ground-top)" opacity=".7"/>
+    <g stroke="#f2d06b" stroke-width="5" stroke-dasharray="44 34" opacity=".8">
+      <line x1="0" y1="836" x2="1600" y2="836"/>
+    </g>
+  </g>
+
   <!-- a car on the near road -->
-  <g class="car"><g transform="translate(0,748)">
-    <rect x="0" y="-16" width="62" height="16" rx="7" fill="var(--hazard)"/>
-    <rect x="12" y="-26" width="30" height="12" rx="5" fill="var(--body-2)"/>
-    <circle cx="14" cy="2" r="6" fill="var(--ink)"/><circle cx="48" cy="2" r="6" fill="var(--ink)"/>
+  <g class="car"><g transform="translate(0,822)">
+    <rect x="0" y="-20" width="84" height="20" rx="8" fill="var(--hazard)"/>
+    <path d="M16,-20 q10,-16 30,-16 q18,0 24,16 z" fill="var(--body-2)"/>
+    <circle cx="20" cy="2" r="8" fill="var(--ink)"/><circle cx="66" cy="2" r="8" fill="var(--ink)"/>
+    <circle cx="20" cy="2" r="3" fill="var(--body-2)"/><circle cx="66" cy="2" r="3" fill="var(--body-2)"/>
+    <rect x="80" y="-14" width="6" height="5" rx="2" fill="#ffe9a8"/>
   </g></g>
 
   <!-- the hero, on a crate stack at the right -->
@@ -601,9 +631,12 @@
       <circle cx="0" cy="-34" r="6" fill="#d2453f"/>
     </g>
   </g>
-  <g transform="translate(110,762)">
-    <rect x="-26" y="-34" width="52" height="34" rx="5" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5" opacity=".9"/>
-    <path d="M-26,-22 L26,-22" stroke="var(--ink)" stroke-width="2.5" opacity=".9"/>
+  <g transform="translate(118,762)">   <!-- a bench -->
+    <rect x="-40" y="-26" width="80" height="7" rx="3" fill="var(--mid)"/>
+    <rect x="-40" y="-16" width="80" height="7" rx="3" fill="var(--mid)"/>
+    <rect x="-40" y="-46" width="80" height="7" rx="3" fill="var(--mid)"/>
+    <rect x="-36" y="-46" width="6" height="46" rx="2" fill="var(--near)"/>
+    <rect x="30" y="-46" width="6" height="46" rx="2" fill="var(--near)"/>
   </g>
 </svg>
 
@@ -773,8 +806,8 @@ const COSTUME = {
                <path d="M-24,-56 l48,22" stroke="#7a6a4a" stroke-width="7" stroke-linecap="round"/>`
 };
 
-function robot(x, phase, title, progress) {
-  const g = node('g', { transform: `translate(${x},762)` });
+function robot(x, phase, title, progress, index) {
+  const g = node('g', { class: 'unit', 'data-i': index, transform: `translate(${x},762)` });
   const review = /review/i.test(phase || '');
   const accent = review ? 'var(--neon)' : 'var(--hazard)';
 
@@ -797,17 +830,31 @@ function robot(x, phase, title, progress) {
       <rect x="-34" y="-58" width="12" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       ${(COSTUME[document.documentElement.dataset.scene] || COSTUME.city)()}
     </g>
-    <rect x="34" y="-16" width="62" height="16" rx="4" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5"/>
+    <g>
+      <rect x="28" y="-22" width="74" height="9" rx="3" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5"/>
+      <rect x="33" y="-13" width="7" height="13" fill="var(--near)"/>
+      <rect x="90" y="-13" width="7" height="13" fill="var(--near)"/>
+      <rect x="52" y="-32" width="20" height="10" rx="3" fill="var(--trim)" stroke="var(--ink)" stroke-width="2"/>
+    </g>
     <g class="spark" fill="${accent}"><circle cx="46" cy="-18" r="3"/><circle cx="54" cy="-22" r="2"/></g>
-    <g transform="translate(0,-150)">
-      <rect class="prog-bg" x="-96" y="-30" width="192" height="44" rx="10"/>
-      <text x="0" y="-12" text-anchor="middle" font-size="12" fill="var(--text)"
-            font-family="var(--mono)" letter-spacing="0.5">${clip(title, 26)}</text>
-      <rect x="-80" y="-2" width="160" height="8" rx="4" fill="rgba(255,255,255,.25)"/>
-      <rect x="-80" y="-2" width="${Math.max(4, Math.round((progress || 0) * 160))}" height="8" rx="4" fill="${accent}"/>
-      <text x="0" y="24" text-anchor="middle" font-size="9" fill="var(--muted)"
-            font-family="var(--mono)" letter-spacing="2">${(phase || 'WORKING').toUpperCase()}</text>
-    </g>`;
+    ${(() => {
+      // The card is measured from its text, not fixed: a long title used to run past the
+      // panel edge and the bar used to sit on the border.
+      const label = clip(title, 30);
+      const phaseText = (phase || 'WORKING').toUpperCase();
+      const w = Math.max(190, Math.min(320, label.length * 7.5 + 34));
+      const inner = w - 34;
+      const done = Math.max(5, Math.round((progress || 0) * inner));
+      return `<g transform="translate(0,-158)">
+        <rect class="prog-bg" x="${-w / 2}" y="-36" width="${w}" height="66" rx="12"/>
+        <text x="0" y="-16" text-anchor="middle" font-size="12" fill="var(--text)"
+              font-family="var(--mono)">${label}</text>
+        <rect class="track" x="${-inner / 2}" y="-6" width="${inner}" height="9" rx="4.5"/>
+        <rect x="${-inner / 2}" y="-6" width="${done}" height="9" rx="4.5" fill="${accent}"/>
+        <text x="0" y="22" text-anchor="middle" font-size="9" fill="var(--muted)"
+              font-family="var(--mono)" letter-spacing="2">${phaseText}</text>
+      </g>`;
+    })()}</g>`;
   return g;
 }
 
@@ -912,8 +959,10 @@ const clip = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n
 // A robot says something over its own head, and occasionally does something silly.
 function miniSay(g, text) {
   const w = Math.min(260, 16 + text.length * 7.2);
-  const b = node('g', { class: 'minisay', transform: 'translate(0,-176)' });
-  b.innerHTML =
+  const b = node('g', { transform: 'translate(0,-226)' });
+  const inner = node('g', { class: 'minisay' });
+  b.appendChild(inner);
+  inner.innerHTML =
     `<rect class="prog-bg" x="${-w / 2}" y="-22" width="${w}" height="30" rx="9"/>
      <path class="prog-bg" d="M-7,8 l7,10 l7,-10 z"/>
      <text x="0" y="-2" text-anchor="middle" font-size="12" font-family="var(--mono)"
@@ -923,15 +972,25 @@ function miniSay(g, text) {
 }
 
 const ACTS = ['act-jump', 'act-spin', 'act-shrug', 'act-faint'];
-function randomAct() {
-  const bodies = [...document.querySelectorAll('#crew .bob')];
+const DANCES = ['dance-a', 'dance-b', 'dance-c', 'dance-d'];
+const DANCE_LINES = ['🎵', 'the build is green.', 'one more pass and i am done.',
+                     'nobody is watching. good.', 'this is my song.'];
+
+function randomAct(forceDance) {
+  const bodies = [...document.querySelectorAll('#crew .unit .bob')];
   if (!bodies.length) return;
   const body = pick(bodies);
-  if ([...body.classList].some(c => c.startsWith('act-'))) return;
-  const act = pick(ACTS);
-  body.classList.add(act);
-  setTimeout(() => body.classList.remove(act), 2400);
-  if (Math.random() < .7) miniSay(body.closest('g[transform]'), pick(CHATTER));
+  if ([...body.classList].some(c => c.startsWith('act-') || c.startsWith('dance-'))) return;
+
+  // Every unit keeps its own dance, so two robots never move the same way.
+  const dancing = forceDance || Math.random() < .35;
+  const unit = body.closest('.unit');
+  const cls = dancing
+    ? DANCES[(Number(unit.dataset.i) || 0) % DANCES.length]
+    : pick(ACTS);
+  body.classList.add(cls);
+  setTimeout(() => body.classList.remove(cls), dancing ? 5200 : 2400);
+  if (Math.random() < .7) miniSay(unit, pick(dancing ? DANCE_LINES : CHATTER));
 }
 let bubble, bubbleTimer;
 function say(text) {
@@ -958,17 +1017,20 @@ function render(d, live) {
   // the hero wears the local uniform too, shifted onto its slightly smaller head
   const hc = el('hero-costume');
   hc.innerHTML = `<g transform="translate(0,-8) scale(.92)">${(COSTUME[scene] || COSTUME.city)()}</g>`;
-  const pet = node('g', { class: 'pet' });   // position comes from the trot keyframes
-  pet.innerHTML = COMPANION[scene] || COMPANION.city;
-  crew.appendChild(pet);
+
   if (idle) {
     crew.appendChild(idleRobot(430, false));
     crew.appendChild(idleRobot(620, true));
   } else {
     const step = 1100 / (runs.length + 1);
     runs.forEach((r, i) => crew.appendChild(
-      robot(Math.round(160 + step * (i + 1)), r.phase, r.title || r.id, r.progress)));
+      robot(Math.round(160 + step * (i + 1)), r.phase, r.title || r.id, r.progress, i)));
   }
+
+  // the companion goes in last so it walks in front of the crew, not behind them
+  const pet = node('g', { class: 'pet' });   // position comes from the trot keyframes
+  pet.innerHTML = COMPANION[scene] || COMPANION.city;
+  crew.appendChild(pet);
 
   const list = el('list');
   list.innerHTML = runs.length ? '' : '<div class="none">Nothing in the field. The queue is quiet.</div>';
