@@ -35,11 +35,27 @@ remembers whatever you choose after that.
 The robots are deliberately the same in both. A dark scene where you cannot find the
 characters is a wallpaper, not a status page.
 
+## Scenes
+
+Three, on the **SCENE** button. The crew, their benches and the progress cards are the same
+in all of them; only the world changes.
+
+| Scene | |
+|---|---|
+| 🌆 **City** | Skyline, traffic, a plane. Lit windows at night |
+| 🏝 **Beach** | Sea, moving waves, palms, one parasol |
+| 🌑 **Space** | A ringed planet, a passing satellite, craters underfoot |
+
+Each works in day and night, and your choice is remembered. `?scene=city|beach|space` pins
+one.
+
 ## The task list is hidden
 
 The scene is the default view. Press **T** or click **TASKS** to slide the list in from the
-right, with the full title, phase, id and progress of every run. Press T again to send it
-away.
+right, with the full title, phase, id and progress of every run.
+
+Close it by clicking anywhere outside it, pressing **Escape**, pressing **T** again, or
+clicking the button.
 
 ## Live data
 
@@ -75,6 +91,7 @@ they are real.
 | Query parameter | Default | Meaning |
 |---|---|---|
 | `?theme=day` / `?theme=night` | from your clock | Force one |
+| `?scene=<name>` | `city` | `city`, `beach` or `space` |
 | `?data=<url>` | `status.json` | Poll a different feed |
 | `?poll=<ms>` | `10000` | Polling interval |
 
