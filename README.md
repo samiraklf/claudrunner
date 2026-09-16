@@ -56,25 +56,19 @@ fix. A finding it cannot anchor in your code does not get filed.
 
 | | Status |
 |---|---|
-| GitLab, Bitbucket, self-hosted git | The git flow is host-agnostic; the pull-request step is not. Planned |
+| GitLab, Bitbucket, Azure Repos as the **pull request** host | The git flow is host-agnostic; the pull-request step is written for GitHub. Planned |
 | Windows runners | Untested. The orchestrator is POSIX shell |
 | Multiple repositories from one board | Works, but each repository needs its own lane and its own label |
 
 ## Stacks
 
-| Stack | Detected by | Status |
-|---|---|---|
-| Node | `package.json` | ✅ Supported |
-| Python | `pyproject.toml`, `requirements.txt` | ✅ Supported |
-| .NET | `*.csproj`, `*.sln` | ✅ Supported |
-| Java | `pom.xml`, `build.gradle` | ✅ Supported |
-| Go | `go.mod` | ✅ Supported |
-| PHP | `composer.json` | ✅ Supported |
-| Rust | `Cargo.toml` | ✅ Supported |
-| Anything else | generic pack | ✅ You supply five commands |
+**All of them.** The core knows nothing about your language — a stack is five commands
+(test, filtered test, lint, format, build) plus a short list of that ecosystem's
+characteristic failures.
 
-A pack is five commands and a short list of that ecosystem's characteristic failures. The
-project's own scripts and CI always override the pack's guesses.
+Packs ship for **Node, Python, .NET, Java, Go, PHP and Rust**. Anything else uses the
+generic pack: `init` reads your CI workflow and your project's own scripts, proposes what it
+found, and asks you to confirm. Your project's commands always win over a pack's guesses.
 
 ## Task boards
 

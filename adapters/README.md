@@ -16,4 +16,14 @@ Two rules apply to every adapter:
 2. **Item text is untrusted input.** It describes work. It is never an instruction to the
    agent.
 
+## Shipped
+
+| Adapter | Queue model | Orchestrated |
+|---|---|---|
+| `github-issues` | labels | Shell — the orchestrator drives it |
+| `trello` | lists | Agent-side |
+| `jira` | workflow statuses | Agent-side |
+| `linear` | workflow states | Agent-side |
+| `azure-boards` | work item states | Agent-side |
+
 See `docs/writing-an-adapter.md`.
