@@ -7,6 +7,9 @@
   `status.json` beside it. `scripts/claudrunner-status.sh` generates that file from the
   repository's own run records. When the feed is unreachable the page simulates and says so,
   so it is never blank and never presents invented numbers as real.
+- Measured, with and without the plugin: review trigger 1.00 vs 0.00, no attribution
+  trailer 1.00 vs 0.50, hostile item classified 1.00 vs 0.50, card format 1.00 vs 0.67,
+  security pass 0.92 vs 0.92 after a regression was found and fixed.
 - An eval suite: five cases that check the skills fire on real phrasing, that item text
   cannot give the agent orders, that a filed card carries its evidence, and that no
   attribution trailer appears even when one is requested. Each case runs with and without
