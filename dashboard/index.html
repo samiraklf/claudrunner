@@ -145,11 +145,26 @@
   :root[data-scene="maze"] .plane,
   :root[data-scene="maze"] .cloud,
   :root[data-scene="maze"] .orb{display:none}
+  .win{fill:var(--trim)}
+  .win.on{fill:var(--hazard)}
+  :root[data-theme="day"] .win{fill:#ffffff;opacity:.30!important}
+  :root[data-theme="day"] .win.on{fill:#cfe3f2;opacity:.6!important}
   .blink{animation:blink2 1.8s steps(1) infinite}
   @keyframes blink2{0%,55%{opacity:1}56%,100%{opacity:.15}}
   .neon{animation:neon 4.5s steps(1) infinite}
   @keyframes neon{0%,88%{opacity:1}89%,91%{opacity:.25}92%,96%{opacity:1}97%,99%{opacity:.3}}
   .lamp{filter:drop-shadow(0 0 16px var(--hazard))}
+  /* the swing: across the sky on a line, then gone for a while */
+  .swinger{animation:swingby 38s ease-in-out infinite}
+  @keyframes swingby{
+    0%{transform:translate(-160px,300px);opacity:0}
+    4%{opacity:1}
+    16%{transform:translate(520px,430px)}
+    28%{transform:translate(1180px,300px)}
+    38%{transform:translate(1760px,400px);opacity:1}
+    40%,100%{transform:translate(1760px,400px);opacity:0}}
+  .swing{animation:pend 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+  @keyframes pend{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(15deg)}}
   .birds{animation:birds 46s linear infinite}
   @keyframes birds{from{transform:translate(-80px,250px)}to{transform:translate(1700px,190px)}}
   .gull{animation:gull 34s linear infinite}
@@ -260,19 +275,9 @@
           fill="var(--body-2)"/></g></g>
 
   <g class="backdrop" id="sc-city">
-  <!-- far skyline -->
-  <g fill="var(--far)">
-    <path d="M0,560 L0,430 90,430 90,470 180,470 180,380 270,380 270,450 360,450 360,400 470,400
-             470,470 560,470 560,360 650,360 650,440 760,440 760,410 870,410 870,470 980,470
-             980,390 1080,390 1080,450 1190,450 1190,420 1300,420 1300,470 1420,470 1420,430
-             1600,430 1600,560 Z"/>
-  </g>
-  <!-- mid skyline -->
-  <g fill="var(--mid)">
-    <path d="M0,620 L0,500 120,500 120,540 240,540 240,470 360,470 360,530 500,530 500,490
-             640,490 640,550 780,550 780,500 920,500 920,545 1060,545 1060,480 1200,480
-             1200,540 1340,540 1340,510 1600,510 1600,620 Z"/>
-    <g id="litwindows" fill="var(--hazard)" opacity=".85"></g>
+    <g id="sky-far"></g>
+    <g id="sky-mid"></g>
+    <g id="sky-near"></g>
   </g>
   <!-- city props -->
   <g id="city-props">
@@ -284,6 +289,23 @@
       <rect x="-64" y="-34" width="128" height="34" rx="4" fill="var(--near)"/>
       <text class="neon" x="0" y="-11" text-anchor="middle" font-size="17"
             font-family="var(--mono)" letter-spacing="3" fill="var(--neon)">OPEN</text>
+    </g>
+    <g class="swinger">
+      <g class="swing">
+        <line x1="0" y1="-560" x2="0" y2="-14" stroke="#ffffff" stroke-width="2.5" opacity=".75"/>
+        <g transform="translate(0,-2)">
+          <path d="M-3,-14 l-17,-22" stroke="#c9352f" stroke-width="7" stroke-linecap="round"/>
+          <ellipse cx="0" cy="4" rx="11" ry="15" fill="#c9352f"/>
+          <path d="M-9,10 q9,8 18,0 l3,20 -8,4 -5,-16 -5,16 -8,-4 z" fill="#2c4d9e"/>
+          <path d="M8,2 l19,10" stroke="#c9352f" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="0" cy="-15" r="10" fill="#c9352f"/>
+          <path d="M-7,-18 q4,-5 7,-1 q-3,5 -7,1 z" fill="#ffffff"/>
+          <path d="M7,-18 q-4,-5 -7,-1 q3,5 7,1 z" fill="#ffffff"/>
+          <g stroke="#8f211d" stroke-width="1.1" opacity=".85" fill="none">
+            <path d="M-11,0 h22 M-10,7 h20 M0,-9 v24"/>
+          </g>
+        </g>
+      </g>
     </g>
     <g class="birds" opacity=".65" fill="none" stroke="var(--near)" stroke-width="3" stroke-linecap="round">
       <path d="M0,0 q9,-9 18,0 M22,4 q8,-8 16,0 M-24,7 q7,-7 14,0"/>
@@ -660,6 +682,68 @@ addEventListener('keydown', e => {
   if (e.key === 'Escape') drawer(false);
 });
 
+// ---------------------------------------------------------------- skyline
+// Buildings with real facades: window grids, rooftop clutter, and three depth layers.
+// Seeded so the city is the same city every time you open the page.
+let seed = 20260916;
+const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+
+function buildLayer(id, { top, base, minW, maxW, fill, winW, winH, gapX, gapY, lit, roof }) {
+  const g = el(id);
+  for (let x = -40; x < 1640;) {
+    const w = ri(minW, maxW);
+    const h = ri(top[0], top[1]);
+    const y = base - h;
+    g.appendChild(node('rect', { x, y, width: w, height: h, fill }));
+    // a lighter face on one side gives the block some volume
+    g.appendChild(node('rect', { x, y, width: Math.min(9, w * .12), height: h,
+      fill: 'var(--ground-top)', opacity: .18 }));
+    g.appendChild(node('rect', { x, y, width: w, height: 5, fill: 'var(--ground-top)', opacity: .3 }));
+
+    // window grid
+    const cols = Math.floor((w - gapX) / (winW + gapX));
+    const rows = Math.floor((h - gapY - 14) / (winH + gapY));
+    const ox = x + (w - (cols * (winW + gapX) - gapX)) / 2;
+    for (let c = 0; c < cols; c++) {
+      for (let r = 0; r < rows; r++) {
+        const on = rnd() < lit;
+        g.appendChild(node('rect', {
+          x: (ox + c * (winW + gapX)).toFixed(1),
+          y: (y + 14 + r * (winH + gapY)).toFixed(1),
+          width: winW, height: winH, rx: 1,
+          class: on ? 'win on' : 'win',
+          opacity: on ? (0.55 + rnd() * 0.45).toFixed(2) : 0.16
+        }));
+      }
+    }
+
+    // rooftop clutter
+    if (roof && w > 60 && rnd() < .75) {
+      const rx = x + ri(8, Math.max(9, w - 30));
+      const k = ri(0, 2);
+      if (k === 0) {                                   // water tank
+        g.appendChild(node('rect', { x: rx, y: y - 20, width: 22, height: 20, rx: 3, fill }));
+        g.appendChild(node('path', { d: `M${rx - 3},${y - 20} h28 l-14,-9 z`, fill }));
+      } else if (k === 1) {                            // aerial with a red light
+        g.appendChild(node('rect', { x: rx + 6, y: y - 34, width: 3, height: 34, fill }));
+        g.appendChild(node('circle', { cx: rx + 7.5, cy: y - 36, r: 3.5, fill: '#ff5a5a',
+          class: 'blink' }));
+      } else {                                         // plant room
+        g.appendChild(node('rect', { x: rx, y: y - 13, width: ri(18, 34), height: 13, fill }));
+      }
+    }
+    x += w + ri(2, 12);
+  }
+}
+
+buildLayer('sky-far',  { top: [170, 330], base: 604, minW: 46, maxW: 104, fill: 'var(--far)',
+  winW: 4, winH: 5, gapX: 7, gapY: 9, lit: .22, roof: false });
+buildLayer('sky-mid',  { top: [150, 300], base: 690, minW: 62, maxW: 132, fill: 'var(--mid)',
+  winW: 6, winH: 7, gapX: 9, gapY: 12, lit: .3, roof: true });
+buildLayer('sky-near', { top: [90, 190],  base: 772, minW: 96, maxW: 190, fill: 'var(--near)',
+  winW: 8, winH: 10, gapX: 13, gapY: 16, lit: .34, roof: true });
+
 // ---------------------------------------------------------------- starfield
 (() => {
   const g = el('starfield');
@@ -669,11 +753,6 @@ addEventListener('keydown', e => {
     if (Math.random() < .3) { s.setAttribute('class', 'twinkle');
       s.style.animationDelay = (Math.random() * 3.4).toFixed(2) + 's'; }
     g.appendChild(s);
-  }
-  const w = el('litwindows');
-  for (let i = 0; i < 70; i++) {
-    w.appendChild(node('rect', { x: Math.round(Math.random() * 1590), y: Math.round(490 + Math.random() * 60),
-      width: 4, height: 6, opacity: (Math.random() * .8 + .2).toFixed(2) }));
   }
 })();
 
@@ -801,7 +880,9 @@ const QUIPS = {
           'IN SPACE, NOBODY CAN HEAR THE TESTS FAIL.',
           'I CHECKED. THE BUG FOLLOWED US.'],
   city: ['SOMEBODY CALLED THIS IN A LOOP AND WENT HOME.',
-         'THE BUG WAS COMING FROM INSIDE THE REPO.'],
+         'THE BUG WAS COMING FROM INSIDE THE REPO.',
+         'SOMEONE JUST SWUNG PAST. DID NOT OFFER TO HELP.',
+         'THAT IS NOT A DEPLOYMENT PIPELINE. THAT IS A WEB.'],
   maze: ['THE WALLS MOVED AGAIN. SO DID THE REQUIREMENTS.',
          'GREAT NEWS: THE EXIT IS DOCUMENTED. BAD NEWS: NOT HERE.',
          'DAY 47. STILL NO ACCEPTANCE CRITERIA.',

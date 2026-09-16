@@ -45,7 +45,7 @@ different animal, different jokes.
 
 | Scene | The world | The crew | Who follows them |
 |---|---|---|---|
-| 🌆 **City** | Skyline, traffic, a plane, a neon sign, a street lamp | Hard hats | A pigeon |
+| 🌆 **City** | A real skyline: window grids, water tanks, aerials. Traffic, a neon sign, and a masked figure who swings past on a line | Hard hats | A pigeon |
 | 🏝 **Beach** | Sea with surf, palms, parasol, a bouncing ball | Sunglasses and swim rings | **A dog**, tail going |
 | 🌑 **Space** | Ringed planet, Earth, a launching rocket, a flag | Helmets and life support | A hovering drone |
 | 🧱 **Maze** | Stone corridors, ivy, a shaft of light, something at the far end | Hoods and satchels | A lizard |
