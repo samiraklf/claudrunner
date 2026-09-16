@@ -109,7 +109,7 @@ jq -e '.is_error == false' "$run_dir/result.json" >/dev/null 2>&1 || {
   # Items stay claimed on failure on purpose: a human sees what was in flight.
   exit 1
 }
-jq -r '"cost=\(.total_cost_usd) turns=\(.num_turns)"' "$run_dir/result.json"
+jq -r '"turns=\(.num_turns)"' "$run_dir/result.json"
 
 # ---------------------------------------------------------------- move the items
 [ "$mode" = "triage" ] || exit 0

@@ -36,7 +36,7 @@ against a baseline of 1.00 because the skill was stopping at its first finding.
 That is what the ablation arm is for. A suite running only the with-plugin arm would have
 shown a security skill scoring 0.25 and looked like a strict grader.
 
-## Cost
+## When to run it
 
-Each case is a full agent run, twice over. The whole suite is a couple of dollars, so it is
-**not** wired into CI — run it deliberately, when the skills or their descriptions change.
+Each case is a full agent run, twice over, so the suite is **not** wired into CI. Run it
+deliberately, when a skill or its description changes.

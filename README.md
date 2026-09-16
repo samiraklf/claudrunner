@@ -165,8 +165,8 @@ It writes a config and a schedule. Nothing runs until you say so.
 **claudrunner is free.** MIT licensed, no account, no sign-up, no telemetry, no paid tier,
 and nothing is sold to you here.
 
-It uses your own agent usage, exactly as if you had typed the work yourself. To use less,
-run the sweep weekly instead of nightly and poll the board less often.
+It runs on your own Claude subscription, exactly as if you had typed the work yourself. To
+use less of it, run the sweep weekly instead of nightly and poll the board less often.
 
 ## Documentation
 
@@ -176,7 +176,6 @@ run the sweep weekly instead of nightly and poll the board less often.
 | [How a run works](docs/how-a-run-works.md) | You want to know what it does to your repo |
 | [Configuration](docs/configuration.md) | Tuning anything |
 | [Scheduling](docs/scheduling.md) | Choosing a cadence and a target |
-| [What it costs to run](docs/cost.md) | Before the first schedule |
 | [Security model](docs/security.md) | Before letting it run unattended |
 | [Write a stack pack](docs/writing-a-pack.md) | Your stack is not listed |
 | [Write a board adapter](docs/writing-an-adapter.md) | Your board is not listed |

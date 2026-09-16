@@ -29,4 +29,4 @@ claude -p "/claudrunner:$mode" \
 
 jq -e '.is_error == false' "/tmp/claudrunner-$mode-$stamp.json" >/dev/null \
   || { echo "$stamp: $mode run failed"; jq -r '.result' "/tmp/claudrunner-$mode-$stamp.json"; exit 1; }
-jq -r '"cost=\(.total_cost_usd) turns=\(.num_turns)"' "/tmp/claudrunner-$mode-$stamp.json"
+jq -r '"turns=\(.num_turns)"' "/tmp/claudrunner-$mode-$stamp.json"

@@ -49,8 +49,6 @@ policy:
 limits:
   run_timeout_minutes: 45
   max_turns: 150
-  max_runs_per_day: 10
-  max_runs_per_week: 40
 
 review:
   second_vendor:

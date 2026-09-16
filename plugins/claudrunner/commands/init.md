@@ -67,7 +67,6 @@ State these back and let the user change them:
 - The base branch it targets, and confirmation that the default branch is protected.
 - The diff ceiling per pull request (default 600 changed lines).
 - Whether new dependencies are allowed (default: no).
-- The run budget: maximum runs per day and per week.
 
 ## Step 4 — Write the files
 
@@ -87,5 +86,5 @@ Print, in this order:
 2. The one command that turns the schedule on.
 3. The command to try one cycle by hand first: `/claudrunner:triage`.
 
-Recommend the manual run before enabling any schedule. State the expected cost of a single
-cycle, from `docs/cost.md`.
+Recommend the manual run before enabling any schedule, so the user sees what a cycle does
+before it does it on a timer.

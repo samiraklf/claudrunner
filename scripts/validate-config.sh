@@ -104,8 +104,6 @@ esac
 lines=$(cr_get '.policy.max_changed_lines' '600')
 [ "$lines" -gt 2000 ] 2>/dev/null && warn "max_changed_lines is $lines — diffs that size do not get reviewed properly"
 
-[ -n "$(cr_get '.limits.max_runs_per_week' '')" ] || warn "no limits.max_runs_per_week — set a spend stop before scheduling"
-
 if [ "$(cr_get '.review.second_vendor.enabled' 'false')" = "true" ]; then
   [ -n "$(cr_get '.review.second_vendor.command' '')" ] || err "second_vendor is enabled but no command is set"
 fi

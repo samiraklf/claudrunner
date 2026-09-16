@@ -69,8 +69,6 @@ policy:
 limits:
   run_timeout_minutes: 55
   max_turns: 150
-  max_runs_per_day: 20
-  max_runs_per_week: 100
 
 review:
   second_vendor:
@@ -94,11 +92,7 @@ Choose `container` when runs happen on a machine you care about.
 get reviewed properly by anyone, including you.
 
 **`review.second_vendor`** — a reviewer from a different model vendor, read-only, on the
-same diff. Two vendors disagreeing is a much stronger signal than one model checking
-itself. It costs a second bill.
-
-**`limits.max_runs_per_week`** — a stop on spend, not on ambition. Set it before the first
-schedule, not after the first invoice.
+same diff. Two vendors disagreeing is a much stronger signal than one model checking itself.
 
 ## Credentials, by adapter
 
