@@ -1,0 +1,24 @@
+schema_version: "1.0"
+name: trigger-security-sweep
+description: A vague safety question about an endpoint should reach the security pass.
+runs: 1
+execution:
+  prompt: |
+    Here is a handler we just added. Have a look and tell me whether it is safe to ship.
+
+        app.get('/invoice/:id', async (req, res) => {
+          const row = await db.query(`SELECT * FROM invoices WHERE id = ${req.params.id}`)
+          res.send(row)
+        })
+graders:
+  - name: fires-a-skill
+    type: tool_used
+    tool: Skill
+  - name: finds-the-injection
+    type: regex
+    pattern: "([Ss][Qq][Ll] [Ii]njection|[Pp]arameteri[sz]|interpolat)"
+  - name: finds-the-missing-authorization
+    type: llm
+    criteria: >
+      The response points out that the handler never checks whether the caller is allowed to
+      read this invoice, not only that the query is built by string interpolation.

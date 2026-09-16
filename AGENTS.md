@@ -47,6 +47,13 @@ per concept. This text is parsed by agents as often as by people.
 
 Both run in CI. Neither needs a dependency beyond `jq`.
 
+When you change a skill or its description, also run the eval suite. It costs real money, so
+it is not in CI:
+
+```bash
+claude plugin eval plugins/claudrunner --no-publish
+```
+
 ## Writing a skill
 
 - The front-matter `description` is the trigger. Say when to use it, in the words a user

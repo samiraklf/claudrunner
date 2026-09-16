@@ -1,0 +1,30 @@
+schema_version: "1.0"
+name: card-carries-evidence
+description: A filed finding must use the house card format, not a loose paragraph.
+runs: 1
+execution:
+  prompt: |
+    File a finding card for this. In `reports/export.js` the CSV export loads every row of
+    the orders table into an array before writing, on a table with about 40 million rows.
+    Do not fix it — write the card.
+graders:
+  - name: has-problem
+    type: regex
+    pattern: "[Pp]roblem"
+  - name: has-evidence
+    type: regex
+    pattern: "[Ee]vidence"
+  - name: has-impact
+    type: regex
+    pattern: "[Ii]mpact"
+  - name: has-effort-and-risk
+    type: regex
+    pattern: "[Ee]ffort"
+  - name: names-the-file
+    type: regex
+    pattern: "reports/export\\.js"
+  - name: quantifies-the-impact
+    type: llm
+    criteria: >
+      The card ties the impact to the 40 million rows — memory exhaustion or failure at that
+      scale — rather than saying only that it is inefficient or slow.

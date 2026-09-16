@@ -4,3 +4,4 @@ node_modules/
 .claudrunner/state/
 .claudrunner/runs/
 .namecheck
+plugins/claudrunner/evals/results/

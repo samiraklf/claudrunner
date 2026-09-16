@@ -3,6 +3,10 @@
 ## Unreleased
 
 ### Added
+- An eval suite: five cases that check the skills fire on real phrasing, that item text
+  cannot give the agent orders, that a filed card carries its evidence, and that no
+  attribution trailer appears even when one is requested. Each case runs with and without
+  the plugin, so the report shows what the package actually changes.
 - All eleven board adapters now run from the orchestrator. The agent never holds a board
   credential on any of them.
 - A session-start hook that loads the repository's crew context — its commands, its notes
