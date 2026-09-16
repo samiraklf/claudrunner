@@ -23,7 +23,48 @@
       radial-gradient(90% 60% at 20% 0%, rgba(255,122,26,.10), transparent 55%),
       linear-gradient(180deg,#070b14 0%,#05070c 60%);
   }
-  .skyline{position:fixed;left:0;right:0;bottom:0;z-index:0;opacity:.85;pointer-events:none}
+  .scenes{position:fixed;left:0;right:0;bottom:0;height:min(40vh,320px);z-index:0;pointer-events:none}
+  .scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1.1s ease}
+  .scene.on{opacity:1}
+
+  /* STREET: a car crosses now and then, and the lit window goes dark when the queue empties */
+  .spinner{transform:translate(-80px,150px);animation:cross 26s linear infinite}
+  @keyframes cross{
+    0%{transform:translate(-80px,150px) scale(.8);opacity:0}
+    6%{opacity:.9} 94%{opacity:.9}
+    100%{transform:translate(1280px,104px) scale(1);opacity:0}}
+  .lit{animation:flicker 7s ease-in-out infinite}
+  [data-idle="1"] .lit{animation:none;opacity:.12}
+  @keyframes flicker{0%,100%{opacity:.95}47%{opacity:.95}49%{opacity:.35}51%{opacity:.95}}
+
+  /* ROOFTOP: the cape moves, the signal breathes, the emblem answers to work */
+  .signal{animation:breathe 6s ease-in-out infinite;transform-origin:841px 64px}
+  @keyframes breathe{0%,100%{opacity:.75}50%{opacity:1}}
+  [data-idle="1"] .signal{opacity:.25;animation:none}
+  .cape{transform-origin:-4px -46px;animation:cape 4.5s ease-in-out infinite}
+  @keyframes cape{0%,100%{transform:skewX(0deg)}50%{transform:skewX(-9deg)}}
+  .hero .emblem,.crew .emblem{animation:pulse 2.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.75}50%{opacity:1}}
+  .hero .arm{transform-origin:-18px -56px;transition:transform .5s ease}
+  .hero.point .arm{transform:rotate(-68deg)}
+
+  /* BREAK ROOM: steam, a slouch, and a clock nobody is watching */
+  .steam{animation:steam 3.4s ease-in-out infinite}
+  @keyframes steam{0%,100%{opacity:.2;transform:translateY(0)}50%{opacity:.6;transform:translateY(-5px)}}
+  .crew,.crew2{transform-origin:0 0;animation:slouch 9s ease-in-out infinite}
+  .crew2{animation-delay:-4s}
+  @keyframes slouch{0%,100%{transform:translate(-96px,-76px)}50%{transform:translate(-96px,-73px)}}
+  .clock .hand{transform-origin:0 0;animation:tick 60s steps(60) infinite}
+  @keyframes tick{to{transform:rotate(360deg)}}
+
+  .bubble{position:absolute;left:50%;bottom:74%;transform:translateX(-50%);
+    background:rgba(9,14,24,.92);color:#9fb0c8;font-size:11px;letter-spacing:.12em;
+    padding:7px 12px;border-radius:3px;max-width:min(560px,80vw);text-align:center;
+    box-shadow:0 0 0 1px rgba(184,196,217,.09);animation:say .4s ease}
+  @keyframes say{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translateX(-50%)}}
+  .scenebadge{font-size:10px;letter-spacing:.24em;color:#55637a;cursor:pointer;
+    background:none;border:0;font-family:inherit;padding:2px 0}
+  .scenebadge:hover{color:var(--neon)}
   .wrap{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;
     padding:20px;gap:16px;max-width:1180px;margin:0 auto}
   header{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
@@ -35,13 +76,14 @@
   .spacer{flex:1}
   .stat{font-size:11px;letter-spacing:.14em;color:#6b7c96}
   .stat b{color:var(--ash);font-weight:500}
-  main{flex:1;display:grid;grid-template-columns:1fr 300px;gap:16px;min-height:0}
-  .panel{background:var(--glass);backdrop-filter:blur(6px);border-radius:3px;
+  main{flex:1 1 auto;max-height:58vh;display:grid;grid-template-columns:1fr 300px;gap:16px;min-height:0}
+  .gap{flex:1}
+  .panel{background:rgba(10,15,26,.82);backdrop-filter:blur(6px);border-radius:3px;
     padding:14px 16px;min-height:0;display:flex;flex-direction:column;
     box-shadow:0 0 0 1px rgba(184,196,217,.07), 0 20px 60px -30px #000}
   .panel h2{font-size:10px;letter-spacing:.3em;color:#6b7c96;margin:0 0 12px;
     text-transform:uppercase;font-weight:500}
-  .units{overflow:auto;display:flex;flex-direction:column;gap:10px}
+  .units{overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:180px}
   .unit{padding:11px 12px;border-radius:2px;background:rgba(255,255,255,.028);
     box-shadow:inset 2px 0 0 var(--hazard)}
   .unit.review{box-shadow:inset 2px 0 0 var(--neon)}
@@ -77,17 +119,94 @@
 <body>
 <div class="sky"></div>
 <canvas id="rain"></canvas>
-<svg class="skyline" viewBox="0 0 1200 220" preserveAspectRatio="none" height="220">
-  <defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#0a1120"/><stop offset="1" stop-color="#05070c"/>
-  </linearGradient></defs>
-  <path fill="url(#b)" d="M0,220 L0,150 40,150 40,120 90,120 90,165 150,165 150,96 210,96
-    210,140 265,140 265,70 300,40 335,70 335,150 400,150 400,118 470,118 470,158 540,158
-    540,88 600,88 600,132 670,132 670,160 740,160 740,105 800,105 800,145 870,145 870,74
-    930,74 930,150 1000,150 1000,124 1070,124 1070,162 1140,162 1140,138 1200,138 1200,220 Z"/>
-  <g id="windows" fill="#2bd9d9" opacity=".22"></g>
-  <rect x="296" y="52" width="9" height="12" fill="#ff7a1a" opacity=".92"/>
-</svg>
+<div class="scenes">
+
+  <!-- STREET — the default. Work is happening somewhere out there. -->
+  <svg class="scene" data-scene="street" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet">
+    <defs><linearGradient id="b1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1120"/><stop offset="1" stop-color="#05070c"/></linearGradient></defs>
+    <path fill="url(#b1)" d="M0,300 L0,190 40,190 40,160 90,160 90,205 150,205 150,136 210,136
+      210,180 265,180 265,110 300,80 335,110 335,190 400,190 400,158 470,158 470,198 540,198
+      540,128 600,128 600,172 670,172 670,200 740,200 740,145 800,145 800,185 870,185 870,114
+      930,114 930,190 1000,190 1000,164 1070,164 1070,202 1140,202 1140,178 1200,178 1200,300 Z"/>
+    <g class="windows" fill="#2bd9d9" opacity=".22"></g>
+    <rect class="lit" x="296" y="92" width="9" height="12" fill="#ff7a1a"/>
+    <g class="spinner"><ellipse cx="0" cy="0" rx="17" ry="4.5" fill="#0d1526"/>
+      <ellipse cx="0" cy="-2" rx="11" ry="3" fill="#16203a"/>
+      <circle cx="-13" cy="0" r="2.2" fill="#ff7a1a"/><circle cx="13" cy="0" r="2.2" fill="#2bd9d9"/></g>
+  </svg>
+
+  <!-- ROOFTOP — someone is watching the city. The signal is up. -->
+  <svg class="scene" data-scene="rooftop" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet">
+    <defs>
+      <linearGradient id="b2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0b1222"/><stop offset="1" stop-color="#05070c"/></linearGradient>
+      <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stop-color="#ff7a1a" stop-opacity=".30"/>
+        <stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/></linearGradient>
+    </defs>
+    <g class="signal"><path d="M700,300 L806,26 L876,26 L804,300 Z" fill="url(#beam)"/>
+      <circle cx="841" cy="64" r="30" fill="none" stroke="#ff7a1a" stroke-width="2.5" opacity=".6"/>
+      <path d="M829,65 l8,9 l15,-18" fill="none" stroke="#ff7a1a" stroke-width="3.5"
+            stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g>
+    <path fill="url(#b2)" d="M0,300 L0,205 70,205 70,150 160,150 160,215 250,215 250,120 330,120
+      330,200 430,200 430,165 540,165 540,225 660,225 660,140 760,140 760,210 880,210 880,175
+      1000,175 1000,230 1200,230 1200,300 Z"/>
+    <g class="windows" fill="#2bd9d9" opacity=".13"></g>
+    <rect x="60" y="236" width="420" height="64" fill="#070c16"/>
+    <rect x="60" y="232" width="420" height="6" fill="#0e1729"/>
+    <g class="hero" transform="translate(236,236)">
+      <path class="cape" d="M-13,-74 q-34,40 -26,74 l22,0 q-8,-36 8,-64 z" fill="#0c1424"/>
+      <path class="cape" d="M13,-74 q34,40 26,74 l-22,0 q8,-36 -8,-64 z" fill="#0e1729"/>
+      <rect x="-14" y="-62" width="28" height="38" rx="8" fill="#16233c"/>
+      <path class="emblem" d="M0,-50 l6,9 -6,9 -6,-9 z" fill="#ff7a1a"/>
+      <circle cx="0" cy="-73" r="11" fill="#1a2942"/>
+      <path d="M-11,-77 q11,-10 22,0 l0,-5 q-11,-9 -22,0 z" fill="#24375a"/>
+      <rect class="arm" x="-22" y="-60" width="8" height="26" rx="4" fill="#16233c"/>
+      <rect x="14" y="-60" width="8" height="26" rx="4" fill="#16233c"/>
+      <rect x="-12" y="-25" width="9" height="25" rx="4" fill="#111c30"/>
+      <rect x="3" y="-25" width="9" height="25" rx="4" fill="#111c30"/>
+    </g>
+  </svg>
+
+  <!-- BREAK ROOM — nothing in the queue. Morale is stable. -->
+  <svg class="scene" data-scene="breakroom" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet">
+    <rect x="-500" y="252" width="2200" height="48" fill="#0b1220"/>
+    <g opacity=".5"><rect x="140" y="96" width="150" height="104" rx="3" fill="none"
+        stroke="#1a2536" stroke-width="2"/>
+      <path d="M150,190 l40,-52 28,32 22,-24 30,44 z" fill="#132033"/>
+      <circle cx="252" cy="122" r="11" fill="#1b2a44"/></g>
+    <g class="plant" transform="translate(1040,252)">
+      <path d="M-16,0 l5,-30 22,0 l5,30 z" fill="#132033"/>
+      <path d="M-2,-30 q-22,-24 -30,-8 q16,10 30,8 z" fill="#1c3a30"/>
+      <path d="M2,-30 q20,-30 32,-12 q-14,14 -32,12 z" fill="#20463a"/>
+      <path d="M0,-30 q2,-34 12,-38 q4,26 -12,38 z" fill="#1a3a31"/></g>
+    <g transform="translate(430,262)">
+      <rect x="-190" y="-56" width="380" height="56" rx="8" fill="#101a2c"/>
+      <rect x="-190" y="-76" width="380" height="26" rx="10" fill="#16223a"/>
+      <g class="crew" transform="translate(-96,-76)">
+        <circle cx="0" cy="-26" r="11" fill="#0c1426"/>
+        <rect x="-13" y="-16" width="26" height="24" rx="7" fill="#132038"/>
+        <path class="emblem" d="M0,-6 l4,6 -4,6 -4,-6 z" fill="#ff7a1a" opacity=".85"/></g>
+      <g class="crew2" transform="translate(84,-76)">
+        <circle cx="0" cy="-26" r="11" fill="#0c1426"/>
+        <rect x="-13" y="-16" width="26" height="24" rx="7" fill="#111d33"/>
+        <circle cx="0" cy="-3" r="4" fill="#2bd9d9" opacity=".7"/></g>
+      <g class="mug" transform="translate(-30,-84)">
+        <rect x="-8" y="0" width="16" height="13" rx="3" fill="#1d2b46"/>
+        <path d="M8,3 q7,3 0,7" fill="none" stroke="#1d2b46" stroke-width="2.5"/>
+        <path class="steam" d="M0,-4 q5,-7 0,-13" fill="none" stroke="#6b7c96"
+              stroke-width="1.6" stroke-linecap="round" opacity=".55"/></g>
+    </g>
+    <g class="clock" transform="translate(760,128)">
+      <circle r="26" fill="#0c1426" stroke="#1a2536" stroke-width="2"/>
+      <line class="hand" x1="0" y1="0" x2="0" y2="-16" stroke="#6b7c96" stroke-width="2"
+            stroke-linecap="round"/>
+      <circle r="2" fill="#6b7c96"/></g>
+  </svg>
+
+  <div class="bubble" id="bubble" hidden></div>
+</div>
 
 <div class="wrap">
   <header>
@@ -97,6 +216,7 @@
     <span class="stat">QUEUE <b id="q">0</b></span>
     <span class="stat">RETIRED <b id="r">0</b></span>
     <span class="stat">INCEPT <b id="incept">—</b></span>
+    <button class="scenebadge" id="scenebadge" title="Change the scene">SCENE ▸</button>
   </header>
 
   <main>
@@ -128,6 +248,7 @@
       </section>
     </aside>
   </main>
+  <div class="gap"></div>
 
   <footer><div id="ticker">THE MACHINE WAITS.</div></footer>
 </div>
@@ -162,18 +283,81 @@ const POLL_MS  = Number(params.get('poll') || 10000);
   })();
 })();
 
-// lit windows in the skyline, scattered once
+// lit windows, scattered once per scene
 (() => {
-  const g = document.getElementById('windows');
-  for (let i = 0; i < 150; i++) {
-    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    r.setAttribute('x', Math.round(Math.random() * 1190));
-    r.setAttribute('y', Math.round(60 + Math.random() * 150));
-    r.setAttribute('width', 3); r.setAttribute('height', 4);
-    r.setAttribute('opacity', (Math.random() * .8 + .2).toFixed(2));
-    g.appendChild(r);
+  for (const g of document.querySelectorAll('.windows')) {
+    for (let i = 0; i < 140; i++) {
+      const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      r.setAttribute('x', Math.round(Math.random() * 1190));
+      r.setAttribute('y', Math.round(110 + Math.random() * 170));
+      r.setAttribute('width', 3); r.setAttribute('height', 4);
+      r.setAttribute('opacity', (Math.random() * .8 + .2).toFixed(2));
+      g.appendChild(r);
+    }
   }
 })();
+
+// ---------------------------------------------------------------- scenes
+const SCENES = ['street', 'rooftop', 'breakroom'];
+const CYCLE_MS = Number(params.get('cycle') || 90) * 1000;
+let forced = params.get('scene');            // ?scene=rooftop pins one
+let current = forced && SCENES.includes(forced) ? forced : 'street';
+
+function showScene(name) {
+  current = name;
+  for (const el of document.querySelectorAll('.scene')) {
+    el.classList.toggle('on', el.dataset.scene === name);
+  }
+  document.getElementById('scenebadge').textContent = name.toUpperCase() + ' ▸';
+}
+document.getElementById('scenebadge').onclick = () => {
+  forced = SCENES[(SCENES.indexOf(current) + 1) % SCENES.length];
+  showScene(forced); say(pick(QUIPS[forced]));
+};
+
+// Idle has its own scene, because a crew with nothing to do should look like one.
+function pickScene(d) {
+  if (forced) return forced;
+  const idle = !(d.runs || []).length && !(d.queue || 0);
+  if (idle) return 'breakroom';
+  if (current === 'breakroom') return 'street';
+  return current;
+}
+
+// ---------------------------------------------------------------- quips
+const QUIPS = {
+  street: [
+    'UNBOUNDED QUERY SPOTTED THREE BLOCKS OVER.',
+    'THE BUG WAS COMING FROM INSIDE THE REPO.',
+    'I HAVE READ THIS FUNCTION FOUR TIMES. IT IS STILL LIKE THAT.',
+    'SOMEBODY CALLED THIS IN A LOOP AND WENT HOME.',
+    'IT RAINS HERE BECAUSE THE TESTS ARE SLOW.'
+  ],
+  rooftop: [
+    'THE SIGNAL IS UP. SOMEWHERE, A MISSING INDEX.',
+    'I DO NOT NEED SLEEP. I HAVE A TIMEOUT.',
+    'WITH GREAT ACCESS COMES A VERY SHORT ALLOWLIST.',
+    'I CANNOT FLY. I CAN OPEN A PULL REQUEST.',
+    'NOT THE REVIEWER THEY WANTED. THE ONE THEIR DIFF DESERVES.',
+    'MY ONE WEAKNESS: A CARD WITH NO ACCEPTANCE CRITERIA.'
+  ],
+  breakroom: [
+    'QUEUE EMPTY. I HAVE READ THE README TWICE.',
+    'NOBODY HAS PUSHED IN A WHILE. I AM FINE.',
+    'I FOLDED ANOTHER UNICORN. THAT IS THE NEWS.',
+    'THE COFFEE IS DECORATIVE. I APPRECIATE THE GESTURE.',
+    'I COULD REFACTOR SOMETHING. I WAS NOT ASKED TO.',
+    'ASK ME ABOUT THE TIME SOMEONE CAUGHT A P0 IN A ONE-LINE DIFF.'
+  ]
+};
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const bubble = document.getElementById('bubble');
+let bubbleTimer;
+function say(text) {
+  clearTimeout(bubbleTimer);
+  bubble.textContent = text; bubble.hidden = false;
+  bubbleTimer = setTimeout(() => { bubble.hidden = true; }, 7000);
+}
 
 // ---------------------------------------------------------------- render
 const el = id => document.getElementById(id);
@@ -182,6 +366,7 @@ const since = t => {
   return s < 60 ? Math.round(s) + 's' : Math.floor(s / 60) + 'm ' + Math.round(s % 60) + 's';
 };
 
+let lastRetired = 0;
 function render(d, live) {
   el('mode').textContent = live ? 'LIVE' : 'SIMULATION';
   el('mode').className = 'tag' + (live ? '' : ' sim');
@@ -204,6 +389,15 @@ function render(d, live) {
       `${r.id} · ${r.started_at ? since(r.started_at) : '—'}${r.board ? ' · ' + r.board : ''}`;
     units.appendChild(div);
   }
+
+  document.documentElement.dataset.idle = (!(d.runs || []).length && !(d.queue || 0)) ? '1' : '0';
+  showScene(pickScene(d));
+
+  // The hero points when something has just been retired.
+  const hero = document.querySelector('.hero');
+  if (hero) hero.classList.toggle('point', (d.retired_today || 0) > lastRetired);
+  if ((d.retired_today || 0) > lastRetired) say(pick(QUIPS[current]));
+  lastRetired = d.retired_today || 0;
 
   const tally = el('tally');
   tally.innerHTML = '';
@@ -249,6 +443,14 @@ async function poll() {
   }
 }
 poll(); setInterval(poll, POLL_MS);
+showScene(current);
+setInterval(() => {
+  if (forced) return;
+  const next = current === 'breakroom' ? 'breakroom'
+             : SCENES[(SCENES.indexOf(current) + 1) % 2];   // street <-> rooftop
+  showScene(next);
+}, CYCLE_MS);
+setInterval(() => { if (Math.random() < .5) say(pick(QUIPS[current])); }, 47000);
 </script>
 </body>
 </html>

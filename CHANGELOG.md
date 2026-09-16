@@ -3,6 +3,10 @@
 ## Unreleased
 
 ### Added
+- Three scenes on the status page — a rain-lit street, a rooftop under a signal, and a break
+  room the crew occupies when the queue is empty — with deadpan one-liners and a figure that
+  points when something is retired. The idle scene is the point: a crew with nothing to do
+  should look like one from across the room.
 - A status page: one self-contained HTML file, no build and no dependencies, that polls a
   `status.json` beside it. `scripts/claudrunner-status.sh` generates that file from the
   repository's own run records. When the feed is unreachable the page simulates and says so,
