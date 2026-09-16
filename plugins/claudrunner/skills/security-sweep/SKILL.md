@@ -44,6 +44,18 @@ deliberately.
 **Dependencies.** New dependencies in the diff: who publishes it, how many releases, and
 whether it does what its name says.
 
+## Enumerate before you report
+
+Find **every** vulnerability in the scope before writing anything. A handler with an
+injection usually also has a missing ownership check, and the injection is the one that is
+easy to see. Stopping at the first finding is the most common way a security pass misses the
+breach that actually happens.
+
+Work the categories above in order and answer each one, even when an earlier one already
+found something. Then report all of them.
+
+"One finding per card" means one card **each**, not one card in total.
+
 ## Reporting
 
 Use the `card-format` skill. For each finding add:

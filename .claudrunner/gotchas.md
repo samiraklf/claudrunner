@@ -51,3 +51,13 @@ the same plugin. One run cannot tell a miss from a flake. Trigger cases need at 
 four lines of code unaided, so the case proved nothing about this package until it also
 required reachability and the absence of a working exploit.
 
+## A skill can make the answer worse than no skill
+
+`trigger-security-sweep` scored 0.25 with the plugin against 1.00 without it. Following the
+sweep skill, the crew filed a card for the SQL injection and never mentioned the missing
+ownership check; unaided, it listed both. "One finding per card" was being read as "one
+finding, then stop".
+
+An ablation arm is the only way this is visible. A suite that only runs the with-plugin arm
+would have shown a passing security skill.
+
