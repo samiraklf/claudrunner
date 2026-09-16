@@ -72,7 +72,7 @@ add `?slow=4` to watch every beat at a quarter speed.
 ## Sprint and Scope Creep, in the maze
 
 Once a minute in the maze, the ground shakes and the gate doors start to close. **Sprint** — a
-round, very out-of-shape jogger in an *I ♥ AGILE* shirt that lost the argument with his gut —
+round, very out-of-shape jogger in a **404: CARDIO NOT FOUND** shirt that lost the argument with his gut —
 jogs out of the gate reading his map: *"JUST A LIGHT JOG. CHECKING THE MAP."*
 
 He stops. Something is behind him. He turns round. **Scope Creep** crawls out of the gate.

@@ -1694,10 +1694,18 @@ const SPRINT = `
     <ellipse cx="6" cy="-74" rx="34" ry="32" fill="#e8543f" stroke="var(--ink)" stroke-width="3"/>
     <ellipse cx="9" cy="-47" rx="24" ry="9" fill="#f1c27d" stroke="var(--ink)" stroke-width="2.5"/>
     <circle cx="12" cy="-47" r="2" fill="#b5834a"/>
-    <text class="txt-r" x="6" y="-70" text-anchor="middle" font-size="8" font-weight="700"
-          font-family="var(--mono)" fill="#ffffff">I ♥ AGILE</text>
-    <text class="txt-l" x="6" y="-70" text-anchor="middle" font-size="8" font-weight="700"
-          font-family="var(--mono)" fill="#ffffff" transform="translate(12,0) scale(-1,1)">I ♥ AGILE</text>
+    <g class="txt-r">
+      <text x="6" y="-76" text-anchor="middle" font-size="13" font-weight="700"
+            font-family="var(--mono)" fill="#ffffff">404</text>
+      <text x="6" y="-66" text-anchor="middle" font-size="5.6" font-weight="700"
+            font-family="var(--mono)" fill="#ffffff" letter-spacing=".3">CARDIO NOT FOUND</text>
+    </g>
+    <g class="txt-l" transform="translate(12,0) scale(-1,1)">
+      <text x="6" y="-76" text-anchor="middle" font-size="13" font-weight="700"
+            font-family="var(--mono)" fill="#ffffff">404</text>
+      <text x="6" y="-66" text-anchor="middle" font-size="5.6" font-weight="700"
+            font-family="var(--mono)" fill="#ffffff" letter-spacing=".3">CARDIO NOT FOUND</text>
+    </g>
   </g>
   <!-- arms: swinging while jogging, flailing when it goes wrong -->
   <g class="arms-run">
@@ -1768,7 +1776,8 @@ WHO.sprint = { name: 'Sprint', role: 'runner · maps the maze · always late', t
   'day 47. the maze changed again. so did the requirements.',
   'i ran twelve miles today. the ticket is still in progress.',
   'every night the walls move. every morning the estimate doubles.',
-  'the map is up to date. as of four minutes ago.' ] };
+  'the map is up to date. as of four minutes ago.',
+  'my shirt is not a joke. it is a status report.' ] };
 WHO.creep = { name: 'Scope Creep', role: 'lives in the maze · follows every project', thoughts: [
   'i am not a monster. i am a small change.',
   'while you are in there, could you also—',
