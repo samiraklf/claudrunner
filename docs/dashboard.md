@@ -69,6 +69,15 @@ something steaming on the pavement. He walks off without looking back. A masked 
 in on a line, webs it, and carries it off into the sky. Press **P** to see it on demand, or
 add `?slow=4` to watch every beat at a quarter speed.
 
+## Crawler, saviour of the city
+
+Crawler patrols the skyline to protect the city from its own code, and often announces
+himself on the way in:
+
+> FEAR NOT, CITIZENS! NO FRIDAY DEPLOYS ON MY WATCH!
+> STAND BACK! THAT CODE HAS NO TESTS!
+> CITIZEN, PUT DOWN THAT CONSOLE.LOG. SLOWLY.
+
 ## Hover to meet them
 
 Hover over a character to see its name, who it is, and what it is thinking right now. The
@@ -76,10 +85,10 @@ thought changes every time.
 
 | | Who | Thinking, for example |
 |---|---|---|
-| **Stash** | the city dog · leaves things behind | *i did not do it. nobody saw me do it.* |
-| **Sandbox** | the beach dog · fetches everything, returns nothing | *i buried a bone next to the production database.* |
-| **Crawler** | friendly neighbourhood web crawler | *with great recursion comes great stack overflow.* |
-| **Nitpick** | the review pass · trusts nobody | *green tests are exactly what a bug would want me to see.* |
+| **Stash** | the city dog · leaves things behind | *i did not do it. i was framed by a pigeon.* |
+| **Sandbox** | the beach dog · fetches everything, returns nothing | *the crab owes me money.* |
+| **Crawler** | saviour of the city · protects you from your own code | *tonight i hunt the most dangerous villain of all: works on my machine.* |
+| **Nitpick** | the review pass · trusts nobody | *nit: this whole feature.* |
 
 They say something over their own heads while they do it:
 

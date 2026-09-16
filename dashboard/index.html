@@ -948,31 +948,48 @@ function idleRobot(x, flip) {
 // Everyone you can hover: a name, who they are, and what is on their mind right now.
 const WHO = {
   stash: { name: 'Stash', role: 'good boy · leaves things behind', thoughts: [
-    'i did not do it. nobody saw me do it.',
-    'that robot has been hammering for an hour. respect.',
-    'is the car a friend.',
-    'git stash. git stash pop. that one is my favourite.',
-    'i can hear the build failing from here.' ] },
+    'i did not do it. i was framed by a pigeon.',
+    'i sniffed the whole codebase. something smells in /utils.',
+    'the swinging man keeps taking my work. i feel unappreciated.',
+    'i know one command: sit. i have never run it.',
+    'good boy is a state of mind, not a test result.',
+    'git stash. git stash pop. git stash… where did i leave it.' ] },
   sandbox: { name: 'Sandbox', role: 'fetches everything, returns nothing', thoughts: [
-    'ball. BALL. where did the ball go.',
-    'the crab and i have an understanding.',
-    'nothing leaves the sandbox. that is the rule.',
-    'i buried a bone next to the production database.' ] },
-  crawler: { name: 'Crawler', role: 'friendly neighbourhood web crawler', thoughts: [
-    'i index everything. i understand nothing.',
-    'with great recursion comes great stack overflow.',
-    'i respect robots.txt. mostly.',
-    '404: responsibility not found.',
-    'that dog again. every single minute.',
-    'i was promised a sitemap.' ] },
+    'i buried a bone next to the production database. do not look.',
+    'the crab owes me money.',
+    'ball. BALL. where did the ball go. oh. it is in my mouth.',
+    'nothing leaves the sandbox. especially not the ball.',
+    'i dug to the bottom of the stack trace. it was more sand.' ] },
+  crawler: { name: 'Crawler', role: 'saviour of the city · protects you from your own code', thoughts: [
+    'fear not, citizens. i have come to save you from the friday deploy.',
+    'somewhere in this city, a developer just typed "quick fix". i must hurry.',
+    'my spider-sense is tingling. someone committed straight to main.',
+    'i swing between these buildings so you never have to read that regex.',
+    'tonight i hunt the most dangerous villain of all: works on my machine.',
+    'the city sleeps. the N+1 query does not.',
+    'i caught 400 bugs today. one was a real spider. we do not talk about it.',
+    'they call me a hero. i just really, really hate merge conflicts.' ] },
   nitpick: { name: 'Nitpick', role: 'the review pass · trusts nobody', thoughts: [
-    'LGTM. just kidding. 14 comments.',
-    'green tests are exactly what a bug would want me to see.',
-    'this diff is three lines. i have concerns about all three.',
-    'have you considered… a second pass?',
-    'i found a race condition. it was me, racing to find it.',
-    'approved. with nine nits. and one P1.' ] }
+    'LGTM. just kidding. i have 47 comments and a diagram.',
+    'your tests pass. that is exactly what a bug would want.',
+    'i left a comment on my own comment. it needed context.',
+    'i am not saying it is wrong. i am saying i am worried about it.',
+    'nit: this whole feature.',
+    'i approved a pull request once. i still think about it at night.',
+    'a three-line diff. my favourite. so much room for concern.' ] }
 };
+
+// What Crawler shouts as he swings over the city. Somebody has to protect us from ourselves.
+const SWING_SHOUTS = [
+  'FEAR NOT, CITIZENS! NO FRIDAY DEPLOYS ON MY WATCH!',
+  'STAND BACK! THAT CODE HAS NO TESTS!',
+  'NOT TODAY, TECHNICAL DEBT!',
+  'EVERYONE STAY CALM. IT IS ONLY A MERGE CONFLICT.',
+  'I SMELL AN UNBOUNDED QUERY. THIS WAY!',
+  'TO THE ROOFTOPS! SOMEONE FORCE-PUSHED!',
+  'CITIZEN, PUT DOWN THAT CONSOLE.LOG. SLOWLY.',
+  'I WILL SAVE THIS CITY FROM ITS OWN README!'
+];
 
 // A companion per scene. The dog is the important one.
 const COMPANION = {
@@ -1347,7 +1364,7 @@ const SPIDEY = `<g class="body">
 let gagRunning = false;
 async function poopGag() {
   const root = document.documentElement;
-  if (gagRunning || root.dataset.scene !== 'city') return;
+  if (gagRunning || root.dataset.scene !== 'city' || document.hidden) return;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const pet = document.querySelector('#crew .pet');
   if (!pet) return;
@@ -1384,7 +1401,7 @@ async function poopGag() {
     await tween(320, t => dog(DX, lerp(1.08, 1, t), lerp(.8, 1.06, t)), E.out);
     await tween(420, (t, raw) => dog(DX, 1, 1, Math.sin(raw * Math.PI) * 26), E.lin);
     if (inner) inner.style.animation = '';
-    say('STASH WOULD LIKE IT ON RECORD THAT THIS WAS NOT HIM.');
+    say(pick(['STASH WOULD LIKE IT ON RECORD THAT THIS WAS NOT HIM.', 'STASH HAS LEFT A FEATURE REQUEST.', 'STASH IS DEPLOYING TO THE PAVEMENT.']));
     const dogLeaves = tween(3400, t => dog(lerp(DX, 1740, t)), E.lin);
 
     await wait(700);
@@ -1412,7 +1429,7 @@ async function poopGag() {
     layer.appendChild(splat);
     await tween(300, t => { splat.setAttribute('transform', `translate(${PX},${Y - 16}) scale(${.4 + t})`); splat.setAttribute('opacity', 1 - t); }, E.out);
     splat.remove();
-    say('GOT IT. YOU ARE WELCOME, CITY.');
+    say(pick(['ANOTHER THREAT CLEARED. YOU ARE WELCOME, CITY.', 'THE STREETS ARE SAFE. FOR NOW.', 'NOT ON MY PAVEMENT.']));
     await wait(380);
 
     // 8. the yank: up, away, cargo swinging on the web below
@@ -1440,6 +1457,14 @@ async function poopGag() {
 }
 
 addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') poopGag(); });
+
+// Each time Crawler starts a new swing across the city, he may announce himself.
+document.querySelector('.swinger')?.addEventListener('animationiteration', e => {
+  if (e.animationName !== 'swingby') return;
+  const root = document.documentElement;
+  if (root.dataset.scene !== 'city' || root.dataset.gag === '1') return;
+  if (Math.random() < .6) setTimeout(() => say(pick(SWING_SHOUTS)), 1400);
+});
 
 // Hover anyone with a name to see who they are and what they are thinking. The tag follows
 // the pointer, since none of them stand still, and the thought changes on every new hover.
