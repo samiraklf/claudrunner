@@ -1,17 +1,9 @@
 # What it costs to run
 
 **claudrunner is free.** MIT licensed, no account, no sign-up, no telemetry, no paid tier.
-Nobody is billing you for this package, and it has no way to.
 
-What it uses is your own agent usage, exactly as if you had typed the work yourself. Running
-it by hand draws on the plan you already have. Only a scheduled run needs its own
-credential, because a machine cannot use your interactive session; whether that is an API
-key or a subscription credential your plan allows is between you and your provider.
-claudrunner never sees it, stores it, or sends it anywhere. CI minutes are your git host's
-business, free on public repositories and metered on private ones.
-
-An agent that works while you sleep uses your allowance while you sleep. Read the rest of
-this page before you schedule anything.
+It uses your own agent usage, exactly as if you had typed the work yourself. To use less,
+run the sweep weekly instead of nightly and poll the board less often.
 
 ## What drives the usage
 

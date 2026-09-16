@@ -147,16 +147,8 @@ It writes a config and a schedule. Nothing runs until you say so.
 **claudrunner is free.** MIT licensed, no account, no sign-up, no telemetry, no paid tier,
 and nothing is sold to you here.
 
-What it uses is your own agent usage, exactly as if you had typed the work yourself. Running
-it by hand costs nothing beyond the plan you already have. Only a scheduled run needs its
-own credential, because a machine cannot use your interactive session — and whether that is
-an API key or a subscription credential is between you and your provider. claudrunner never
-sees it, stores it, or sends it anywhere.
-
-An agent that works while you sleep uses your allowance while you sleep, so
-[measure one cycle](docs/cost.md) before you schedule anything. Polling less often, sweeping
-weekly instead of nightly, and keeping the diff ceiling low all cost far less than they
-sound like they would.
+It uses your own agent usage, exactly as if you had typed the work yourself. To use less,
+run the sweep weekly instead of nightly and poll the board less often.
 
 ## Documentation
 
