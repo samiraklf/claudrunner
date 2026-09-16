@@ -32,19 +32,33 @@ Any language. Any stack. Any task board. No server required.
 Every card carries the file, the line, the quoted code, the measured impact and a proposed
 fix. A finding it cannot anchor in your code does not get filed.
 
-## Requirements
+## What you need
 
-| | Required? | Notes |
+| Required | Why | Note |
 |---|---|---|
-| Claude Code | **Yes** | The only hard dependency |
-| A git repository | **Yes** | GitHub for the default schedule |
-| `jq` | For scheduled runs | Already on every CI runner |
-| API key | For scheduled runs | Not needed to run it by hand in your own session |
-| Node.js | No | Installed by the CI template, not by you |
-| Docker | No | Optional, for isolation on a machine you care about |
-| A server | No | The default schedule uses your CI runner |
-| A task board | Optional | The sweep works without one |
-| A second model CLI | Optional | Adds a cross-vendor reviewer |
+| **Claude Code** | The crew ships as a plugin for it | The only hard dependency |
+| **A git repository** | It works in branches and pull requests | GitHub for the default schedule |
+| **`jq`** | Reads the config and the agent's run summary | Already on every CI runner |
+| **An API key** | Only for runs on a schedule | Running by hand uses your own session |
+
+## What is supported but optional
+
+| | Supported | What it adds | What happens without it |
+|---|---|---|---|
+| **Docker / Podman** | ✅ | Runs tests inside a container, on machines you care about | Tests run directly — which is correct on a CI runner, since it is destroyed after the job |
+| **Your own server** | ✅ systemd lanes | Many repositories in parallel, no CI minutes, full control | CI cron runs it instead. No machine to maintain |
+| **A task board** | ✅ 4 boards | The fast loop: work gets picked up on its own | The sweep still runs and writes its findings to files |
+| **A second model CLI** | ✅ any read-only CLI | A reviewer from a different vendor on the same diff | One fresh-context reviewer, which is already the main gate |
+| **Node.js** | ✅ | Nothing you do — the CI template installs the agent with it | Nothing. You never install it yourself |
+| **A monorepo** | ✅ | `code_dir` points the crew at one directory | — |
+
+## Not yet
+
+| | Status |
+|---|---|
+| GitLab, Bitbucket, self-hosted git | The git flow is host-agnostic; the pull-request step is not. Planned |
+| Windows runners | Untested. The orchestrator is POSIX shell |
+| Multiple repositories from one board | Works, but each repository needs its own lane and its own label |
 
 ## Stacks
 
