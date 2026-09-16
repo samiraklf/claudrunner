@@ -145,24 +145,18 @@ It writes a config and a schedule. Nothing runs until you say so.
 ## What it costs to run
 
 **claudrunner is free.** MIT licensed, no account, no sign-up, no telemetry, no paid tier,
-and nothing is sold to you here. It is a set of instructions and small shell scripts.
+and nothing is sold to you here.
 
-What it consumes is your own agent usage, exactly as if you had typed the work yourself.
+What it uses is your own agent usage, exactly as if you had typed the work yourself. Running
+it by hand costs nothing beyond the plan you already have. Only a scheduled run needs its
+own credential, because a machine cannot use your interactive session — and whether that is
+an API key or a subscription credential is between you and your provider. claudrunner never
+sees it, stores it, or sends it anywhere.
 
-| | Who this is between | Free? |
-|---|---|---|
-| claudrunner itself | Nobody. It is MIT on GitHub | ✅ Always |
-| Running it by hand in your session | You and your existing Claude plan | ✅ Uses the allowance you already pay for |
-| Running it on a schedule | You and Anthropic, through the credential you give your CI | ➖ Usage-based, on your own plan or key |
-| CI minutes | You and your git host | ✅ Free on public repos · quota on private |
-
-A scheduled run is the only part that needs its own credential, because a machine cannot
-use your interactive session. Which one you use — an API key, or a subscription credential
-where your plan allows it — is between you and your provider. claudrunner never sees it.
-
-**Keeping it small:** poll less often, sweep weekly instead of nightly, write specific
-items, and keep the diff ceiling low. [docs/cost.md](docs/cost.md) shows how to measure one
-cycle before you schedule anything, so you are never surprised.
+An agent that works while you sleep uses your allowance while you sleep, so
+[measure one cycle](docs/cost.md) before you schedule anything. Polling less often, sweeping
+weekly instead of nightly, and keeping the diff ceiling low all cost far less than they
+sound like they would.
 
 ## Documentation
 

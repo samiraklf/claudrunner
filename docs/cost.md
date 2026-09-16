@@ -3,21 +3,15 @@
 **claudrunner is free.** MIT licensed, no account, no sign-up, no telemetry, no paid tier.
 Nobody is billing you for this package, and it has no way to.
 
-What it consumes is your own agent usage, exactly as if you had typed the work yourself. An
-agent that works while you sleep uses your allowance while you sleep, so read this before
-you schedule anything.
+What it uses is your own agent usage, exactly as if you had typed the work yourself. Running
+it by hand draws on the plan you already have. Only a scheduled run needs its own
+credential, because a machine cannot use your interactive session; whether that is an API
+key or a subscription credential your plan allows is between you and your provider.
+claudrunner never sees it, stores it, or sends it anywhere. CI minutes are your git host's
+business, free on public repositories and metered on private ones.
 
-| | Who this is between | Free? |
-|---|---|---|
-| claudrunner | Nobody | ✅ Always |
-| Running it by hand | You and your existing plan | ✅ The allowance you already pay for |
-| Running it on a schedule | You and your provider, via the credential in your CI | ➖ Usage-based |
-| CI minutes | You and your git host | ✅ Free on public repos · quota on private |
-
-A scheduled run is the only part needing its own credential: a machine cannot use your
-interactive session. Whether that is an API key or a subscription credential your plan
-allows is between you and your provider. claudrunner never sees it, stores it, or sends it
-anywhere.
+An agent that works while you sleep uses your allowance while you sleep. Read the rest of
+this page before you schedule anything.
 
 ## What drives the usage
 
