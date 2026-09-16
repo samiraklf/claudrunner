@@ -41,7 +41,10 @@ board_fetch() {
 board_claim() {
   local id="$1" me
   me=$(az account show --output json 2>/dev/null | jq -r '.user.name')
-  [ -n "$me" ] && [ "$me" != "null" ] || { echo "cannot resolve the runner identity from az" >&2; return 1; }
+  if [ -z "$me" ] || [ "$me" = "null" ]; then
+    echo "cannot resolve the runner identity from az" >&2
+    return 1
+  fi
   _az work-item update --id "$id" --assigned-to "$me" --state "$(cr_get '.board.queues.claimed' '')" >/dev/null || return 1
   [ "$(_az work-item show --id "$id" | jq -r '.fields["System.AssignedTo"].uniqueName // ""')" = "$me" ] \
     || { echo "claim contested on $id" >&2; return 1; }

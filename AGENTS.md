@@ -41,11 +41,15 @@ per concept. This text is parsed by agents as often as by people.
 ## Before you commit
 
 ```bash
-./scripts/selftest.sh        # manifests, front matter, shell syntax, leak check
-./scripts/validate-config.sh # the dogfood config still parses
+./scripts/lint.sh
 ```
 
-Both run in CI. Neither needs a dependency beyond `jq`.
+It runs exactly what CI runs — the self test, the config check, the leak check, and
+shellcheck at the version CI pins — and fails if your shellcheck is a different release,
+because releases disagree about what passes. Do not commit until it prints `lint passed`.
+
+After pushing, check the run: `gh run list --limit 3`. A red run is fixed before the next
+commit, never after twenty more.
 
 When you change a skill or its description, also run the eval suite. It costs real money, so
 it is not in CI:
