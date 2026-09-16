@@ -40,14 +40,28 @@ characters is a wallpaper, not a status page.
 Three, on the **SCENE** button. The crew, their benches and the progress cards are the same
 in all of them; only the world changes.
 
-| Scene | |
-|---|---|
-| 🌆 **City** | Skyline, traffic, a plane. Lit windows at night |
-| 🏝 **Beach** | Sea, moving waves, palms, one parasol |
-| 🌑 **Space** | A ringed planet, a passing satellite, craters underfoot |
+Four, on the **SCENE** button. The crew changes with the world — different uniform,
+different animal, different jokes.
 
-Each works in day and night, and your choice is remembered. `?scene=city|beach|space` pins
-one.
+| Scene | The world | The crew | Who follows them |
+|---|---|---|---|
+| 🌆 **City** | Skyline, traffic, a plane, a neon sign, a street lamp | Hard hats | A pigeon |
+| 🏝 **Beach** | Sea with surf, palms, parasol, a bouncing ball | Sunglasses and swim rings | **A dog**, tail going |
+| 🌑 **Space** | Ringed planet, Earth, a launching rocket, a flag | Helmets and life support | A hovering drone |
+| 🧱 **Maze** | Stone corridors, ivy, a shaft of light, something at the far end | Hoods and satchels | A lizard |
+
+Each works in day and night, and your choice is remembered.
+`?scene=city|beach|space|maze` pins one.
+
+## They do things
+
+Every few seconds a robot jumps, spins, shrugs, or falls flat on its back and gets up, and
+says something over its own head:
+
+> this test was green yesterday.
+> who wrote this? …oh.
+> that is not a number, that is a vibe.
+> someone left a TODO here in 2019.
 
 ## The task list is hidden
 
