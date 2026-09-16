@@ -4,6 +4,7 @@ version: 1
 project:
   name: claudrunner
   base_branch: main
+  host: github            # github | gitlab | bitbucket | azure-repos
   code_dir: .
 
 stack:

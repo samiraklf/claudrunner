@@ -44,6 +44,9 @@ done
 for d in adapters/*/; do
   check "$d" test -f "$d/ADAPTER.md"
 done
+for d in hosts/*/; do
+  check "$d" test -f "$d/HOST.md"
+done
 
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then

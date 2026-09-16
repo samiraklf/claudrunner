@@ -56,7 +56,7 @@ fix. A finding it cannot anchor in your code does not get filed.
 
 | | Status |
 |---|---|
-| GitLab, Bitbucket, Azure Repos as the **pull request** host | The git flow is host-agnostic; the pull-request step is written for GitHub. Planned |
+| Bitbucket Data Center, Gitea, self-hosted Forgejo | A different API from the shipped hosts. Planned |
 | Windows runners | Untested. The orchestrator is POSIX shell |
 | Multiple repositories from one board | Works, but each repository needs its own lane and its own label |
 
@@ -72,13 +72,28 @@ found, and asks you to confirm. Your project's commands always win over a pack's
 
 ## Task boards
 
-| Board | Queues are | Claim is atomic | Status |
-|---|---|---|---|
-| GitHub Issues | labels | No — re-read guard | ✅ Supported, shell-orchestrated |
-| Trello | lists | No — re-read guard | ✅ Supported, agent-side |
-| Jira | workflow statuses | Yes, via assignee | ✅ Supported, agent-side |
-| Linear | workflow states | Yes, via assignee | ✅ Supported, agent-side |
-| None | — | — | ✅ Sweep only, reports to files |
+Eleven, covering what teams actually use. A board is four verbs — fetch, claim, comment,
+move — so adding yours takes an afternoon.
+
+| Board | Queues are | Claiming |
+|---|---|---|
+| **GitHub Issues** · **GitLab Issues** | labels | Guarded re-read |
+| **Jira** · **Linear** · **Shortcut** · **Azure Boards** | workflow states | Atomic, via assignee |
+| **Asana** · **ClickUp** · **monday.com** · **Notion** | sections, statuses, columns | Atomic, one write |
+| **Trello** | lists | Guarded re-read |
+| **None** | — | Sweep only, findings written to files |
+
+## Code hosts
+
+Where the branch lands and the change gets proposed. A separate choice from the board —
+plenty of teams split them.
+
+| Host | The change is called | Uses |
+|---|---|---|
+| **GitHub** · GitHub Enterprise | pull request | `gh` |
+| **GitLab** · self-managed | merge request | `glab` |
+| **Azure Repos** | pull request | `az repos` |
+| **Bitbucket Cloud** | pull request | REST |
 
 ## Schedules
 
@@ -162,6 +177,7 @@ run the sweep weekly instead of nightly and poll the board less often.
 | [Security model](docs/security.md) | Before letting it run unattended |
 | [Write a stack pack](docs/writing-a-pack.md) | Your stack is not listed |
 | [Write a board adapter](docs/writing-an-adapter.md) | Your board is not listed |
+| [Write a code host](docs/writing-a-host.md) | Your git host is not listed |
 
 ## License
 

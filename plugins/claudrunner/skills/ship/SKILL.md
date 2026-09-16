@@ -23,6 +23,11 @@ Read `autonomy` from `.claudrunner/config.yml`:
 
 **Never push to the default branch at any level. Never merge. Never force-push.**
 
+The three host-specific steps — push, propose the change, return its link — are defined by
+`project.host`. Read that host's `HOST.md` before proposing: on GitLab the change is a merge
+request, and on Azure Repos it can carry its work-item link directly. Everything before the
+push is plain git and identical everywhere.
+
 ## 3 — The pull request body
 
 Five sections. No more.

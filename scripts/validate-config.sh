@@ -35,6 +35,15 @@ if [ -n "$base" ]; then
   [ "$(cr_get '.policy.push_branch' '')" = "$base" ] && err "policy.push_branch must never equal project.base_branch"
 fi
 
+host=$(cr_get '.project.host' 'github')
+case "$host" in
+  github|gitlab|bitbucket|azure-repos) ;;
+  *) err "project.host must be github, gitlab, bitbucket or azure-repos (got '$host')" ;;
+esac
+if [ "$autonomy" = "pr-only" ] && [ ! -f "hosts/$host/HOST.md" ] && [ ! -d "$HOME/.claude/plugins" ]; then
+  warn "no host definition found for '$host'"
+fi
+
 filtered=$(cr_get '.stack.commands.test_filter' '')
 if [ -n "$filtered" ]; then
   case "$filtered" in *"{filter}"*) ;; *) err "stack.commands.test_filter must contain {filter}" ;; esac

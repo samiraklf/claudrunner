@@ -8,6 +8,7 @@ version: 1
 project:
   name: acme-api
   base_branch: main          # what pull requests target; never pushed to directly
+  host: github               # github | gitlab | bitbucket | azure-repos
   code_dir: .                # for a monorepo, the directory this crew owns
 
 stack:
@@ -69,6 +70,9 @@ review:
 **`base_branch`** — not necessarily the repository's default branch. Many projects
 integrate on a branch that is not what GitHub shows as default. Set it explicitly; the crew
 never resolves it from `HEAD`.
+
+**`project.host`** — where the branch is pushed and the change proposed. Independent of
+your board: code on GitHub with work items in Jira is a normal combination.
 
 **`executor.mode`** — `direct` is correct on a CI runner, which is already disposable.
 Choose `container` when runs happen on a machine you care about.
