@@ -11,7 +11,7 @@ stack:
   commands:
     test: "./scripts/selftest.sh"
     test_filter: "./scripts/selftest.sh {filter}"
-    lint: "shellcheck scripts/*.sh scripts/lib/*.sh templates/cron/*.sh"
+    lint: "shellcheck -x scripts/*.sh scripts/lib/*.sh templates/cron/*.sh"
     format: ""
     build: ""
 

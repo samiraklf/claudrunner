@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source-path=SCRIPTDIR
 # The orchestrator. It holds every piece of power the agent does not get:
 # fetching the work, claiming it, preparing the branch, and moving items afterwards.
 #
@@ -34,6 +35,7 @@ mkdir -p "$run_dir"
 exec 9>"${TMPDIR:-/tmp}/claudrunner-$mode.lock"
 flock -n 9 || { echo "a $mode run is already active — skipping"; exit 0; }
 
+# shellcheck source=lib/board-github.sh
 case "$adapter" in
   github-issues) source "$here/lib/board-github.sh" ;;
   none) [ "$mode" = "sweep" ] || { echo "triage needs a board adapter"; exit 2; } ;;

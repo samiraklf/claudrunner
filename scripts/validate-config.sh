@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source-path=SCRIPTDIR
 # Check .claudrunner/config.yml before anything runs on a schedule.
 # Catches the misconfigurations that otherwise surface as a silent nightly no-op.
 set -uo pipefail
