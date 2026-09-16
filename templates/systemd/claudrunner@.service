@@ -1,0 +1,29 @@
+# One lane per repository: systemctl start claudrunner@<name>.service
+# Config for each lane lives in /etc/claudrunner/<name>.conf
+[Unit]
+Description=claudrunner lane %i
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=claudrunner
+EnvironmentFile=/etc/claudrunner/%i.conf
+RuntimeDirectory=claudrunner
+WorkingDirectory=/var/lib/claudrunner/%i
+
+# flock: a second start for the same lane exits instead of entering a live working tree.
+ExecStart=/usr/bin/flock -n /run/claudrunner/%i.lock /usr/local/bin/claudrunner.sh triage
+
+# Containers started by tests live outside this cgroup. Without this, a run killed at the
+# timeout leaves the test stack running and eating memory until somebody notices.
+ExecStopPost=-/usr/local/bin/claudrunner-teardown %i
+
+TimeoutStartSec=3300
+TimeoutStopSec=60
+PrivateTmp=yes
+NoNewPrivileges=yes
+ReadWritePaths=/var/lib/claudrunner /var/log/claudrunner
+
+[Install]
+WantedBy=multi-user.target

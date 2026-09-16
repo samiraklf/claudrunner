@@ -1,0 +1,10 @@
+[Unit]
+Description=claudrunner slow loop
+
+[Timer]
+# A working hour on purpose: a failure lands when somebody is around to read it.
+OnCalendar=Mon..Fri 07:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

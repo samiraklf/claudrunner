@@ -1,0 +1,53 @@
+# Fast loop: take ready work off the board and open a pull request.
+# Copied and filled in by /claudrunner:init.
+name: claudrunner triage
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # every 10 minutes; raise this if the board is quiet
+  workflow_dispatch:
+
+concurrency:
+  group: claudrunner-triage
+  cancel-in-progress: false   # never interrupt a run mid-change
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ vars.CLAUDRUNNER_BASE_BRANCH || github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      # Replace with your project's own setup step. init fills this in from the pack.
+      - name: Set up the project
+        run: echo "install dependencies here"
+
+      - name: Install the agent
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run one triage cycle
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          claude -p "/claudrunner:triage" \
+            --permission-mode acceptEdits \
+            --max-turns 150 \
+            --output-format json > run.json
+          jq -e '.is_error == false' run.json
+
+      - name: Keep the run log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudrunner-run
+          path: run.json
+          retention-days: 14
