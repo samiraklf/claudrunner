@@ -35,6 +35,14 @@ board:
     parked: "claudrunner:needs-input"
     filed: "claudrunner:finding"
 
+  # Adapter-specific settings. Only the keys your adapter needs.
+  #   trello        settings.lists.<role> (list ids), settings.claim_label_id
+  #   linear        settings.states.<role> (workflow state ids)
+  #   jira          settings.project or settings.jql, settings.transitions.<role>
+  #   azure-boards  settings.organization, settings.project, settings.area_path
+  #   gitlab-issues settings.project (path or id)
+  settings: {}
+
 loops:
   fast:
     enabled: true
@@ -86,6 +94,20 @@ itself. It costs a second bill.
 
 **`limits.max_runs_per_week`** — a stop on spend, not on ambition. Set it before the first
 schedule, not after the first invoice.
+
+## Credentials, by adapter
+
+Never in this file. The orchestrator reads them from the environment, and the agent never
+sees them.
+
+| Adapter | Environment |
+|---|---|
+| `github-issues` | `GH_TOKEN` |
+| `gitlab-issues` | `GITLAB_TOKEN`, plus `GITLAB_HOST` when self-managed |
+| `jira` | `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN` |
+| `linear` | `LINEAR_API_KEY` |
+| `azure-boards` | `AZURE_DEVOPS_EXT_PAT` |
+| `trello` | `TRELLO_API_KEY`, `TRELLO_TOKEN` |
 
 ## Two files that are not config
 

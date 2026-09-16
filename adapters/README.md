@@ -21,15 +21,15 @@ Two rules apply to every adapter:
 | Adapter | Queues are | Claim is atomic | Orchestrated |
 |---|---|---|---|
 | `github-issues` | labels | No — re-read guard | Shell |
-| `gitlab-issues` | labels, or scoped labels | Scoped labels: yes | Agent-side |
-| `jira` | workflow statuses | Yes, via assignee | Agent-side |
-| `linear` | workflow states | Yes, via assignee | Agent-side |
-| `azure-boards` | work item states | Yes, via assignee | Agent-side |
+| `gitlab-issues` | labels, or scoped labels | Scoped labels: yes | Shell |
+| `jira` | workflow statuses | Yes, via assignee | Shell |
+| `linear` | workflow states | Yes, via assignee | Shell |
+| `azure-boards` | work item states | Yes, via assignee | Shell |
 | `shortcut` | workflow states | Yes, via owner | Agent-side |
 | `asana` | sections | Yes, via assignee | Agent-side |
 | `clickup` | statuses | Yes, one PUT | Agent-side |
 | `monday` | status column values | Yes, one mutation | Agent-side |
 | `notion` | select property values | Yes, one patch | Agent-side |
-| `trello` | lists | No — re-read guard | Agent-side |
+| `trello` | lists | No — re-read guard | Shell |
 
 See `docs/writing-an-adapter.md`.

@@ -27,3 +27,18 @@ Resolve state identifiers once at init and store them.
 
 - Priority is numeric, where 1 is urgent. Do not sort ascending by accident.
 - Sub-issues inherit context from their parent. Read the parent before judging size.
+
+## Running it from the orchestrator
+
+Shipped as `scripts/lib/board-linear.sh`, so the shell fetches, claims and moves. The agent
+never holds the board credential.
+
+| | |
+|---|---|
+| Credentials | `LINEAR_API_KEY` |
+| Config | `board.settings.states.<role>` — workflow state ids, resolved once at init |
+
+Set `board.adapter: linear` and map every queue role under `board.queues`.
+`scripts/validate-config.sh` fails when a required setting is missing, so a half-configured
+board is caught before the first scheduled run rather than at two in the morning.
+

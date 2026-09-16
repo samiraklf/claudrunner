@@ -75,13 +75,16 @@ found, and asks you to confirm. Your project's commands always win over a pack's
 Eleven, covering what teams actually use. A board is four verbs — fetch, claim, comment,
 move — so adding yours takes an afternoon.
 
-| Board | Queues are | Claiming |
-|---|---|---|
-| **GitHub Issues** · **GitLab Issues** | labels | Guarded re-read |
-| **Jira** · **Linear** · **Shortcut** · **Azure Boards** | workflow states | Atomic, via assignee |
-| **Asana** · **ClickUp** · **monday.com** · **Notion** | sections, statuses, columns | Atomic, one write |
-| **Trello** | lists | Guarded re-read |
-| **None** | — | Sweep only, findings written to files |
+| Board | Queues are | Claiming | Runs from |
+|---|---|---|---|
+| **GitHub Issues** · **GitLab Issues** | labels | Guarded re-read | Orchestrator |
+| **Jira** · **Linear** · **Azure Boards** | workflow states | Atomic, via assignee | Orchestrator |
+| **Trello** | lists | Guarded re-read | Orchestrator |
+| **Shortcut** · **Asana** · **ClickUp** · **monday.com** · **Notion** | states, sections, columns | Atomic, one write | Agent |
+| **None** | — | — | Sweep only, findings to files |
+
+*Orchestrator* means the shell fetches, claims and moves, so the agent never holds the
+board credential. *Agent* means the same four verbs, driven from inside the run.
 
 ## Code hosts
 

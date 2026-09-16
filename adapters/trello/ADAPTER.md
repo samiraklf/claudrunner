@@ -32,3 +32,18 @@ lists get renamed.
   repository labels would be implemented twice. Detect that case, park the card with an
   explanation, and exclude it from the run.
 - Labels carry both severity and kind. Read them; do not infer severity from wording.
+
+## Running it from the orchestrator
+
+Shipped as `scripts/lib/board-trello.sh`, so the shell fetches, claims and moves. The agent
+never holds the board credential.
+
+| | |
+|---|---|
+| Credentials | `TRELLO_API_KEY`, `TRELLO_TOKEN` |
+| Config | `board.settings.lists.<role>` — list ids, and `board.settings.claim_label_id` |
+
+Set `board.adapter: trello` and map every queue role under `board.queues`.
+`scripts/validate-config.sh` fails when a required setting is missing, so a half-configured
+board is caught before the first scheduled run rather than at two in the morning.
+

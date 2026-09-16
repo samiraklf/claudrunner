@@ -48,6 +48,17 @@ for d in hosts/*/; do
   check "$d" test -f "$d/HOST.md"
 done
 
+echo "board bindings define all four verbs"
+for f in scripts/lib/board-*.sh; do
+  name=$(basename "$f" .sh); name=${name#board-}
+  missing=""
+  for verb in board_fetch board_claim board_comment board_move; do
+    grep -q "^$verb()" "$f" || missing="$missing $verb"
+  done
+  if [ -n "$missing" ]; then bad "$f is missing:$missing"; else ok "$f"; fi
+  check "adapters/$name documented" test -f "adapters/$name/ADAPTER.md"
+done
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in templates/github-actions/*.yml; do

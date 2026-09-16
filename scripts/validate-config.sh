@@ -51,9 +51,39 @@ else
   warn "no test_filter: every run pays for the full suite, which usually kills the time budget"
 fi
 
-if [ "$(cr_get '.board.adapter' 'none')" = "none" ] && [ "$(cr_get '.loops.fast.enabled' 'false')" = "true" ]; then
+adapter=$(cr_get '.board.adapter' 'none')
+if [ "$adapter" = "none" ] && [ "$(cr_get '.loops.fast.enabled' 'false')" = "true" ]; then
   err "the fast loop needs a board adapter"
 fi
+
+# Each queue role the orchestrator moves items into must be mapped.
+if [ "$adapter" != "none" ]; then
+  for role in ready claimed review parked; do
+    [ -n "$(cr_get ".board.queues.$role" '')" ] || err "board.queues.$role is not set"
+  done
+fi
+
+# Adapter-specific settings, checked by name so a half-configured board fails here rather
+# than at 02:00 with the queue silently empty.
+case "$adapter" in
+  trello)
+    for k in lists.ready lists.review lists.parked claim_label_id; do
+      [ -n "$(cr_get ".board.settings.$k" '')" ] || err "board.settings.$k is not set"
+    done ;;
+  linear)
+    for role in ready claimed review parked; do
+      [ -n "$(cr_get ".board.settings.states.$role" '')" ] || err "board.settings.states.$role is not set"
+    done ;;
+  jira)
+    [ -n "$(cr_get '.board.settings.jql' '')$(cr_get '.board.settings.project' '')" ] || err "jira needs board.settings.project or board.settings.jql"
+    for role in claimed review parked; do
+      [ -n "$(cr_get ".board.settings.transitions.$role" '')" ] || err "board.settings.transitions.$role is not set"
+    done ;;
+  azure-boards)
+    for k in organization project; do
+      [ -n "$(cr_get ".board.settings.$k" '')" ] || err "board.settings.$k is not set"
+    done ;;
+esac
 
 lines=$(cr_get '.policy.max_changed_lines' '600')
 [ "$lines" -gt 2000 ] 2>/dev/null && warn "max_changed_lines is $lines — diffs that size do not get reviewed properly"

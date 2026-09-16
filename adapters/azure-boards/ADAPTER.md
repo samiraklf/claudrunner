@@ -3,8 +3,6 @@
 For teams on Azure DevOps. Work items are the queue; the queue role is a **State** on the
 work item's board.
 
-Status: documented, agent-side. The shell orchestrator has no binding for it yet, so runs
-are driven from the agent rather than from `claudrunner-run.sh`.
 
 ## Queue mapping
 
@@ -41,3 +39,18 @@ The `az boards` CLI covers all four, and is usually easier than raw REST inside 
 - Azure DevOps hosts its own git and pull requests. The crew's git flow works there, but the
   pull-request step is written for GitHub. Until that is generalised, use this adapter with a
   repository hosted on GitHub, or set `policy.autonomy` to `suggest` or `push`.
+
+## Running it from the orchestrator
+
+Shipped as `scripts/lib/board-azure-boards.sh`, so the shell fetches, claims and moves. The agent
+never holds the board credential.
+
+| | |
+|---|---|
+| Credentials | `AZURE_DEVOPS_EXT_PAT`, and the `az` CLI with the devops extension |
+| Config | `board.settings.organization`, `board.settings.project`, and `board.settings.area_path` when one project feeds several repositories |
+
+Set `board.adapter: azure-boards` and map every queue role under `board.queues`.
+`scripts/validate-config.sh` fails when a required setting is missing, so a half-configured
+board is caught before the first scheduled run rather than at two in the morning.
+

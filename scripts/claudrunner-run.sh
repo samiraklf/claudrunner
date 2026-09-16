@@ -35,12 +35,20 @@ mkdir -p "$run_dir"
 exec 9>"${TMPDIR:-/tmp}/claudrunner-$mode.lock"
 flock -n 9 || { echo "a $mode run is already active — skipping"; exit 0; }
 
-# shellcheck source=lib/board-github.sh
-case "$adapter" in
-  github-issues) source "$here/lib/board-github.sh" ;;
-  none) [ "$mode" = "sweep" ] || { echo "triage needs a board adapter"; exit 2; } ;;
-  *) echo "adapter '$adapter' has no orchestrator binding yet; run it from the agent instead" >&2; exit 2 ;;
-esac
+binding="$here/lib/board-$adapter.sh"
+if [ "$adapter" = "none" ]; then
+  [ "$mode" = "sweep" ] || { echo "triage needs a board adapter" >&2; exit 2; }
+elif [ -f "$binding" ]; then
+  # shellcheck source=/dev/null
+  source "$binding"
+  for verb in board_fetch board_claim board_comment board_move; do
+    declare -F "$verb" >/dev/null || { echo "$binding does not define $verb" >&2; exit 2; }
+  done
+else
+  echo "adapter '$adapter' has no shell binding — see adapters/$adapter/ADAPTER.md and run it" >&2
+  echo "from the agent with /claudrunner:$mode instead." >&2
+  exit 2
+fi
 
 # ---------------------------------------------------------------- fetch and claim
 if [ "$mode" = "triage" ]; then
