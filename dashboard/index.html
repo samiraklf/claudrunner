@@ -149,7 +149,8 @@
   :root[data-scene="space"] .plane,
   :root[data-scene="space"] .car{display:none}
   :root[data-scene="space"] .stars{opacity:1}
-  #city-props,#city-fg,#city-road,#city-shop{display:none}
+  #city-props,#city-fg,#city-road,#city-shop,#maze-floor{display:none}
+  :root[data-scene="maze"] #maze-floor{display:block}
   :root[data-scene="city"] .car,
   :root[data-scene="city"] #city-road,
   :root[data-scene="city"] #city-shop,
@@ -291,9 +292,21 @@
   .scan-bar{animation:scanbar 1.4s ease-in-out infinite alternate}
   @keyframes scanbar{from{transform:translateY(0)}to{transform:translateY(96px)}}
 
+  /* the maze chase */
+  .runlegs .leg-a{animation:legA .26s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+  .runlegs .leg-b{animation:legA .26s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+  @keyframes legA{from{transform:rotate(-38deg)}to{transform:rotate(38deg)}}
+  .runlegs .arm-a{animation:legA .26s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+  .crawl .gl1,.crawl .gl3{animation:gleg .22s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+  .crawl .gl2,.crawl .gl4{animation:gleg .22s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+  @keyframes gleg{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+  .geye{filter:drop-shadow(0 0 6px var(--hazard))}
+  .shake{animation:shake .12s linear 8}
+  @keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
+
   /* the gag */
   [data-gag="1"] .swinger{display:none}
-  :root:not([data-scene="city"]) #gag{display:none}
+  :root:not([data-scene="city"]):not([data-scene="maze"]) #gag{display:none}
   .stk{animation:stk 1.5s ease-out infinite}
   @keyframes stk{0%{opacity:0;transform:translateY(6px)}30%{opacity:.95}100%{opacity:0;transform:translateY(-16px)}}
   .fly{animation:fly 1.1s linear infinite;transform-box:view-box}
@@ -448,7 +461,8 @@
 
     <!-- the far wall, with the gate cut into it -->
     <rect x="470" y="150" width="660" height="612" fill="var(--far)"/>
-    <g stroke="var(--near)" stroke-width="2" opacity=".45">
+    <rect x="470" y="150" width="660" height="612" fill="#000" opacity=".12"/>
+    <g stroke="var(--ink)" stroke-width="2" opacity=".3">
       <path d="M470,220 H1130 M470,290 H1130 M470,360 H1130 M470,430 H1130
                M470,500 H1130 M470,570 H1130 M470,640 H1130 M470,710 H1130"/>
       <path d="M580,150 V762 M690,150 V762 M910,150 V762 M1020,150 V762"/>
@@ -463,11 +477,26 @@
       <g stroke="var(--near)" stroke-width="6" opacity=".9">
         <path d="M770,762 V300 M800,762 V286 M830,762 V300"/>
       </g>
+      <g id="door-l" transform="translate(736,0) scale(0,1) translate(-736,0)">
+        <rect x="736" y="296" width="64" height="466" fill="#4a4f47" stroke="var(--ink)" stroke-width="3"/>
+        <path d="M750,316 v430 M774,316 v430" stroke="#6b7166" stroke-width="5"/>
+      </g>
+      <g id="door-r" transform="translate(864,0) scale(0,1) translate(-864,0)">
+        <rect x="800" y="296" width="64" height="466" fill="#4a4f47" stroke="var(--ink)" stroke-width="3"/>
+        <path d="M826,316 v430 M850,316 v430" stroke="#6b7166" stroke-width="5"/>
+      </g>
     </g>
 
+    <defs>
+      <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient>
+      <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="0">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient>
+    </defs>
     <!-- left wall -->
     <path d="M0,-40 L470,150 L470,762 L0,762 Z" fill="var(--mid)"/>
-    <g stroke="var(--near)" stroke-width="3" opacity=".5" fill="none">
+    <path d="M0,-40 L470,150 L470,762 L0,762 Z" fill="url(#wallL)"/>
+    <g stroke="var(--ink)" stroke-width="3" opacity=".35" fill="none">
       <path d="M0,762 L470,470"/>
       <path d="M0,690 L470,436"/>
       <path d="M0,618 L470,402"/>
@@ -489,7 +518,8 @@
 
     <!-- right wall -->
     <path d="M1600,-40 L1130,150 L1130,762 L1600,762 Z" fill="var(--mid)"/>
-    <g stroke="var(--near)" stroke-width="3" opacity=".5" fill="none">
+    <path d="M1600,-40 L1130,150 L1130,762 L1600,762 Z" fill="url(#wallR)"/>
+    <g stroke="var(--ink)" stroke-width="3" opacity=".35" fill="none">
       <path d="M1600,762 L1130,470"/>
       <path d="M1600,690 L1130,436"/>
       <path d="M1600,618 L1130,402"/>
@@ -610,6 +640,34 @@
   <rect y="762" width="1600" height="12" fill="var(--ground-top)"/>
   <g class="road" opacity=".35" stroke="var(--ground-top)" stroke-width="4" stroke-dasharray="34 30">
     <line x1="0" y1="820" x2="1600" y2="820"/></g>
+
+<g id="maze-floor">
+    <rect y="762" width="1600" height="138" fill="#57594f"/>
+    <g stroke="var(--ink)" stroke-width="3" opacity=".3" fill="none">
+      <path d="M800,762 L-600,900"/>
+      <path d="M800,762 L-200,900"/>
+      <path d="M800,762 L200,900"/>
+      <path d="M800,762 L500,900"/>
+      <path d="M800,762 L800,900"/>
+      <path d="M800,762 L1100,900"/>
+      <path d="M800,762 L1400,900"/>
+      <path d="M800,762 L1800,900"/>
+      <path d="M800,762 L2200,900"/>
+      <path d="M0,784 H1600"/>
+      <path d="M0,812 H1600"/>
+      <path d="M0,848 H1600"/>
+      <path d="M0,892 H1600"/>
+    </g>
+    <g fill="#4f7a4f" opacity=".7">
+      <path d="M60,900 q30,-26 60,-8 q24,-22 52,4 q10,4 20,4 z"/>
+      <path d="M1380,900 q28,-24 58,-6 q26,-20 50,6 z"/>
+      <path d="M300,786 q10,-10 22,-2 q10,-8 20,2 z"/><path d="M1180,790 q10,-10 22,-2 q10,-8 20,2 z"/>
+    </g>
+    <ellipse cx="980" cy="870" rx="70" ry="10" fill="#8fb4c8" opacity=".35"/>
+    <ellipse cx="960" cy="868" rx="20" ry="3" fill="#ffffff" opacity=".35"/>
+    <g fill="#3e4038"><circle cx="420" cy="860" r="5"/><circle cx="436" cy="866" r="3"/>
+      <circle cx="1240" cy="834" r="4"/><circle cx="700" cy="888" r="4"/></g>
+  </g>
 
   <g id="city-road">
     <rect y="790" width="1600" height="110" fill="#2f3743"/>
@@ -792,10 +850,17 @@
   <!-- workers and idle props are built here -->
 
   <!-- foreground: a plant and a crate, for depth -->
-  <g transform="translate(1520,762)" opacity=".9">
+  <g id="city-fg">
+    <g transform="translate(118,762)">   <!-- a bench -->
+    <rect x="-40" y="-26" width="80" height="7" rx="3" fill="var(--mid)"/>
+    <rect x="-40" y="-16" width="80" height="7" rx="3" fill="var(--mid)"/>
+    <rect x="-40" y="-46" width="80" height="7" rx="3" fill="var(--mid)"/>
+    <rect x="-36" y="-46" width="6" height="46" rx="2" fill="var(--near)"/>
+    <rect x="30" y="-46" width="6" height="46" rx="2" fill="var(--near)"/>
+  </g>
+    <g transform="translate(1520,762)" opacity=".9">
     <path d="M0,0 l-10,-40 q16,-26 26,-6 q18,-16 22,10 l-8,36 z" fill="var(--near)"/>
   </g>
-  <g id="city-fg">
     <g transform="translate(1540,762)">
       <rect x="-4" y="-150" width="8" height="150" fill="var(--near)"/>
       <path d="M4,-150 q0,-26 -30,-26" fill="none" stroke="var(--near)" stroke-width="7"/>
@@ -811,13 +876,6 @@
       <rect x="-14" y="-22" width="28" height="6" rx="3" fill="#d2453f"/>
       <circle cx="0" cy="-34" r="6" fill="#d2453f"/>
     </g>
-  </g>
-  <g transform="translate(118,762)">   <!-- a bench -->
-    <rect x="-40" y="-26" width="80" height="7" rx="3" fill="var(--mid)"/>
-    <rect x="-40" y="-16" width="80" height="7" rx="3" fill="var(--mid)"/>
-    <rect x="-40" y="-46" width="80" height="7" rx="3" fill="var(--mid)"/>
-    <rect x="-36" y="-46" width="6" height="46" rx="2" fill="var(--near)"/>
-    <rect x="30" y="-46" width="6" height="46" rx="2" fill="var(--near)"/>
   </g>
   <g id="crew"></g>
   <g id="scan"></g>
@@ -1586,7 +1644,180 @@ async function poopGag() {
   }
 }
 
-addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') poopGag(); });
+// ---------------------------------------------------------------- the maze chase
+// The doors start closing. A runner bolts out of the gate with a map, and something with far too
+// many legs comes after him. He trips. It looms over him — and hands the map back. It has notes.
+const SPRINT = `
+  <ellipse cx="0" cy="2" rx="24" ry="5" fill="rgba(0,0,0,.22)"/>
+  <g class="leg-a"><rect x="-8" y="-28" width="9" height="28" rx="4" fill="#3f4a3a" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <g class="leg-b"><rect x="0" y="-28" width="9" height="28" rx="4" fill="#4b5745" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <rect x="-15" y="-64" width="30" height="40" rx="11" fill="#7d8c5f" stroke="var(--ink)" stroke-width="3"/>
+  <path d="M-12,-60 L14,-30" stroke="#6a4e2f" stroke-width="5" stroke-linecap="round"/>
+  <rect x="8" y="-38" width="14" height="12" rx="3" fill="#8a6a3f" stroke="var(--ink)" stroke-width="2"/>
+  <g class="arm-a"><rect x="-4" y="-60" width="8" height="26" rx="4" fill="#7d8c5f" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <rect x="-13" y="-92" width="28" height="30" rx="11" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
+  <path d="M-15,-78 q4,-26 17,-26 q16,0 17,22 q-12,-10 -34,4 z" fill="#5d6b4e" stroke="var(--ink)" stroke-width="2.5"/>
+  <rect x="-2" y="-82" width="16" height="7" rx="3.5" fill="var(--hazard)"/>
+  <g class="sprint-map"><rect x="16" y="-56" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/></g>`;
+
+const CREEP = `
+  <ellipse cx="0" cy="3" rx="64" ry="9" fill="rgba(0,0,0,.25)"/>
+  <g stroke="#26282a" stroke-width="7" stroke-linecap="round" fill="none">
+    <g class="gl1"><path d="M-34,-40 l-22,20 l-8,22"/></g>
+    <g class="gl2"><path d="M-12,-44 l-10,24 l-12,22"/></g>
+    <g class="gl3"><path d="M12,-44 l10,24 l12,22"/></g>
+    <g class="gl4"><path d="M34,-40 l22,20 l8,22"/></g>
+  </g>
+  <path d="M-58,-52 q-30,-22 -18,-62 q6,-16 18,-6 q-10,26 10,48 z" fill="#35383a" stroke="var(--ink)" stroke-width="3"/>
+  <path d="M-72,-118 l-6,-18 l12,12 z" fill="#c9c9c9" stroke="var(--ink)" stroke-width="2"/>
+  <ellipse cx="0" cy="-52" rx="58" ry="30" fill="#3e4244" stroke="var(--ink)" stroke-width="3"/>
+  <path d="M-40,-74 l6,-14 6,12 M-16,-80 l6,-15 6,13 M10,-80 l6,-15 6,13 M34,-74 l6,-14 6,12"
+        fill="#2c2f31" stroke="var(--ink)" stroke-width="2"/>
+  <ellipse cx="-10" cy="-44" rx="30" ry="10" fill="#4c5153" opacity=".6"/>
+  <circle cx="48" cy="-54" r="22" fill="#474b4d" stroke="var(--ink)" stroke-width="3"/>
+  <circle class="geye" cx="56" cy="-62" r="5" fill="var(--hazard)"/>
+  <circle class="geye" cx="42" cy="-64" r="4" fill="var(--hazard)"/>
+  <path d="M40,-42 l5,6 5,-6 5,6 5,-6" fill="none" stroke="#e8e8e8" stroke-width="2.5"/>
+  <path d="M60,-36 q4,10 -2,16" fill="none" stroke="#9fc8d6" stroke-width="2.5" opacity=".8"/>
+  <g class="creep-claw"><path d="M52,-34 l30,8 M82,-26 l10,-7 M82,-26 l10,5" stroke="#26282a"
+     stroke-width="6" stroke-linecap="round" fill="none"/></g>`;
+
+WHO.sprint = { name: 'Sprint', role: 'runner · maps the maze · always late', thoughts: [
+  'day 47. the maze changed again. so did the requirements.',
+  'i ran twelve miles today. the ticket is still in progress.',
+  'every night the walls move. every morning the estimate doubles.',
+  'the map is up to date. as of four minutes ago.' ] };
+WHO.creep = { name: 'Scope Creep', role: 'lives in the maze · follows every project', thoughts: [
+  'i am not a monster. i am a small change.',
+  'while you are in there, could you also—',
+  'i get bigger every time someone says "quick".',
+  'have you considered adding a dark mode.',
+  'i do not chase people. i just… keep up.' ] };
+
+function worldSay(layer, x, y, text, ms = 2200) {
+  const w = Math.min(420, 30 + text.length * 7.8);
+  const b = node('g', { transform: `translate(${x},${y})` });
+  b.innerHTML = `<rect class="prog-bg" x="${-w / 2}" y="-26" width="${w}" height="34" rx="10"/>
+    <path class="prog-bg" d="M-8,8 l8,11 l8,-11 z"/>
+    <text x="0" y="-4" text-anchor="middle" font-size="13" font-weight="700"
+          font-family="var(--mono)" fill="var(--text)">${text}</text>`;
+  layer.appendChild(b);
+  setTimeout(() => b.remove(), ms * SLOW);
+  return b;
+}
+
+function setDoors(f) {
+  const l = el('door-l'), r = el('door-r');
+  if (l) l.setAttribute('transform', `translate(736,0) scale(${f},1) translate(-736,0)`);
+  if (r) r.setAttribute('transform', `translate(864,0) scale(${f},1) translate(-864,0)`);
+}
+
+async function mazeGag() {
+  const root = document.documentElement;
+  if (gagRunning || root.dataset.scene !== 'maze' || document.hidden) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  gagRunning = true;
+  root.dataset.gag = '1';
+  const layer = el('gag'); layer.textContent = '';
+  const stage = el('stage');
+  const FLOOR = 818;
+
+  const sprint = node('g', { 'data-who': 'sprint' });
+  const sprintBody = node('g', { class: 'runlegs' }); sprintBody.innerHTML = SPRINT;
+  sprint.appendChild(sprintBody);
+  const creep = node('g', { 'data-who': 'creep' });
+  const creepBody = node('g', { class: 'crawl' }); creepBody.innerHTML = CREEP;
+  creep.appendChild(creepBody);
+  const put = (g, x, y, sc, flip = false, rot = 0) =>
+    g.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${flip ? -sc : sc},${sc})`);
+
+  try {
+    // 1. the walls begin to close
+    stage.classList.add('shake');
+    setTimeout(() => stage.classList.remove('shake'), 1000);
+    say('THE WALLS ARE CLOSING!');
+    await tween(1300, t => setDoors(t * .55), E.io);
+
+    // 2. out of the gate: a runner, running left, towards us
+    put(sprint, 800, 770, .45, true); layer.appendChild(sprint);
+    const run1 = tween(1500, t => put(sprint, lerp(800, 560, t), lerp(770, FLOOR, t), lerp(.45, 1.05, t), true), E.lin);
+    await wait(450);
+    worldSay(layer, 560, FLOOR - 120, 'RUN! SCOPE CREEP IS LOOSE!', 1800);
+
+    // 3. and after him, the thing
+    put(creep, 800, 770, .35, true); layer.insertBefore(creep, sprint);
+    const chase1 = tween(1600, t => put(creep, lerp(800, 760, t), lerp(770, FLOOR, t), lerp(.35, 1.1, t), true), E.lin);
+    await Promise.all([run1, chase1]);
+
+    // 4. across the floor
+    const run2 = tween(1500, t => put(sprint, lerp(560, 300, t), FLOOR, 1.05, true), E.lin);
+    const chase2 = tween(1500, t => put(creep, lerp(760, 470, t), FLOOR, 1.1, true), E.lin);
+    await run2;
+
+    // 5. he trips. the map goes flying.
+    sprintBody.classList.remove('runlegs');
+    const map = sprint.querySelector('.sprint-map'); map.remove();
+    const flyingMap = node('g'); flyingMap.innerHTML = '<rect x="-10" y="-5" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/>';
+    layer.appendChild(flyingMap);
+    const mapFly = tween(700, (t, raw) => flyingMap.setAttribute('transform',
+      `translate(${lerp(290, 380, t)},${FLOOR - 70 - Math.sin(raw * Math.PI) * 60 + raw * 64}) rotate(${raw * 540})`), E.lin);
+    await tween(420, t => put(sprint, lerp(300, 262, t), FLOOR, 1.05, true, lerp(0, -84, t)), E.out);
+    await Promise.all([chase2, mapFly]);
+
+    // 6. it skids to a stop over him, and looms
+    creepBody.classList.remove('crawl');
+    await tween(260, (t, raw) => put(creep, 470 - Math.sin(raw * Math.PI) * 18, FLOOR, 1.1, true), E.out);
+    await tween(700, t => put(creep, 470, FLOOR, lerp(1.1, 1.38, t), true), E.back);
+    await wait(700);
+
+    // 7. …and hands it back
+    flyingMap.remove();
+    const claw = creep.querySelector('.creep-claw');
+    const held = node('g'); held.innerHTML = '<rect x="86" y="-33" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/>';
+    claw.appendChild(held);
+    worldSay(layer, 470, FLOOR - 190, 'YOU DROPPED YOUR MAP.', 1900);
+    await wait(2000);
+    worldSay(layer, 470, FLOOR - 190, 'ALSO. ONE MORE SMALL FEATURE.', 2100);
+    await wait(2200);
+
+    // 8. he faints properly this time
+    await tween(300, t => put(sprint, 262, FLOOR, 1.05, true, lerp(-84, -92, t)), E.out);
+    say('SPRINT HAS FAINTED. THE SPRINT IS OVER.');
+    await wait(900);
+
+    // 9. it puts the map down gently, and goes home
+    held.remove();
+    const leftMap = node('g', { transform: `translate(330,${FLOOR - 4})` });
+    leftMap.innerHTML = '<rect x="-10" y="-5" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/>';
+    layer.appendChild(leftMap);
+    worldSay(layer, 470, FLOOR - 190, 'I JUST WANTED TO ADD A BUTTON.', 1800);
+    await wait(1400);
+    creepBody.classList.add('crawl');
+    await tween(2200, t => put(creep, lerp(470, 800, t), lerp(FLOOR, 770, t), lerp(1.38, .35, t), false), E.io);
+    creep.remove();
+    await tween(1200, t => setDoors((1 - t) * .55), E.io);
+
+    // 10. he comes round, picks up the map, and limps off to find out what the button does
+    await tween(600, t => put(sprint, 262, FLOOR, 1.05, true, lerp(-92, 0, t)), E.back);
+    leftMap.remove();
+    sprintBody.classList.add('runlegs');
+    await tween(1800, t => put(sprint, lerp(262, -120, t), FLOOR, 1.05, true), E.lin);
+  } finally {
+    layer.textContent = '';
+    setDoors(0);
+    stage.classList.remove('shake');
+    delete root.dataset.gag;
+    gagRunning = false;
+  }
+}
+
+// P plays whichever scene's gag is on screen; the timer does the same.
+function sceneGag() {
+  const scene = document.documentElement.dataset.scene;
+  if (scene === 'city') return poopGag();
+  if (scene === 'maze') return mazeGag();
+}
+addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') sceneGag(); });
 
 // Each time Crawler starts a new swing across the city, he may announce himself.
 document.querySelector('.swinger')?.addEventListener('animationiteration', e => {
@@ -1626,8 +1857,8 @@ document.querySelector('.swinger')?.addEventListener('animationiteration', e => 
     tag.hidden = true;
   });
 })();
-setTimeout(poopGag, 12000);
-setInterval(poopGag, 60000);
+setTimeout(sceneGag, 12000);
+setInterval(sceneGag, 60000);
 </script>
 </body>
 </html>
