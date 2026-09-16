@@ -149,7 +149,8 @@
   :root[data-scene="space"] .plane,
   :root[data-scene="space"] .car{display:none}
   :root[data-scene="space"] .stars{opacity:1}
-  #city-props,#city-fg,#city-road,#city-shop,#maze-floor{display:none}
+  #city-props,#city-fg,#city-road,#city-shop,#maze-floor,#beach-floor{display:none}
+  :root[data-scene="beach"] #beach-floor{display:block}
   :root[data-scene="maze"] #maze-floor{display:block}
   :root[data-scene="city"] .car,
   :root[data-scene="city"] #city-road,
@@ -204,8 +205,8 @@
   @keyframes ball{0%,100%{transform:translateY(0) rotate(0)}
     50%{transform:translateY(-58px) rotate(180deg)}}
   .crab{animation:crab 19s ease-in-out infinite}
-  @keyframes crab{0%{transform:translate(1340px,762px)}50%{transform:translate(1500px,762px) scaleX(-1)}
-    100%{transform:translate(1340px,762px)}}
+  @keyframes crab{0%{transform:translate(900px,884px)}50%{transform:translate(1100px,884px) scaleX(-1)}
+    100%{transform:translate(900px,884px)}}
   .rock{animation:rock 60s linear infinite}
   @keyframes rock{from{transform:translate(-140px,240px) rotate(0)}
     to{transform:translate(1740px,300px) rotate(360deg)}}
@@ -232,6 +233,9 @@
   @keyframes palm{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
   .sat{animation:sat 34s linear infinite}
   @keyframes sat{from{transform:translate(-200px,60px)}to{transform:translate(1800px,-20px)}}
+  .lifeguard-hut{display:none}
+  :root[data-scene="beach"] .lifeguard-hut{display:block}
+  :root[data-scene="beach"] #hero g[stroke="var(--ink)"] path{stroke:#8a5a2b}
   :root[data-theme="day"] .beam,
   :root:not([data-scene="city"]) .beam{display:none}
   :root[data-theme="day"] #litwindows{opacity:.28}
@@ -326,9 +330,30 @@
   .shake{animation:shake .12s linear 8}
   @keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
 
+  /* the beach rescue */
+  .rb-run .rb-leg-a{animation:legA .5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+  .rb-run .rb-leg-b{animation:legA .5s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+  .rb-run .rb-arm-a{animation:legA .5s ease-in-out infinite alternate-reverse;transform-box:fill-box;transform-origin:50% 0}
+  .rb-run .rb-arm-b{animation:legA .5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+  .rb-run .rb-hair{animation:hairflow .5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 100%}
+  @keyframes hairflow{from{transform:skewX(0)}to{transform:skewX(-14deg)}}
+  .rb .rb-cape{animation:cape 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+  .rb-swim .rb-arm-a{animation:crawlstroke .7s linear infinite;transform-box:fill-box;transform-origin:50% 0}
+  .rb-swim .rb-arm-b{animation:crawlstroke .7s linear infinite .35s;transform-box:fill-box;transform-origin:50% 0}
+  @keyframes crawlstroke{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .rb .rb-facepalm{display:none}
+  .rb.facepalm .rb-facepalm{display:block}
+  .rb.facepalm .rb-arm-a{display:none}
+  .splash{animation:splash .6s ease-out 1 forwards}
+  @keyframes splash{from{opacity:1;transform:translateY(0) scale(.6)}to{opacity:0;transform:translateY(-26px) scale(1.2)}}
+  .bubble-up{animation:bubbleup 1.2s ease-out infinite}
+  @keyframes bubbleup{from{opacity:.9;transform:translateY(0)}to{opacity:0;transform:translateY(-34px)}}
+  .dog-shake{animation:dogshake .09s linear infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes dogshake{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+
   /* the gag */
   [data-gag="1"] .swinger{display:none}
-  :root:not([data-scene="city"]):not([data-scene="maze"]) #gag{display:none}
+  :root[data-scene="space"] #gag{display:none}
   .stk{animation:stk 1.5s ease-out infinite}
   @keyframes stk{0%{opacity:0;transform:translateY(6px)}30%{opacity:.95}100%{opacity:0;transform:translateY(-16px)}}
   .fly{animation:fly 1.1s linear infinite;transform-box:view-box}
@@ -346,6 +371,9 @@
       <stop offset=".62" stop-color="var(--sky-2)"/>
       <stop offset="1" stop-color="var(--sky-3)"/>
     </linearGradient>
+    <clipPath id="aboveWater" clipPathUnits="userSpaceOnUse">
+      <rect x="-400" y="-400" width="2400" height="1058"/>
+    </clipPath>
     <linearGradient id="beamgrad" x1="0" y1="1" x2="0" y2="0">
       <stop offset="0" stop-color="var(--hazard)" stop-opacity=".34"/>
       <stop offset="1" stop-color="var(--hazard)" stop-opacity="0"/>
@@ -455,21 +483,6 @@
     </g>
     <g class="gull" opacity=".8" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round">
       <path d="M0,0 q12,-12 24,0 M28,6 q11,-11 22,0"/>
-    </g>
-    <g transform="translate(1120,762)">
-      <rect x="-54" y="-8" width="108" height="8" rx="4" fill="#e8657e" opacity=".9"/>
-      <rect x="-54" y="-8" width="108" height="4" rx="2" fill="#ffffff" opacity=".55"/>
-    </g>
-    <g transform="translate(980,762)"><g class="ball">
-      <circle cx="0" cy="-18" r="18" fill="#ffffff"/>
-      <path d="M0,-36 a18,18 0 0,1 0,36 z" fill="#ff5a5a" opacity=".85"/>
-      <path d="M-18,-18 a18,18 0 0,1 18,-18 z" fill="var(--neon)" opacity=".8"/>
-    </g></g>
-    <g class="crab" transform="translate(300,762)">
-      <ellipse cx="0" cy="-10" rx="13" ry="9" fill="#ef5f3c"/>
-      <circle cx="-5" cy="-17" r="2.6" fill="var(--ink)"/><circle cx="5" cy="-17" r="2.6" fill="var(--ink)"/>
-      <path d="M-13,-8 l-9,5 M13,-8 l9,5 M-11,-4 l-7,7 M11,-4 l7,7" stroke="#ef5f3c"
-            stroke-width="3" stroke-linecap="round"/>
     </g>
     <!-- a parasol, because somebody has to -->
     <g transform="translate(1240,762)">
@@ -691,6 +704,69 @@
       <circle cx="1240" cy="834" r="4"/><circle cx="700" cy="888" r="4"/></g>
   </g>
 
+  <g id="beach-floor">
+    <!-- sand ripples -->
+    <g stroke="#d9b98a" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round">
+      <path d="M40,812 q40,-6 80,0 t80,0"/><path d="M1300,826 q40,-6 80,0 t80,0"/>
+      <path d="M620,880 q40,-6 80,0 t80,0 t80,0"/><path d="M160,872 q30,-5 60,0 t60,0"/>
+    </g>
+    <!-- footprints leading down to the water -->
+    <g fill="#d9b98a" opacity=".75">
+      <ellipse cx="1480" cy="890" rx="6" ry="10"/><ellipse cx="1452" cy="872" rx="6" ry="10"/>
+      <ellipse cx="1430" cy="852" rx="5" ry="9"/><ellipse cx="1404" cy="836" rx="5" ry="9"/>
+      <ellipse cx="1386" cy="818" rx="4" ry="8"/>
+    </g>
+    <!-- a sandcastle, badly engineered -->
+    <g transform="translate(250,868)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round">
+      <path d="M-44,0 v-26 h14 v-8 h8 v8 h14 v-8 h8 v8 h14 v-8 h8 v8 h14 v26 z" fill="#e8c98e"/>
+      <path d="M-12,-34 v-26 h8 v-6 h8 v6 h8 v26" fill="#e8c98e"/>
+      <path d="M-8,0 v-12 q8,-10 16,0 v12" fill="#b99365"/>
+      <path d="M0,-66 v-20" fill="none"/><path d="M0,-86 l16,5 -16,5 z" fill="#ff5a5f"/>
+    </g>
+    <!-- bucket and spade -->
+    <g transform="translate(360,884)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round">
+      <path d="M-18,-30 l36,0 -6,30 -24,0 z" fill="#29b6f6"/>
+      <path d="M-18,-30 q18,-22 36,0" fill="none"/>
+      <path d="M26,0 l18,-50" fill="none" stroke="#8a5a2b" stroke-width="4"/>
+      <path d="M40,-58 l14,4 -4,14 -12,-2 z" fill="#ffd54f"/>
+    </g>
+    <!-- starfish and shells -->
+    <path transform="translate(640,878) rotate(18)" d="M0,-16 L4,-5 L16,-5 L6,2 L10,14 L0,6 L-10,14 L-6,2 L-16,-5 L-4,-5 Z"
+          fill="#ff8a65" stroke="var(--ink)" stroke-width="2"/>
+    <g stroke="var(--ink)" stroke-width="1.8">
+      <path transform="translate(820,892)" d="M-10,0 q10,-18 20,0 z" fill="#f8e1d4"/>
+      <path transform="translate(1180,860)" d="M-8,0 q8,-14 16,0 z" fill="#ffe0b2"/>
+      <circle cx="560" cy="892" r="4" fill="#fff3e0"/>
+    </g>
+    <!-- a proper striped towel -->
+    <g transform="translate(1000,864) skewX(-18)" stroke="var(--ink)" stroke-width="2.5">
+      <rect x="-66" y="-14" width="132" height="28" rx="4" fill="#4dd0e1"/>
+      <rect x="-40" y="-14" width="16" height="28" fill="#ffffff" stroke="none"/>
+      <rect x="-8" y="-14" width="16" height="28" fill="#ffffff" stroke="none"/>
+      <rect x="24" y="-14" width="16" height="28" fill="#ffffff" stroke="none"/>
+      <rect x="-66" y="-14" width="132" height="28" rx="4" fill="none"/>
+    </g>
+    <!-- the beach ball, parked well away from anyone's workbench -->
+    <g transform="translate(1250,882)"><g class="ball">
+      <circle cx="0" cy="-20" r="20" fill="#ffffff" stroke="var(--ink)" stroke-width="2.5"/>
+      <path d="M0,-40 a20,20 0 0,1 0,40 z" fill="#ff5a5a" opacity=".9"/>
+      <path d="M-20,-20 a20,20 0 0,1 20,-20 z" fill="#29b6f6"/>
+      <path d="M-20,-20 a20,20 0 0,0 20,20 z" fill="#ffd54f"/>
+      <circle cx="-7" cy="-28" r="4" fill="#ffffff" opacity=".7"/>
+    </g></g>
+    <!-- the crab patrols the towel -->
+    <g class="crab">
+      <ellipse cx="0" cy="-10" rx="14" ry="10" fill="#ef5f3c" stroke="var(--ink)" stroke-width="2"/>
+      <circle cx="-5" cy="-22" r="3.5" fill="#ffffff" stroke="var(--ink)" stroke-width="1.5"/>
+      <circle cx="5" cy="-22" r="3.5" fill="#ffffff" stroke="var(--ink)" stroke-width="1.5"/>
+      <circle cx="-5" cy="-22" r="1.4" fill="var(--ink)"/><circle cx="5" cy="-22" r="1.4" fill="var(--ink)"/>
+      <path d="M-14,-10 q-12,-8 -16,-18 M14,-10 q12,-8 16,-18 M-11,-3 l-9,8 M11,-3 l9,8" stroke="#ef5f3c"
+            stroke-width="4" stroke-linecap="round" fill="none"/>
+      <circle cx="-30" cy="-28" r="5" fill="#ef5f3c" stroke="var(--ink)" stroke-width="1.5"/>
+      <circle cx="30" cy="-28" r="5" fill="#ef5f3c" stroke="var(--ink)" stroke-width="1.5"/>
+    </g>
+  </g>
+
   <g id="city-road">
     <rect y="790" width="1600" height="110" fill="#2f3743"/>
     <rect y="786" width="1600" height="6" fill="var(--ground-top)" opacity=".7"/>
@@ -850,6 +926,13 @@
       <path d="M-33,-24 L31,-54 M33,-24 L-31,-54" fill="none" opacity=".6"/>
       <rect x="-50" y="-92" width="100" height="10" rx="3" fill="var(--mid)"/>
       <path d="M-46,-92 v-22 M46,-92 v-22 M-46,-112 h92" fill="none"/>
+    </g>
+    <g class="lifeguard-hut" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round">
+      <path d="M-58,-232 L0,-262 L58,-232 Z" fill="#e53935"/>
+      <path d="M-40,-240 L-22,-250 M22,-250 L40,-240" stroke="#ffffff" stroke-width="6"/>
+      <path d="M-50,-232 v120 M50,-232 v120" fill="none"/>
+      <path d="M0,-262 v-26" fill="none"/>
+      <path class="flag" d="M2,-288 l30,7 -30,8 z" fill="#ffd54f"/>
     </g>
     <rect x="-18" y="-26" width="36" height="7" rx="2" fill="var(--hazard)" opacity=".9"/>
     <text x="0" y="-8" text-anchor="middle" font-size="9" font-family="var(--mono)"
@@ -1061,9 +1144,19 @@ buildLayer('sky-near', { top: [90, 190],  base: 772, minW: 96, maxW: 190, fill: 
 const COSTUME = {
   city: () => `<path d="M-26,-98 q26,-22 52,0 z" fill="var(--hazard)"/>
                <rect x="-30" y="-100" width="60" height="7" rx="3.5" fill="var(--hazard)"/>`,
-  beach: () => `<rect x="-15" y="-88" width="30" height="8" rx="4" fill="#1d2b3c"/>
-                <rect x="-30" y="-46" width="60" height="16" rx="8" fill="none"
-                      stroke="#ff5a5a" stroke-width="7" opacity=".9"/>`,
+  beach: () => `<rect x="-17" y="-89" width="34" height="10" rx="5" fill="#1d2b3c"/>
+                <rect x="-14" y="-87" width="11" height="4" rx="2" fill="#5b7a99" opacity=".7"/>
+                <g transform="translate(0,-34)">
+                  <path d="M-36,0 A36,12 0 0,0 36,0" fill="none" stroke="#b8323a" stroke-width="15"
+                        stroke-linecap="round"/>
+                  <path d="M-36,0 A36,12 0 0,0 36,0" fill="none" stroke="#ff5a5f" stroke-width="12"
+                        stroke-linecap="round"/>
+                  <path d="M-36,0 A36,12 0 0,0 36,0" fill="none" stroke="#ffffff" stroke-width="12"
+                        stroke-dasharray="11 13" stroke-dashoffset="4"/>
+                  <path d="M-30,2 A30,8 0 0,0 30,2" fill="none" stroke="#ffffff" stroke-width="2.5"
+                        opacity=".75" stroke-linecap="round"/>
+                  <rect x="-3" y="8" width="6" height="7" rx="2" fill="#e8e8e8" stroke="var(--ink)" stroke-width="1.2"/>
+                </g>`,
   space: () => `<circle cx="0" cy="-80" r="27" fill="#bfe6ff" opacity=".34"/>
                 <circle cx="0" cy="-80" r="27" fill="none" stroke="var(--body-2)" stroke-width="3"/>
                 <rect x="-34" y="-62" width="12" height="34" rx="5" fill="var(--body-2)"
@@ -1427,7 +1520,7 @@ function render(d, live) {
   reviewScan();
 
   // the companion goes in last so it walks in front of the crew, and is made once per scene
-  let pet = crew.querySelector('.pet');
+  let pet = crew.querySelector('.pet') || (document.documentElement.dataset.gag === '1' ? document.querySelector('#gag .pet') : null);
   if (!pet) {
     pet = node('g', { class: 'pet' });   // position comes from the trot keyframes
     const key = { city: 'stash', beach: 'sandbox' }[scene];
@@ -1437,7 +1530,7 @@ function render(d, live) {
                     pointer-events="all"/><title>${who.name}</title>` : '');
     if (who) pet.dataset.who = key;
   }
-  crew.appendChild(pet);
+  if (pet.parentNode === crew || !pet.parentNode) crew.appendChild(pet);
 
   const list = el('list');
   list.innerHTML = runs.length ? '' : '<div class="none">Nothing in the field. The queue is quiet.</div>';
@@ -1925,11 +2018,200 @@ async function mazeGag() {
   }
 }
 
+// ---------------------------------------------------------------- the beach rescue
+// Sandbox fetches the ball straight into the sea and discovers he cannot swim. A whistle.
+// Rollback, lifeguard and superhero, arrives in slow motion — because of course he does — dives
+// in, brings him back, and gets thoroughly shaken dry on. Then the dog sees the ball again.
+const ROLLBACK = `
+  <ellipse cx="0" cy="3" rx="34" ry="6" fill="rgba(0,0,0,.22)"/>
+  <path class="rb-cape" d="M-16,-116 q-30,50 -26,104 l26,-10 q-10,-50 14,-90 z" fill="#d32f2f" stroke="var(--ink)" stroke-width="2.5"/>
+  <g class="rb-arm-b"><path d="M-22,-106 q-10,24 -8,46" fill="none" stroke="var(--ink)" stroke-width="15" stroke-linecap="round"/>
+    <path d="M-22,-106 q-10,24 -8,46" fill="none" stroke="#c98657" stroke-width="10" stroke-linecap="round"/></g>
+  <g class="rb-leg-a"><rect x="-15" y="-52" width="14" height="50" rx="7" fill="#d9956a" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <g class="rb-leg-b"><rect x="2" y="-52" width="14" height="50" rx="7" fill="#c98657" stroke="var(--ink)" stroke-width="2.5"/></g>
+  <path d="M-19,-66 h38 l4,20 -18,4 -5,-10 -5,10 -18,-4 z" fill="#e53935" stroke="var(--ink)" stroke-width="2.5"/>
+  <path d="M0,-60 v12 M-6,-54 h12" stroke="#ffffff" stroke-width="3"/>
+  <path d="M-26,-118 q26,-10 52,0 l-10,54 h-32 z" fill="#d9956a" stroke="var(--ink)" stroke-width="3"/>
+  <path d="M-15,-104 q8,6 15,0 q7,6 15,0 M-7,-90 h14 M-7,-80 h14 M0,-96 v26" fill="none"
+        stroke="#a8683f" stroke-width="2" stroke-linecap="round"/>
+  <path d="M-10,-118 q10,22 20,0" fill="none" stroke="#d32f2f" stroke-width="2.5"/>
+  <rect x="-4" y="-100" width="10" height="6" rx="2" fill="#bdbdbd" stroke="var(--ink)" stroke-width="1.5"/>
+  <rect x="-7" y="-132" width="14" height="16" rx="5" fill="#d9956a" stroke="var(--ink)" stroke-width="2.5"/>
+  <circle cx="2" cy="-146" r="17" fill="#d9956a" stroke="var(--ink)" stroke-width="3"/>
+  <path class="rb-hair" d="M-16,-152 q4,-22 22,-18 q14,2 12,10 q-10,-6 -20,2 q6,-8 -2,-6 q-6,2 -12,12 z"
+        fill="#f3cf6b" stroke="var(--ink)" stroke-width="2.5"/>
+  <rect x="-4" y="-152" width="24" height="8" rx="4" fill="#1d2b3c"/>
+  <path d="M0,-137 q8,7 16,0" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M3,-136 q5,3 10,0" fill="#ffffff" stroke="none"/>
+  <g class="rb-arm-a">
+    <path d="M22,-106 q14,20 10,44" fill="none" stroke="var(--ink)" stroke-width="15" stroke-linecap="round"/>
+    <path d="M22,-106 q14,20 10,44" fill="none" stroke="#d9956a" stroke-width="10" stroke-linecap="round"/>
+    <g transform="translate(28,-70) rotate(-14)">
+      <rect x="-10" y="-26" width="20" height="52" rx="10" fill="#ff7043" stroke="var(--ink)" stroke-width="2.5"/>
+      <rect x="-10" y="-6" width="20" height="10" fill="#ffffff"/>
+    </g>
+  </g>
+  <g class="rb-facepalm">
+    <path d="M22,-106 q10,-20 -6,-38" fill="none" stroke="var(--ink)" stroke-width="15" stroke-linecap="round"/>
+    <path d="M22,-106 q10,-20 -6,-38" fill="none" stroke="#d9956a" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="12" cy="-148" r="9" fill="#d9956a" stroke="var(--ink)" stroke-width="2.5"/>
+  </g>`;
+
+WHO.rollback = { name: 'Rollback', role: 'lifeguard · superhero · rolls back anything that goes under', thoughts: [
+  'i have never walked anywhere. only run. in slow motion.',
+  'every deploy needs a lifeguard. i am that lifeguard.',
+  'i can hold my breath for exactly as long as a code review.',
+  'the undertow is just a memory leak with a tan.',
+  'last known good state: the dog, dry, on the sand.',
+  'i put on the cape so people know i am a professional.' ] };
+
+async function beachGag() {
+  const root = document.documentElement;
+  if (gagRunning || root.dataset.scene !== 'beach' || document.hidden) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const pet = document.querySelector('#crew .pet');
+  if (!pet) return;
+  gagRunning = true;
+  root.dataset.gag = '1';
+  const layer = el('gag'); layer.textContent = '';
+  const inner = pet.firstElementChild;
+  const SAND = 782, WATER = 652;
+
+  const dog = (x, y, sc = 1, flip = false, rot = 0) => {
+    if (pet.isConnected) pet.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${flip ? -sc : sc},${sc})`);
+  };
+  const hero = node('g', { 'data-who': 'rollback' });
+  const heroBody = node('g', { class: 'rb' }); heroBody.innerHTML = ROLLBACK; hero.appendChild(heroBody);
+  const hput = (x, y, sc, flip, rot = 0) => hero.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${flip ? -sc : sc},${sc})`);
+  const ball = node('g');
+  ball.innerHTML = `<circle cx="0" cy="-14" r="14" fill="#ffffff" stroke="var(--ink)" stroke-width="2"/>
+    <path d="M0,-28 a14,14 0 0,1 0,28 z" fill="#ff5a5a"/><path d="M-14,-14 a14,14 0 0,1 14,-14 z" fill="#29b6f6"/>`;
+  // Swimmers go inside this wrapper, which has no transform of its own, so the clip below
+  // is measured in scene coordinates and cuts everything under the surface.
+  const underwater = node('g', { 'clip-path': 'url(#aboveWater)' });
+  const home = el('crew');
+  const at = (g, x, y, sc = 1) => g.setAttribute('transform', `translate(${x},${y}) scale(${sc})`);
+  const splash = (x, y) => {
+    const sp = node('g', { transform: `translate(${x},${y})` });
+    sp.innerHTML = `<g class="splash" fill="#ffffff" stroke="var(--ink)" stroke-width="1.5">
+      <circle cx="-18" cy="-6" r="5"/><circle cx="0" cy="-14" r="6"/><circle cx="16" cy="-5" r="5"/>
+      <circle cx="-8" cy="-2" r="3"/><circle cx="9" cy="-1" r="3"/></g>`;
+    layer.appendChild(sp); setTimeout(() => sp.remove(), 700 * SLOW);
+  };
+
+  try {
+    // 1. the ball gets away from him, and bounces into the sea
+    pet.style.animation = 'none';
+    layer.appendChild(ball);
+    worldSay(layer, 460, 700, 'BALL. BALL. BALL. BALL.', 1600);
+    const ballGo = tween(1500, (t, raw) => at(ball, lerp(470, 760, t), lerp(SAND, WATER - 4, t) - Math.abs(Math.sin(raw * Math.PI * 3)) * 60), E.lin);
+    await tween(1500, t => dog(lerp(260, 600, t), SAND), E.lin);
+    await ballGo;
+
+    // 2. straight in after it, getting smaller as he swims out
+    splash(640, WATER + 20);
+    await tween(1100, t => {
+      dog(lerp(600, 720, t), lerp(SAND, WATER + 22, t), lerp(1, .78, t));
+      at(ball, lerp(760, 800, t), WATER - 4 + Math.sin(t * 6) * 2);
+    }, E.out);
+    layer.appendChild(underwater);
+    underwater.appendChild(pet);          // from here on, only what is above the surface shows
+
+    // 3. he cannot, in fact, swim
+    if (inner) inner.style.animation = 'none';
+    const bubbles = node('g', { transform: `translate(726,${WATER - 4})` });
+    bubbles.innerHTML = `<g fill="none" stroke="#ffffff" stroke-width="2">
+      <circle class="bubble-up" cx="-6" cy="0" r="4"/><circle class="bubble-up" style="animation-delay:.4s" cx="6" cy="0" r="3"/>
+      <circle class="bubble-up" style="animation-delay:.8s" cx="0" cy="0" r="5"/></g>`;
+    layer.appendChild(bubbles);
+    worldSay(layer, 720, 560, 'BLUB. HELP. BLUB.', 1500);
+    const flail = (raw, beats) => {
+      const dip = Math.max(0, Math.sin(raw * Math.PI * beats)) * 24;   // head goes under on each beat
+      dog(720 + Math.sin(raw * 30) * 3, WATER + 20 + dip, .78, false, Math.sin(raw * 22) * 12);
+    };
+    await tween(2600, (t, raw) => { flail(raw, 3); at(ball, lerp(800, 860, t), WATER - 4 + Math.sin(raw * 12) * 2); }, E.lin);
+    worldSay(layer, 720, 560, 'I AM A RETRIEVER. I FORGOT THE RETURN STATEMENT.', 2200);
+
+    // 4. a whistle. and then, from the right, in slow motion
+    say('FWEEEEEEEEEEEET!', 1400 * SLOW);
+    heroBody.classList.add('rb-run');
+    hput(1700, SAND, 1.05, true);
+    layer.insertBefore(hero, underwater);
+    worldSay(layer, 1150, 560, '* slow-motion running *', 2600);
+    const dogStruggle = tween(3000, (t, raw) => flail(raw, 4), E.lin);
+    await tween(3000, (t, raw) => hput(lerp(1700, 960, t), SAND - Math.abs(Math.sin(raw * Math.PI * 5)) * 8, 1.05, true), E.lin);
+    await dogStruggle;
+
+    // 5. the dive
+    heroBody.classList.remove('rb-run');
+    await tween(700, (t, raw) => hput(lerp(960, 800, t), lerp(SAND, WATER + 40, t) - Math.sin(raw * Math.PI) * 110, lerp(1.05, .86, t), true, lerp(0, -70, t)), E.lin);
+    splash(800, WATER + 10);
+    heroBody.classList.add('rb-swim');
+    underwater.appendChild(hero);
+
+    // 6. swims out, grabs him
+    await tween(900, t => {
+      hput(lerp(800, 752, t), WATER + 40, .86, true, -70);
+      dog(720 + Math.sin(t * 30) * 3, WATER + 20, .78, false, Math.sin(t * 22) * 12);
+    }, E.lin);
+    bubbles.remove();
+    worldSay(layer, 740, 540, 'HOLD ON, BUDDY. ROLLING YOU BACK.', 2000);
+
+    // 7. back to shore, dog under one arm
+    await tween(1000, t => {
+      hput(lerp(752, 790, t), lerp(WATER + 40, WATER + 12, t), lerp(.86, .95, t), true, lerp(-70, -10, t));
+      dog(lerp(720, 770, t), lerp(WATER + 20, WATER - 30, t), lerp(.78, .86, t), false, lerp(12, 0, t));
+    }, E.io);
+    layer.appendChild(hero);              // out of the water: nothing is clipped any more
+    layer.appendChild(pet);
+    heroBody.classList.remove('rb-swim');
+    await tween(700, t => {
+      hput(lerp(790, 820, t), lerp(WATER + 12, SAND, t), lerp(.95, 1.05, t), true, lerp(-10, 0, t));
+      dog(lerp(770, 800, t), lerp(WATER - 30, SAND - 64, t), lerp(.86, .9, t));
+    }, E.out);
+    underwater.remove();
+
+    // 8. set down on the sand. he shakes himself dry. all over the lifeguard.
+    await tween(500, t => dog(lerp(800, 740, t), lerp(SAND - 64, SAND, t), .95), E.out);
+    if (inner) inner.classList.add('dog-shake');
+    const spray = node('g', { transform: `translate(760,${SAND - 30})` });
+    spray.innerHTML = `<g class="splash" fill="#8fd3f4" stroke="var(--ink)" stroke-width="1.2">
+      <circle cx="20" cy="-10" r="4"/><circle cx="40" cy="-24" r="3"/><circle cx="58" cy="-8" r="4"/>
+      <circle cx="30" cy="-36" r="3"/><circle cx="70" cy="-30" r="3"/><circle cx="-20" cy="-18" r="3"/></g>`;
+    layer.appendChild(spray);
+    worldSay(layer, 740, 690, 'shake shake shake shake', 1400);
+    await wait(1500);
+    spray.remove();
+    if (inner) inner.classList.remove('dog-shake');
+    worldSay(layer, 840, 560, 'ROLLED BACK TO LAST KNOWN GOOD STATE.', 2000);
+    await wait(2000);
+
+    // 9. the dog notices the ball is still out there
+    worldSay(layer, 740, 690, '…ball.', 1100);
+    await wait(900);
+    heroBody.classList.add('facepalm');
+    worldSay(layer, 840, 560, 'NO. NO NO NO NO.', 1700);
+    if (inner) inner.style.animation = '';
+    await tween(1300, t => dog(lerp(740, 700, t), lerp(SAND, WATER + 30, t), lerp(.95, .8, t)), E.in || (t => t * t));
+    heroBody.classList.remove('facepalm');
+    heroBody.classList.add('rb-run');
+    await tween(900, t => hput(lerp(820, 760, t), SAND, 1.05, true), E.lin);
+  } finally {
+    home.appendChild(pet);
+    layer.textContent = '';
+    pet.style.animation = '';
+    if (inner) { inner.style.animation = ''; inner.classList.remove('dog-shake'); }
+    delete root.dataset.gag;
+    gagRunning = false;
+  }
+}
+
 // P plays whichever scene's gag is on screen; the timer does the same.
 function sceneGag() {
   const scene = document.documentElement.dataset.scene;
   if (scene === 'city') return poopGag();
   if (scene === 'maze') return mazeGag();
+  if (scene === 'beach') return beachGag();
 }
 addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') sceneGag(); });
 

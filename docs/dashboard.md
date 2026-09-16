@@ -48,7 +48,7 @@ different animal, different jokes.
 | Scene | The world | The crew | Who follows them |
 |---|---|---|---|
 | 🌆 **City** | A real skyline: window grids, water tanks, aerials. A road with traffic, and a brick corner shop whose neon sign — and the sign on its door — reads **OPEN** while the crew works and **CLOSED** when the queue is empty. Its windows go dark when it closes | Hard hats | **Sir Wigglebutt** — black and white, red collar, leaves things behind |
-| 🏝 **Beach** | Sea with surf, palms, parasol, a bouncing ball | Sunglasses and swim rings | **Sandbox** — golden, fetches everything, returns nothing |
+| 🏝 **Beach** | Sea with surf, palms, a sandcastle, bucket and spade, a starfish, a striped towel, a crab, and a lifeguard hut for the reviewer | Sunglasses and real inflatable rings | **Sandbox** — golden, fetches everything, returns nothing |
 | 🌑 **Space** | Ringed planet, Earth, a launching rocket, a flag | Helmets and life support | A hovering drone |
 | 🧱 **Maze** | Stone corridors, ivy, a shaft of light, something at the far end | Hoods and satchels | A lizard |
 
@@ -87,6 +87,18 @@ screams *"NOPE."* and is gone.
 `P` plays whichever scene's gag is on screen. `?gag=1` plays it as soon as the page loads — a
 link you can send someone.
 
+## Rollback, on the beach
+
+Once a minute on the beach, Sandbox chases the ball — *"BALL. BALL. BALL. BALL."* — straight
+into the sea, and discovers he cannot swim. *"BLUB. HELP. BLUB."* *"I AM A RETRIEVER. I FORGOT
+THE RETURN STATEMENT."*
+
+A whistle. From the right, in slow motion, comes **Rollback**: lifeguard, superhero, red trunks,
+red cape, orange rescue can, and hair that moves on its own. He dives in, swims out, and brings
+Sandbox back under one arm: *"HOLD ON, BUDDY. ROLLING YOU BACK."* Sandbox shakes himself dry
+all over him. *"ROLLED BACK TO LAST KNOWN GOOD STATE."* Then Sandbox notices the ball is still
+out there. Rollback puts his face in his hand: *"NO. NO NO NO NO."*
+
 ## Crawler, saviour of the city
 
 Crawler patrols the skyline to protect the city from its own code, and often announces
@@ -104,6 +116,7 @@ thought changes every time.
 | | Who | Thinking, for example |
 |---|---|---|
 | **Sir Wigglebutt** | the city dog · very good boy · leaves things behind | *my full name is Sir Wigglebutt the Third. the first two also did this.* |
+| **Rollback** | lifeguard · superhero · rolls back anything that goes under | *i have never walked anywhere. only run. in slow motion.* |
 | **Sandbox** | the beach dog · fetches everything, returns nothing | *the crab owes me money.* |
 | **Crawler** | saviour of the city · protects you from your own code | *tonight i hunt the most dangerous villain of all: works on my machine.* |
 | **Sprint** | runner · maps the maze · always late | *i ran twelve miles today. the ticket is still in progress.* |
