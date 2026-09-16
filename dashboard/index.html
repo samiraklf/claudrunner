@@ -260,6 +260,14 @@
   .tail{animation:tail .4s ease-in-out infinite;transform-box:fill-box;transform-origin:100% 100%}
   @keyframes tail{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(20deg)}}
 
+  /* the gag */
+  [data-gag="1"] .swinger{display:none}
+  :root:not([data-scene="city"]) #gag{display:none}
+  .stk{animation:stk 1.5s ease-out infinite}
+  @keyframes stk{0%{opacity:0;transform:translateY(6px)}30%{opacity:.95}100%{opacity:0;transform:translateY(-16px)}}
+  .fly{animation:fly 1.1s linear infinite;transform-box:view-box}
+  @keyframes fly{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
   @media (prefers-reduced-motion:reduce){ *{animation:none!important} }
 </style>
 </head>
@@ -652,6 +660,7 @@
     <rect x="30" y="-46" width="6" height="46" rx="2" fill="var(--near)"/>
   </g>
   <g id="crew"></g>
+  <g id="gag"></g>
 </svg>
 
 <div class="hud">
@@ -1165,6 +1174,162 @@ function danceParty() {
   });
 }
 addEventListener('keydown', e => { if (e.key === 'd' || e.key === 'D') danceParty(); });
+
+// ---------------------------------------------------------------- the gag
+// The dog stops, does his business and walks off, pleased with himself. A masked figure swings
+// in, webs it, and carries it off into the sky. Scripted on a small tween timeline so every
+// beat lands in order; city only, and never under reduced motion.
+const E = {
+  lin: t => t,
+  io: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  out: t => 1 - Math.pow(1 - t, 3),
+  back: t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }
+};
+const lerp = (a, b, t) => a + (b - a) * t;
+// ?slow=4 plays the gag at a quarter speed, which is handy for checking every beat
+const SLOW = Math.max(1, Number(params.get('slow')) || 1);
+const wait = ms => new Promise(r => setTimeout(r, ms * SLOW));
+function tween(ms, fn, ease = E.io) {
+  ms *= SLOW;
+  return new Promise(resolve => {
+    const t0 = performance.now();
+    function frame(now) {
+      const t = Math.min(1, (now - t0) / ms);
+      fn(ease(t), t);
+      if (t < 1) requestAnimationFrame(frame); else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+const POOP = `
+  <ellipse cx="0" cy="-1" rx="22" ry="4" fill="rgba(0,0,0,.18)"/>
+  <ellipse cx="0" cy="-7" rx="19" ry="8" fill="#6d4020"/>
+  <ellipse cx="0" cy="-15" rx="14" ry="7" fill="#7d4b25"/>
+  <ellipse cx="0" cy="-22" rx="9" ry="6" fill="#8d572b"/>
+  <path d="M1,-27 q8,-4 4,-12" fill="none" stroke="#8d572b" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="-7" cy="-16" rx="4" ry="2" fill="#fff" opacity=".35"/>
+  <ellipse cx="-4" cy="-24" rx="2.5" ry="1.4" fill="#fff" opacity=".35"/>
+  <g stroke="#9ccc65" stroke-width="3" fill="none" stroke-linecap="round">
+    <path class="stk" d="M-14,-36 q6,-6 0,-12 q-6,-6 0,-12"/>
+    <path class="stk" style="animation-delay:.5s" d="M0,-42 q6,-6 0,-12 q-6,-6 0,-12"/>
+    <path class="stk" style="animation-delay:1s" d="M14,-36 q6,-6 0,-12 q-6,-6 0,-12"/>
+  </g>
+  <g transform="translate(0,-34)"><g class="fly"><circle cx="24" cy="0" r="2.6" fill="#222"/>
+    <ellipse cx="22" cy="-3" rx="3" ry="1.6" fill="#fff" opacity=".7"/></g></g>`;
+
+const SPLAT = `<g stroke="#ffffff" stroke-width="3" stroke-linecap="round">
+  <path d="M0,-12 v-10 M9,-8 l7,-7 M-9,-8 l-7,-7 M12,2 h10 M-12,2 h-10"/></g>`;
+
+// same figure as the ambient swinger, with the shooting hand at (27,12)
+const SPIDEY = `<g class="body">
+  <path d="M-3,-14 l-17,-22" stroke="#c9352f" stroke-width="7" stroke-linecap="round"/>
+  <ellipse cx="0" cy="4" rx="11" ry="15" fill="#c9352f"/>
+  <path d="M-9,10 q9,8 18,0 l3,20 -8,4 -5,-16 -5,16 -8,-4 z" fill="#2c4d9e"/>
+  <path d="M8,2 l19,10" stroke="#c9352f" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="0" cy="-15" r="10" fill="#c9352f"/>
+  <path d="M-7,-18 q4,-5 7,-1 q-3,5 -7,1 z" fill="#ffffff"/>
+  <path d="M7,-18 q-4,-5 -7,-1 q3,5 7,1 z" fill="#ffffff"/>
+  <g stroke="#8f211d" stroke-width="1.1" opacity=".85" fill="none"><path d="M-11,0 h22 M-10,7 h20 M0,-9 v24"/></g>
+</g>`;
+
+let gagRunning = false;
+async function poopGag() {
+  const root = document.documentElement;
+  if (gagRunning || root.dataset.scene !== 'city') return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const pet = document.querySelector('#crew .pet');
+  if (!pet) return;
+
+  gagRunning = true;
+  root.dataset.gag = '1';
+  const layer = el('gag'); layer.textContent = '';
+  const inner = pet.firstElementChild;
+  const Y = 782, DX = 620, PX = DX - 46;       // where the dog stops, and where it lands
+  const dog = (x, sx = 1, sy = 1, lift = 0) => {
+    if (pet.isConnected) pet.setAttribute('transform', `translate(${x},${Y - lift}) scale(${sx},${sy})`);
+  };
+
+  try {
+    // 1. the dog trots in
+    pet.style.animation = 'none';
+    await tween(2600, t => dog(lerp(-90, DX, t)), E.out);
+
+    // 2. a sniff, a look around
+    await tween(700, (t, raw) => dog(DX, 1, 1 - .05 * Math.sin(raw * Math.PI * 4)), E.lin);
+
+    // 3. the squat, with a small determined wobble
+    if (inner) inner.style.animation = 'none';
+    await tween(600, t => dog(DX, 1 + .08 * t, 1 - .2 * t), E.out);
+    await tween(900, (t, raw) => dog(DX + Math.sin(raw * 38) * 1.6, 1.08, .8), E.lin);
+
+    // 4. plop
+    const poop = node('g', { transform: `translate(${PX},${Y}) scale(0)` });
+    poop.innerHTML = POOP;
+    layer.appendChild(poop);
+    await tween(560, t => poop.setAttribute('transform', `translate(${PX},${Y}) scale(${Math.max(0, E.back(t))})`), E.lin);
+
+    // 5. stands up, very pleased, hops, and leaves without looking back
+    await tween(320, t => dog(DX, lerp(1.08, 1, t), lerp(.8, 1.06, t)), E.out);
+    await tween(420, (t, raw) => dog(DX, 1, 1, Math.sin(raw * Math.PI) * 26), E.lin);
+    if (inner) inner.style.animation = '';
+    say('THE DOG WOULD LIKE IT ON RECORD THAT THIS WAS NOT HIM.');
+    const dogLeaves = tween(3400, t => dog(lerp(DX, 1740, t)), E.lin);
+
+    await wait(700);
+
+    // 6. the swing in, on a line from somewhere above the rooftops
+    const swingLine = node('line', { stroke: '#ffffff', 'stroke-width': 2.5, opacity: .8 });
+    const webLine = node('line', { stroke: '#ffffff', 'stroke-width': 3.5, 'stroke-linecap': 'round' });
+    const hero = node('g'); hero.innerHTML = SPIDEY;
+    layer.append(swingLine, webLine, hero);
+    const HX = PX - 44, HY = 400, AX = PX + 40, AY = -80;
+    const place = (x, y, r) => {
+      hero.setAttribute('transform', `translate(${x},${y}) rotate(${r})`);
+      swingLine.setAttribute('x1', x); swingLine.setAttribute('y1', y - 14);
+      swingLine.setAttribute('x2', AX); swingLine.setAttribute('y2', AY);
+    };
+    await tween(2100, (t, raw) => place(lerp(-160, HX, t), lerp(120, HY, t) + Math.sin(raw * Math.PI) * 120, lerp(-42, 6, t)), E.io);
+    await tween(700, (t, raw) => place(HX + Math.sin(raw * Math.PI * 2) * 12, HY, 10 * Math.cos(raw * Math.PI * 2)), E.lin);
+
+    // 7. thwip
+    const hx = HX + 27, hy = HY + 12;
+    webLine.setAttribute('x1', hx); webLine.setAttribute('y1', hy);
+    await tween(360, t => { webLine.setAttribute('x2', lerp(hx, PX, t)); webLine.setAttribute('y2', lerp(hy, Y - 16, t)); }, E.out);
+    const splat = node('g', { transform: `translate(${PX},${Y - 16})` }); splat.innerHTML = SPLAT;
+    layer.appendChild(splat);
+    await tween(300, t => { splat.setAttribute('transform', `translate(${PX},${Y - 16}) scale(${.4 + t})`); splat.setAttribute('opacity', 1 - t); }, E.out);
+    splat.remove();
+    say('GOT IT. YOU ARE WELCOME, CITY.');
+    await wait(380);
+
+    // 8. the yank: up, away, cargo swinging on the web below
+    await tween(2600, (t, raw) => {
+      const x = lerp(HX, 1780, t);
+      const y = lerp(HY, 40, t) - Math.sin(raw * Math.PI) * 50;
+      place(x, y, lerp(10, 34, t));
+      const handX = x + 27, handY = y + 12;
+      const reel = E.out(Math.min(1, raw * 2.4));          // first reel it off the ground
+      const px = lerp(PX, handX - 8 + Math.sin(raw * 15) * 22, reel);
+      const py = lerp(Y, handY + 120, reel);
+      poop.setAttribute('transform', `translate(${px},${py}) rotate(${Math.sin(raw * 18) * 26 * reel})`);
+      webLine.setAttribute('x1', handX); webLine.setAttribute('y1', handY);
+      webLine.setAttribute('x2', px); webLine.setAttribute('y2', py - 16);
+    }, E.io);
+
+    await dogLeaves;
+  } finally {
+    layer.textContent = '';
+    pet.style.animation = '';
+    if (inner) inner.style.animation = '';
+    delete root.dataset.gag;
+    gagRunning = false;
+  }
+}
+
+addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') poopGag(); });
+setTimeout(poopGag, 12000);
+setInterval(poopGag, 60000);
 </script>
 </body>
 </html>

@@ -62,6 +62,11 @@ unison: one sways side to side, one shuffles, one bounces, one spins and hops.
 **When something ships, the whole crew dances at once**, each its own dance. Press **D** to
 start one yourself.
 
+**Once a minute in the city**, the dog stops, has a look around, squats, and leaves
+something steaming on the pavement. He walks off without looking back. A masked figure swings
+in on a line, webs it, and carries it off into the sky. Press **P** to see it on demand, or
+add `?slow=4` to watch every beat at a quarter speed.
+
 They say something over their own heads while they do it:
 
 > this test was green yesterday.
