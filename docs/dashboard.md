@@ -47,7 +47,7 @@ different animal, different jokes.
 
 | Scene | The world | The crew | Who follows them |
 |---|---|---|---|
-| 🌆 **City** | A real skyline: window grids, water tanks, aerials. A road with traffic, and a shop whose neon sign reads **OPEN** while the crew works and **CLOSED** when the queue is empty | Hard hats | **Stash** — black and white, red collar, leaves things behind |
+| 🌆 **City** | A real skyline: window grids, water tanks, aerials. A road with traffic, and a brick corner shop whose neon sign — and the sign on its door — reads **OPEN** while the crew works and **CLOSED** when the queue is empty. Its windows go dark when it closes | Hard hats | **Sir Wigglebutt** — black and white, red collar, leaves things behind |
 | 🏝 **Beach** | Sea with surf, palms, parasol, a bouncing ball | Sunglasses and swim rings | **Sandbox** — golden, fetches everything, returns nothing |
 | 🌑 **Space** | Ringed planet, Earth, a launching rocket, a flag | Helmets and life support | A hovering drone |
 | 🧱 **Maze** | Stone corridors, ivy, a shaft of light, something at the far end | Hoods and satchels | A lizard |
@@ -64,7 +64,7 @@ unison: one sways side to side, one shuffles, one bounces, one spins and hops.
 **When something ships, the whole crew dances at once**, each its own dance. Press **D** to
 start one yourself.
 
-**Once a minute in the city**, Stash stops, has a look around, squats, and leaves
+**Once a minute in the city**, Sir Wigglebutt stops, has a look around, squats, and leaves
 something steaming on the pavement. He walks off without looking back. A masked figure swings
 in on a line, webs it, and carries it off into the sky. Press **P** to see it on demand, or
 add `?slow=4` to watch every beat at a quarter speed.
@@ -85,10 +85,10 @@ thought changes every time.
 
 | | Who | Thinking, for example |
 |---|---|---|
-| **Stash** | the city dog · leaves things behind | *i did not do it. i was framed by a pigeon.* |
+| **Sir Wigglebutt** | the city dog · very good boy · leaves things behind | *my full name is Sir Wigglebutt the Third. the first two also did this.* |
 | **Sandbox** | the beach dog · fetches everything, returns nothing | *the crab owes me money.* |
 | **Crawler** | saviour of the city · protects you from your own code | *tonight i hunt the most dangerous villain of all: works on my machine.* |
-| **Nitpick** | the review pass · trusts nobody | *nit: this whole feature.* |
+| **Professor Well-Actually** | the review pass · trusts nobody | *well, actually… nit: this whole feature.* |
 
 They say something over their own heads while they do it:
 

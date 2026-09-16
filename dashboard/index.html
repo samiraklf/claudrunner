@@ -170,7 +170,16 @@
   .blink{animation:blink2 1.8s steps(1) infinite}
   @keyframes blink2{0%,55%{opacity:1}56%,100%{opacity:.15}}
   .neon{animation:neon 4.5s steps(1) infinite}
-  [data-idle="1"] #shopsign{fill:#ff6b6b;animation:none;opacity:.7}
+  #shopsign{animation:neon 4.5s steps(1) infinite;filter:drop-shadow(0 0 6px var(--neon))}
+  [data-idle="1"] #shopsign{fill:#ff6b6b;animation:none;filter:drop-shadow(0 0 6px #ff6b6b)}
+  .shopwin{fill:#ffd27a;opacity:.9}
+  :root[data-theme="day"] .shopwin{fill:#cfe3f2;opacity:.85}
+  [data-idle="1"] .shopwin{fill:#1c1c26;opacity:.9}
+  .upwin{fill:#ffd27a;opacity:.75}
+  :root[data-theme="day"] .upwin{fill:#cfe3f2;opacity:.85}
+  .walllamp{filter:drop-shadow(0 0 10px #ffd27a)}
+  :root[data-theme="day"] .walllamp{filter:none;opacity:.6}
+  [data-idle="1"] .shopstuff{opacity:.25}
   @keyframes neon{0%,88%{opacity:1}89%,91%{opacity:.25}92%,96%{opacity:1}97%,99%{opacity:.3}}
   .lamp{filter:drop-shadow(0 0 16px var(--hazard))}
   /* the swing: across the sky on a line, then gone for a while */
@@ -612,16 +621,134 @@
 
   <g id="city-shop">
     <g transform="translate(1188,762)">
-      <rect x="-86" y="-118" width="172" height="118" fill="var(--near)"/>
-      <rect x="-60" y="-78" width="46" height="78" fill="var(--ink)" opacity=".6"/>
-      <rect x="4" y="-78" width="56" height="44" rx="3" fill="var(--body-2)" opacity=".35"/>
-      <path d="M-94,-118 l188,0 l-10,22 l-168,0 z" fill="var(--hazard)"/>
-      <g stroke="#ffffff" stroke-width="10" opacity=".35">
-        <path d="M-70,-118 l-6,22 M-34,-118 l-5,22 M2,-118 l-3,22 M38,-118 l-2,22 M74,-118 l0,22"/>
+      <!-- the building: its own colour and a hard outline, so it never melts into the skyline -->
+      <rect x="-92" y="-158" width="184" height="158" fill="#8c4a3b" stroke="var(--ink)" stroke-width="3"/>
+      <g fill="#a35a47" opacity=".55">
+        <rect x="-88" y="-148" width="20" height="7" rx="1"/>
+        <rect x="-66" y="-148" width="20" height="7" rx="1"/>
+        <rect x="-44" y="-148" width="20" height="7" rx="1"/>
+        <rect x="-22" y="-148" width="20" height="7" rx="1"/>
+        <rect x="0" y="-148" width="20" height="7" rx="1"/>
+        <rect x="22" y="-148" width="20" height="7" rx="1"/>
+        <rect x="44" y="-148" width="20" height="7" rx="1"/>
+        <rect x="66" y="-148" width="20" height="7" rx="1"/>
+        <rect x="-77" y="-139" width="20" height="7" rx="1"/>
+        <rect x="-55" y="-139" width="20" height="7" rx="1"/>
+        <rect x="-33" y="-139" width="20" height="7" rx="1"/>
+        <rect x="-11" y="-139" width="20" height="7" rx="1"/>
+        <rect x="11" y="-139" width="20" height="7" rx="1"/>
+        <rect x="33" y="-139" width="20" height="7" rx="1"/>
+        <rect x="55" y="-139" width="20" height="7" rx="1"/>
+        <rect x="-88" y="-130" width="20" height="7" rx="1"/>
+        <rect x="-66" y="-130" width="20" height="7" rx="1"/>
+        <rect x="-44" y="-130" width="20" height="7" rx="1"/>
+        <rect x="-22" y="-130" width="20" height="7" rx="1"/>
+        <rect x="0" y="-130" width="20" height="7" rx="1"/>
+        <rect x="22" y="-130" width="20" height="7" rx="1"/>
+        <rect x="44" y="-130" width="20" height="7" rx="1"/>
+        <rect x="66" y="-130" width="20" height="7" rx="1"/>
+        <rect x="-77" y="-121" width="20" height="7" rx="1"/>
+        <rect x="-55" y="-121" width="20" height="7" rx="1"/>
+        <rect x="-33" y="-121" width="20" height="7" rx="1"/>
+        <rect x="-11" y="-121" width="20" height="7" rx="1"/>
+        <rect x="11" y="-121" width="20" height="7" rx="1"/>
+        <rect x="33" y="-121" width="20" height="7" rx="1"/>
+        <rect x="55" y="-121" width="20" height="7" rx="1"/>
+        <rect x="-88" y="-112" width="20" height="7" rx="1"/>
+        <rect x="-66" y="-112" width="20" height="7" rx="1"/>
+        <rect x="-44" y="-112" width="20" height="7" rx="1"/>
+        <rect x="-22" y="-112" width="20" height="7" rx="1"/>
+        <rect x="0" y="-112" width="20" height="7" rx="1"/>
+        <rect x="22" y="-112" width="20" height="7" rx="1"/>
+        <rect x="44" y="-112" width="20" height="7" rx="1"/>
+        <rect x="66" y="-112" width="20" height="7" rx="1"/>
+        <rect x="-77" y="-103" width="20" height="7" rx="1"/>
+        <rect x="-55" y="-103" width="20" height="7" rx="1"/>
+        <rect x="-33" y="-103" width="20" height="7" rx="1"/>
+        <rect x="-11" y="-103" width="20" height="7" rx="1"/>
+        <rect x="11" y="-103" width="20" height="7" rx="1"/>
+        <rect x="33" y="-103" width="20" height="7" rx="1"/>
+        <rect x="55" y="-103" width="20" height="7" rx="1"/>
+        <rect x="-88" y="-94" width="20" height="7" rx="1"/>
+        <rect x="-66" y="-94" width="20" height="7" rx="1"/>
+        <rect x="-44" y="-94" width="20" height="7" rx="1"/>
+        <rect x="-22" y="-94" width="20" height="7" rx="1"/>
+        <rect x="0" y="-94" width="20" height="7" rx="1"/>
+        <rect x="22" y="-94" width="20" height="7" rx="1"/>
+        <rect x="44" y="-94" width="20" height="7" rx="1"/>
+        <rect x="66" y="-94" width="20" height="7" rx="1"/>
+        <rect x="-77" y="-85" width="20" height="7" rx="1"/>
+        <rect x="-55" y="-85" width="20" height="7" rx="1"/>
+        <rect x="-33" y="-85" width="20" height="7" rx="1"/>
+        <rect x="-11" y="-85" width="20" height="7" rx="1"/>
+        <rect x="11" y="-85" width="20" height="7" rx="1"/>
+        <rect x="33" y="-85" width="20" height="7" rx="1"/>
+        <rect x="55" y="-85" width="20" height="7" rx="1"/>
+        <rect x="-88" y="-76" width="20" height="7" rx="1"/>
+        <rect x="-66" y="-76" width="20" height="7" rx="1"/>
+        <rect x="-44" y="-76" width="20" height="7" rx="1"/>
+        <rect x="-22" y="-76" width="20" height="7" rx="1"/>
+        <rect x="0" y="-76" width="20" height="7" rx="1"/>
+        <rect x="22" y="-76" width="20" height="7" rx="1"/>
+        <rect x="44" y="-76" width="20" height="7" rx="1"/>
+        <rect x="66" y="-76" width="20" height="7" rx="1"/>
       </g>
-      <rect x="-50" y="-150" width="100" height="30" rx="5" fill="var(--ink)"/>
-      <text id="shopsign" class="neon" x="0" y="-129" text-anchor="middle" font-size="15"
-            font-family="var(--mono)" letter-spacing="3" fill="var(--neon)">OPEN</text>
+      <rect x="-92" y="-66" width="184" height="66" fill="#3b2b2c" stroke="var(--ink)" stroke-width="3"/>
+
+      <!-- cornice and the sign mounted on it -->
+      <rect x="-100" y="-170" width="200" height="14" rx="2" fill="#5a2f27" stroke="var(--ink)" stroke-width="3"/>
+      <rect x="-40" y="-184" width="5" height="14" fill="var(--ink)"/>
+      <rect x="35" y="-184" width="5" height="14" fill="var(--ink)"/>
+      <rect x="-60" y="-214" width="120" height="32" rx="6" fill="#15151f" stroke="var(--ink)" stroke-width="3"/>
+      <text id="shopsign" x="0" y="-191" text-anchor="middle" font-size="16" font-weight="700"
+            font-family="var(--mono)" letter-spacing="4" fill="var(--neon)">OPEN</text>
+
+      <!-- upper windows -->
+      <g stroke="var(--ink)" stroke-width="3">
+        <rect x="-70" y="-146" width="40" height="30" rx="2" class="upwin"/>
+        <rect x="30" y="-146" width="40" height="30" rx="2" class="upwin"/>
+      </g>
+      <path d="M-50,-146 v30 M-70,-131 h40 M50,-146 v30 M30,-131 h40" stroke="var(--ink)" stroke-width="2"/>
+
+      <!-- awning: scalloped, striped, outlined -->
+      <path d="M-100,-104 L100,-104 L110,-80 L-110,-80 Z" fill="#ffffff" stroke="var(--ink)" stroke-width="3"/>
+      <g fill="var(--hazard)">
+        <path d="M-80,-104 L-60,-104 L-56,-80 L-78,-80 Z"/>
+        <path d="M-40,-104 L-20,-104 L-18,-80 L-38,-80 Z"/>
+        <path d="M0,-104 L20,-104 L22,-80 L2,-80 Z"/>
+        <path d="M40,-104 L60,-104 L64,-80 L44,-80 Z"/>
+        <path d="M80,-104 L100,-104 L106,-80 L84,-80 Z"/>
+      </g>
+      <path d="M-110,-80 q11,12 22,0 q11,12 22,0 q11,12 22,0 q11,12 22,0 q11,12 22,0 q11,12 22,0
+               q11,12 22,0 q11,12 22,0 q11,12 22,0 q11,12 22,0" fill="#ffffff" stroke="var(--ink)" stroke-width="3"/>
+
+      <!-- shop window, lit when open -->
+      <rect x="-4" y="-60" width="84" height="48" rx="2" class="shopwin" stroke="var(--ink)" stroke-width="3"/>
+      <path d="M38,-60 v48" stroke="var(--ink)" stroke-width="3"/>
+      <path d="M6,-54 l18,-0 -26,36 -8,0 z" fill="#ffffff" opacity=".22"/>
+      <g class="shopstuff">
+        <rect x="8" y="-26" width="14" height="14" rx="3" fill="#c46a3a"/>
+        <circle cx="58" cy="-22" r="8" fill="#e8c05a"/>
+        <rect x="46" y="-18" width="26" height="6" rx="2" fill="#6b3f2a"/>
+      </g>
+
+      <!-- door -->
+      <rect x="-70" y="-62" width="44" height="62" rx="2" fill="#5a2f27" stroke="var(--ink)" stroke-width="3"/>
+      <rect x="-62" y="-54" width="28" height="26" rx="2" class="shopwin" stroke="var(--ink)" stroke-width="2"/>
+      <circle cx="-34" cy="-26" r="3.5" fill="#e8c05a"/>
+      <text x="-48" y="-38" text-anchor="middle" font-size="7" font-family="var(--mono)"
+            fill="var(--ink)" class="doorsign">OPEN</text>
+
+      <!-- a step, a plant, and a lamp by the door -->
+      <rect x="-78" y="-5" width="60" height="6" fill="#6b6b73" stroke="var(--ink)" stroke-width="2"/>
+      <g transform="translate(-84,0)">
+        <rect x="-8" y="-16" width="16" height="16" rx="2" fill="#6b3f2a" stroke="var(--ink)" stroke-width="2"/>
+        <path d="M0,-16 q-12,-14 -4,-26 q4,12 4,26 q2,-16 12,-24 q2,14 -12,24" fill="#3f8a55"/>
+      </g>
+      <g transform="translate(-84,-92)">
+        <rect x="-2" y="0" width="10" height="4" fill="var(--ink)"/>
+        <circle class="walllamp" cx="10" cy="8" r="6" fill="#ffd27a"/>
+      </g>
     </g>
   </g>
 
@@ -636,7 +763,7 @@
 
   <!-- the hero, on a crate stack at the right -->
   <g id="hero" data-who="nitpick" transform="translate(1350,762)">
-    <title>Nitpick</title>
+    <title>Professor Well-Actually</title>
     <g class="beam" opacity=".7"><path d="M-70,0 L10,-560 90,-560 40,0 Z" fill="url(#beamgrad)"/></g>
     <g stroke="var(--ink)" stroke-width="3" stroke-linejoin="round">
       <path d="M-36,0 L-26,-84 M36,0 L26,-84" fill="none"/>
@@ -934,6 +1061,7 @@ function idleRobot(x, flip) {
       <rect x="-22" y="-78" width="44" height="40" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
       <rect x="-20" y="-112" width="40" height="36" rx="12" fill="var(--body)" stroke="var(--ink)" stroke-width="3"/>
       <rect class="visor" x="-12" y="-100" width="24" height="9" rx="4.5" fill="var(--neon)"/>
+      <g transform="translate(0,-14)">${(COSTUME[document.documentElement.dataset.scene] || COSTUME.city)()}</g>
       <rect x="24" y="-72" width="12" height="26" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       <g transform="translate(40,-48)">
         <rect x="-9" y="-12" width="18" height="15" rx="4" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2"/>
@@ -947,13 +1075,13 @@ function idleRobot(x, flip) {
 
 // Everyone you can hover: a name, who they are, and what is on their mind right now.
 const WHO = {
-  stash: { name: 'Stash', role: 'good boy · leaves things behind', thoughts: [
+  stash: { name: 'Sir Wigglebutt', role: 'very good boy · leaves things behind', thoughts: [
     'i did not do it. i was framed by a pigeon.',
     'i sniffed the whole codebase. something smells in /utils.',
     'the swinging man keeps taking my work. i feel unappreciated.',
     'i know one command: sit. i have never run it.',
     'good boy is a state of mind, not a test result.',
-    'git stash. git stash pop. git stash… where did i leave it.' ] },
+    'my full name is Sir Wigglebutt the Third. the first two also did this.' ] },
   sandbox: { name: 'Sandbox', role: 'fetches everything, returns nothing', thoughts: [
     'i buried a bone next to the production database. do not look.',
     'the crab owes me money.',
@@ -969,12 +1097,12 @@ const WHO = {
     'the city sleeps. the N+1 query does not.',
     'i caught 400 bugs today. one was a real spider. we do not talk about it.',
     'they call me a hero. i just really, really hate merge conflicts.' ] },
-  nitpick: { name: 'Nitpick', role: 'the review pass · trusts nobody', thoughts: [
+  nitpick: { name: 'Professor Well-Actually', role: 'the review pass · trusts nobody', thoughts: [
     'LGTM. just kidding. i have 47 comments and a diagram.',
     'your tests pass. that is exactly what a bug would want.',
     'i left a comment on my own comment. it needed context.',
     'i am not saying it is wrong. i am saying i am worried about it.',
-    'nit: this whole feature.',
+    'well, actually… nit: this whole feature.',
     'i approved a pull request once. i still think about it at night.',
     'a three-line diff. my favourite. so much room for concern.' ] }
 };
@@ -1082,7 +1210,7 @@ function reviewScan() {
 const QUIPS = {
   work: ['SOMEBODY CALLED THIS IN A LOOP AND WENT HOME.',
          'THE BUG WAS COMING FROM INSIDE THE REPO.',
-         'STASH HAS REVIEWED THIS PR. HE APPROVES OF NOTHING.',
+         'SIR WIGGLEBUTT HAS REVIEWED THIS PR. HE APPROVES OF NOTHING.',
          'I CANNOT FLY. I CAN OPEN A PULL REQUEST.',
          'THIS FUNCTION HAS FOUR RESPONSIBILITIES. I COUNTED.',
          'WITH GREAT ACCESS COMES A VERY SHORT ALLOWLIST.'],
@@ -1094,7 +1222,7 @@ const QUIPS = {
           'I CHECKED. THE BUG FOLLOWED US.'],
   city: ['SOMEBODY CALLED THIS IN A LOOP AND WENT HOME.',
          'THE BUG WAS COMING FROM INSIDE THE REPO.',
-         'STASH HAS REVIEWED THIS PR. HE APPROVES OF NOTHING.',
+         'SIR WIGGLEBUTT HAS REVIEWED THIS PR. HE APPROVES OF NOTHING.',
          'SOMEONE JUST SWUNG PAST. DID NOT OFFER TO HELP.',
          'THAT IS NOT A DEPLOYMENT PIPELINE. THAT IS A WEB.'],
   maze: ['THE WALLS MOVED AGAIN. SO DID THE REQUIREMENTS.',
@@ -1177,6 +1305,8 @@ function render(d, live) {
   document.documentElement.dataset.idle = idle ? '1' : '0';
   const sign = el('shopsign');
   if (sign) sign.textContent = idle ? 'CLOSED' : 'OPEN';
+  const doorSign = document.querySelector('.doorsign');
+  if (doorSign) doorSign.textContent = idle ? 'CLOSED' : 'OPEN';
 
   el('mode').textContent = live ? 'LIVE' : 'SIMULATION';
   el('q').textContent = d.queue ?? 0;
@@ -1242,8 +1372,8 @@ function render(d, live) {
   }
 
   if ((d.retired_today || 0) > lastShipped && lastShipped > 0) {
-    say('SHIPPED. EVERYBODY DANCE.');
-    setTimeout(danceParty, 300);
+    if (runs.length) { say('SHIPPED. EVERYBODY DANCE.'); setTimeout(danceParty, 300); }
+    else say(pick(['SHIPPED. THE LAST ONE. CLOCKING OFF.', 'THAT WAS THE LAST TICKET. COFFEE TIME.']));
   }
   lastShipped = d.retired_today || 0;
 }
@@ -1401,7 +1531,7 @@ async function poopGag() {
     await tween(320, t => dog(DX, lerp(1.08, 1, t), lerp(.8, 1.06, t)), E.out);
     await tween(420, (t, raw) => dog(DX, 1, 1, Math.sin(raw * Math.PI) * 26), E.lin);
     if (inner) inner.style.animation = '';
-    say(pick(['STASH WOULD LIKE IT ON RECORD THAT THIS WAS NOT HIM.', 'STASH HAS LEFT A FEATURE REQUEST.', 'STASH IS DEPLOYING TO THE PAVEMENT.']));
+    say(pick(['SIR WIGGLEBUTT WOULD LIKE IT ON RECORD THAT THIS WAS NOT HIM.', 'SIR WIGGLEBUTT HAS LEFT A FEATURE REQUEST.', 'SIR WIGGLEBUTT IS DEPLOYING TO THE PAVEMENT.']));
     const dogLeaves = tween(3400, t => dog(lerp(DX, 1740, t)), E.lin);
 
     await wait(700);
