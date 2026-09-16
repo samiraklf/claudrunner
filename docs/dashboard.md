@@ -69,6 +69,17 @@ something steaming on the pavement. He walks off without looking back. A masked 
 in on a line, webs it, and carries it off into the sky. Press **P** to see it on demand, or
 add `?slow=4` to watch every beat at a quarter speed.
 
+## Sprint and Scope Creep, in the maze
+
+Once a minute in the maze, the ground shakes and the gate doors start to close. **Sprint**, a
+runner, bolts out with a map — *"RUN! SCOPE CREEP IS LOOSE!"* — and **Scope Creep** comes out
+after him on far too many legs. Sprint trips. Scope Creep skids to a stop over him and looms.
+Then it hands the map back: *"YOU DROPPED YOUR MAP."* … *"ALSO. ONE MORE SMALL FEATURE."*
+Sprint faints. Scope Creep, a little hurt, goes home: *"I JUST WANTED TO ADD A BUTTON."*
+
+`P` plays whichever scene's gag is on screen. `?gag=1` plays it as soon as the page loads — a
+link you can send someone.
+
 ## Crawler, saviour of the city
 
 Crawler patrols the skyline to protect the city from its own code, and often announces
@@ -88,6 +99,8 @@ thought changes every time.
 | **Sir Wigglebutt** | the city dog · very good boy · leaves things behind | *my full name is Sir Wigglebutt the Third. the first two also did this.* |
 | **Sandbox** | the beach dog · fetches everything, returns nothing | *the crab owes me money.* |
 | **Crawler** | saviour of the city · protects you from your own code | *tonight i hunt the most dangerous villain of all: works on my machine.* |
+| **Sprint** | runner · maps the maze · always late | *i ran twelve miles today. the ticket is still in progress.* |
+| **Scope Creep** | lives in the maze · follows every project | *i get bigger every time someone says "quick".* |
 | **Professor Well-Actually** | the review pass · trusts nobody | *well, actually… nit: this whole feature.* |
 
 They say something over their own heads while they do it:

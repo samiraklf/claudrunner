@@ -1330,6 +1330,7 @@ const DANCE_LINES = ['🎵', 'the build is green.', 'one more pass and i am done
                      'nobody is watching. good.', 'this is my song.'];
 
 function randomAct(forceDance) {
+  if (document.documentElement.dataset.gag === '1') return;
   const bodies = [...document.querySelectorAll('#crew .unit .bob')];
   if (!bodies.length) return;
   const body = pick(bodies);
@@ -1346,12 +1347,12 @@ function randomAct(forceDance) {
   if (Math.random() < .7) miniSay(unit, pick(dancing ? DANCE_LINES : CHATTER));
 }
 let bubble, bubbleTimer;
-function say(text) {
+function say(text, ms = 8000) {
   bubble?.remove(); clearTimeout(bubbleTimer);
   bubble = document.createElement('div');
   bubble.className = 'say'; bubble.textContent = text;
   document.body.appendChild(bubble);
-  bubbleTimer = setTimeout(() => bubble?.remove(), 8000);
+  bubbleTimer = setTimeout(() => bubble?.remove(), ms);
 }
 
 // ---------------------------------------------------------------- render
@@ -1506,15 +1507,26 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const SLOW = Math.max(1, Number(params.get('slow')) || 1);
 const wait = ms => new Promise(r => setTimeout(r, ms * SLOW));
 function tween(ms, fn, ease = E.io) {
+  // Driven by wall-clock time, advanced by whichever arrives first: an animation frame or a
+  // short timer. A browser that stops painting frames — a hidden tab, a headless render, a
+  // throttled laptop — used to freeze the whole sequence half-way. Now it only gets choppier.
   ms *= SLOW;
   return new Promise(resolve => {
     const t0 = performance.now();
-    function frame(now) {
-      const t = Math.min(1, (now - t0) / ms);
-      fn(ease(t), t);
-      if (t < 1) requestAnimationFrame(frame); else resolve();
+    let finished = false;
+    function frame() {
+      if (finished) return;
+      const raw = Math.min(1, (performance.now() - t0) / ms);
+      fn(ease(raw), raw);
+      if (raw >= 1) { finished = true; resolve(); } else schedule();
     }
-    requestAnimationFrame(frame);
+    function schedule() {
+      let fired = false;
+      const go = () => { if (!fired) { fired = true; frame(); } };
+      requestAnimationFrame(go);
+      setTimeout(go, 34);
+    }
+    schedule();
   });
 }
 
@@ -1735,7 +1747,7 @@ async function mazeGag() {
     // 1. the walls begin to close
     stage.classList.add('shake');
     setTimeout(() => stage.classList.remove('shake'), 1000);
-    say('THE WALLS ARE CLOSING!');
+    say('THE WALLS ARE CLOSING!', 2600 * SLOW);
     await tween(1300, t => setDoors(t * .55), E.io);
 
     // 2. out of the gate: a runner, running left, towards us
@@ -1775,14 +1787,14 @@ async function mazeGag() {
     const claw = creep.querySelector('.creep-claw');
     const held = node('g'); held.innerHTML = '<rect x="86" y="-33" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/>';
     claw.appendChild(held);
-    worldSay(layer, 470, FLOOR - 190, 'YOU DROPPED YOUR MAP.', 1900);
+    worldSay(layer, 470, 532, 'YOU DROPPED YOUR MAP.', 1900);
     await wait(2000);
-    worldSay(layer, 470, FLOOR - 190, 'ALSO. ONE MORE SMALL FEATURE.', 2100);
+    worldSay(layer, 470, 532, 'ALSO. ONE MORE SMALL FEATURE.', 2100);
     await wait(2200);
 
     // 8. he faints properly this time
     await tween(300, t => put(sprint, 262, FLOOR, 1.05, true, lerp(-84, -92, t)), E.out);
-    say('SPRINT HAS FAINTED. THE SPRINT IS OVER.');
+    say('SPRINT HAS FAINTED. THE SPRINT IS OVER.', 4000 * SLOW);
     await wait(900);
 
     // 9. it puts the map down gently, and goes home
@@ -1790,7 +1802,7 @@ async function mazeGag() {
     const leftMap = node('g', { transform: `translate(330,${FLOOR - 4})` });
     leftMap.innerHTML = '<rect x="-10" y="-5" width="20" height="9" rx="4" fill="#f1e3b5" stroke="var(--ink)" stroke-width="2"/>';
     layer.appendChild(leftMap);
-    worldSay(layer, 470, FLOOR - 190, 'I JUST WANTED TO ADD A BUTTON.', 1800);
+    worldSay(layer, 470, 532, 'I JUST WANTED TO ADD A BUTTON.', 1800);
     await wait(1400);
     creepBody.classList.add('crawl');
     await tween(2200, t => put(creep, lerp(470, 800, t), lerp(FLOOR, 770, t), lerp(1.38, .35, t), false), E.io);
@@ -1857,7 +1869,8 @@ document.querySelector('.swinger')?.addEventListener('animationiteration', e => 
     tag.hidden = true;
   });
 })();
-setTimeout(sceneGag, 12000);
+// ?gag=1 plays the current scene's gag straight away — a link you can send someone
+setTimeout(sceneGag, params.get('gag') ? 600 : 12000);
 setInterval(sceneGag, 60000);
 </script>
 </body>
