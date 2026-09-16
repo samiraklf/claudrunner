@@ -4,12 +4,13 @@ name: claudrunner triage
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # every 10 minutes; raise this if the board is quiet
+    - cron: "*/10 * * * *"   # raise this if the board is quiet; every poll costs a little
   workflow_dispatch:
 
+# Never interrupt a run mid-change, and never start a second one beside it.
 concurrency:
   group: claudrunner-triage
-  cancel-in-progress: false   # never interrupt a run mid-change
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -19,35 +20,37 @@ permissions:
 jobs:
   triage:
     runs-on: ubuntu-latest
-    timeout-minutes: 55
+    timeout-minutes: 60      # the orchestrator's own ceiling is lower, by design
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ vars.CLAUDRUNNER_BASE_BRANCH || github.event.repository.default_branch }}
-          fetch-depth: 0
+          fetch-depth: 0     # the review needs real history, not a shallow clone
 
-      # Replace with your project's own setup step. init fills this in from the pack.
+      # init replaces this with the project's real setup, from the stack pack.
       - name: Set up the project
         run: echo "install dependencies here"
 
-      - name: Install the agent
-        run: npm install -g @anthropic-ai/claude-code
+      - name: Install the agent and the crew
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin marketplace add samiraklf/claudrunner
+          claude plugin install claudrunner
+
+      - name: Validate the configuration
+        run: ./scripts/validate-config.sh
 
       - name: Run one triage cycle
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          claude -p "/claudrunner:triage" \
-            --permission-mode acceptEdits \
-            --max-turns 150 \
-            --output-format json > run.json
-          jq -e '.is_error == false' run.json
+          GIT_AUTHOR_NAME: claudrunner
+          GIT_COMMITTER_NAME: claudrunner
+        run: ./scripts/claudrunner-run.sh triage
 
-      - name: Keep the run log
+      - name: Keep the run record
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: claudrunner-run
-          path: run.json
+          name: claudrunner-triage-${{ github.run_id }}
+          path: .claudrunner/runs/
           retention-days: 14

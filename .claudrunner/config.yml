@@ -1,0 +1,57 @@
+# claudrunner runs on itself. This file is the working example every doc refers to.
+version: 1
+
+project:
+  name: claudrunner
+  base_branch: main
+  code_dir: .
+
+stack:
+  pack: generic
+  commands:
+    test: "./scripts/selftest.sh"
+    test_filter: "./scripts/selftest.sh {filter}"
+    lint: "shellcheck -x scripts/*.sh scripts/lib/*.sh templates/cron/*.sh"
+    format: ""
+    build: ""
+
+executor:
+  mode: direct
+
+board:
+  adapter: github-issues
+  queues:
+    ready: "claudrunner:ready"
+    claimed: "claudrunner:running"
+    review: "claudrunner:in-review"
+    parked: "claudrunner:needs-input"
+    filed: "claudrunner:finding"
+
+loops:
+  fast:
+    enabled: false        # off until the crew has been watched working by hand
+    every: 30m
+    max_items: 2
+  slow:
+    enabled: false
+    schedule: weekly
+    scopes: [correctness, security, tests]
+    max_new_cards: 10
+
+policy:
+  autonomy: pr-only
+  push_branch: null
+  allow_new_dependencies: false
+  max_changed_lines: 600
+  edit_ci: false
+
+limits:
+  run_timeout_minutes: 45
+  max_turns: 150
+  max_runs_per_day: 10
+  max_runs_per_week: 40
+
+review:
+  second_vendor:
+    enabled: false
+    command: null

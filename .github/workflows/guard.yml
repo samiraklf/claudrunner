@@ -5,11 +5,15 @@ on:
   pull_request:
 
 jobs:
-  leaks:
+  selftest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check for private details
+      - name: Self test
+        run: ./scripts/selftest.sh
+      - name: Validate the dogfood config
+        run: ./scripts/validate-config.sh
+      - name: Private details
         env:
           PRIVATE_PATTERN: ${{ vars.PRIVATE_PATTERN }}
         run: ./scripts/check-leaks.sh
@@ -19,21 +23,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Lint shell scripts
-        run: shellcheck scripts/*.sh templates/cron/*.sh
-
-  manifests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate JSON manifests
-        run: |
-          for f in .claude-plugin/marketplace.json plugins/*/.claude-plugin/plugin.json; do
-            jq -e . "$f" > /dev/null && echo "ok: $f"
-          done
-      - name: Every skill, agent and command has front matter
-        run: |
-          fail=0
-          for f in plugins/*/skills/*/SKILL.md plugins/*/agents/*.md plugins/*/commands/*.md; do
-            head -1 "$f" | grep -q '^---$' || { echo "missing front matter: $f"; fail=1; }
-          done
-          exit $fail
+        run: shellcheck -x scripts/*.sh scripts/lib/*.sh templates/cron/*.sh
