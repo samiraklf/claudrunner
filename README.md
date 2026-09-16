@@ -18,7 +18,19 @@ Any language. Any stack. Any task board. No server required.
 | Loop | Runs | Does | You get |
 |---|---|---|---|
 | **Fast** | every ~10 min | Takes ready work, implements it, tests it, reviews it | A pull request, or a question |
-| **Slow** | nightly or weekly | Sweeps the codebase for defects | New cards, each with evidence |
+| **Slow** | nightly or weekly | Hunts defects: security holes, silent bugs, scale traps, missing tests | New cards, each with evidence |
+
+## What the sweep looks for
+
+| Pass | Examples of what it files |
+|---|---|
+| **Security** | Injection · missing ownership checks · one tenant reading another's data · secrets in source or logs · a whole request body assigned to a record · unsafe deserialization · outbound requests to a user-supplied address |
+| **Correctness** | A condition that fires when nothing changed · a record left in a state nothing can move forward · a new enum case its consumers never handle · a response field a client still depends on · a cached value with no invalidation path |
+| **Scale & performance** | A query inside a loop · an unbounded read on a growing table · a missing index on a newly filtered column · a whole file buffered in memory · a job whose timeout exceeds the retry window, so it runs twice · a migration that locks a large table |
+| **Tests** | An untested calculation · an untested billing or money path · an untested authorization rule · a fake that suppresses the callback the test claims to prove |
+
+Every card carries the file, the line, the quoted code, the measured impact and a proposed
+fix. A finding it cannot anchor in your code does not get filed.
 
 ## Requirements
 
