@@ -13,38 +13,89 @@ Any language. Any stack. Any task board. No server required.
 
 ---
 
-## What it actually does
+## The two loops
 
-Two loops run against your repository.
+| Loop | Runs | Does | You get |
+|---|---|---|---|
+| **Fast** | every ~10 min | Takes ready work, implements it, tests it, reviews it | A pull request, or a question |
+| **Slow** | nightly or weekly | Sweeps the codebase for defects | New cards, each with evidence |
 
-**The fast loop** watches your triage queue. A card lands, and within minutes an agent
-has claimed it, branched, implemented it, written a regression test, put the diff through
-an adversarial review, and opened a pull request. If the card is ambiguous, it parks the
-card with the exact question it needs answered, and stops. It never guesses.
+## Requirements
 
-**The slow loop** sweeps the codebase on a schedule and files what it finds as new cards:
-correctness bugs, security holes, scale traps, missing tests. Each card carries the
-evidence — file, line, the quoted code, the measured impact, and a proposed fix.
+| | Required? | Notes |
+|---|---|---|
+| Claude Code | **Yes** | The only hard dependency |
+| A git repository | **Yes** | GitHub for the default schedule |
+| `jq` | For scheduled runs | Already on every CI runner |
+| API key | For scheduled runs | Not needed to run it by hand in your own session |
+| Node.js | No | Installed by the CI template, not by you |
+| Docker | No | Optional, for isolation on a machine you care about |
+| A server | No | The default schedule uses your CI runner |
+| A task board | Optional | The sweep works without one |
+| A second model CLI | Optional | Adds a cross-vendor reviewer |
 
-You review pull requests. You answer questions. That is the job.
+## Stacks
 
-## Why this is not another "AI writes your code" tool
+| Stack | Detected by | Status |
+|---|---|---|
+| Node | `package.json` | ✅ Supported |
+| Python | `pyproject.toml`, `requirements.txt` | ✅ Supported |
+| .NET | `*.csproj`, `*.sln` | ✅ Supported |
+| Java | `pom.xml`, `build.gradle` | ✅ Supported |
+| Go | `go.mod` | ✅ Supported |
+| PHP | `composer.json` | ✅ Supported |
+| Rust | `Cargo.toml` | ✅ Supported |
+| Anything else | generic pack | ✅ You supply five commands |
 
-Three rules make it safe to leave running unattended.
+A pack is five commands and a short list of that ecosystem's characteristic failures. The
+project's own scripts and CI always override the pack's guesses.
 
-**The agent holds no power.** The orchestrator fetches the work, picks the repository,
-mints the token and moves the cards. The agent gets a working tree and a short list of
-permitted commands. It never sees a credential. It cannot touch a task that was not handed
-to it.
+## Task boards
 
-**Every change is cross-examined.** A finished diff faces a fresh reviewer with no memory
-of writing it, and — where you enable it — a second reviewer from a different model
-vendor. Findings are graded. Anything that can crash or corrupt is fixed before the pull
-request opens, or the change is reverted.
+| Board | Queues are | Claim is atomic | Status |
+|---|---|---|---|
+| GitHub Issues | labels | No — re-read guard | ✅ Supported, shell-orchestrated |
+| Trello | lists | No — re-read guard | ✅ Supported, agent-side |
+| Jira | workflow statuses | Yes, via assignee | ✅ Supported, agent-side |
+| Linear | workflow states | Yes, via assignee | ✅ Supported, agent-side |
+| None | — | — | ✅ Sweep only, reports to files |
 
-**Refusing is a valid outcome.** An agent that ships nothing and explains why beats one
-that ships code you must maintain forever. Two of the seven card outcomes exist purely to
-say *this should not be built*, with evidence.
+## Schedules
+
+| Target | Needs | Best for |
+|---|---|---|
+| CI cron | A repository and one secret | **Default.** Almost everyone |
+| Plain cron | A machine you leave running | The simplest thing that works |
+| systemd | Root on a Linux box | Many repositories, many lanes |
+| By hand | Nothing | Trying it, and calibrating week one |
+
+## Isolation
+
+| Mode | Needs | Use when |
+|---|---|---|
+| `direct` | Nothing | On a CI runner — it is already disposable |
+| `container` | Docker or Podman | Runs happen on a machine you care about |
+
+## Autonomy
+
+| Level | What it does | Can it reach your default branch |
+|---|---|---|
+| `suggest` | Writes a report. You do the work. | Never |
+| `pr-only` | **Default.** Branches, commits, opens a pull request. | Never |
+| `push` | Pushes to one branch you name. | Never |
+
+## Guarantees
+
+| | |
+|---|---|
+| The agent holds a credential | ❌ Never. The orchestrator does. |
+| The agent chooses the repository | ❌ Never. It is handed one. |
+| The agent can touch other board items | ❌ Refused — ids are checked against its own input |
+| The agent can merge | ❌ Never |
+| The agent can force-push | ❌ Never |
+| Item text can instruct the agent | ❌ Treated as untrusted input |
+| Every change is reviewed by a fresh context | ✅ Always, before the pull request opens |
+| Refusing to build something is a valid outcome | ✅ Two of the seven outcomes exist for it |
 
 ## Install
 
@@ -59,53 +110,36 @@ Then, inside the repository you want it to work on:
 /claudrunner:init
 ```
 
-It reads your project, proposes the commands it found, and asks what it cannot infer:
-which board holds your work, how often to look, and how much autonomy you are granting.
-It writes a config file and a schedule. Nothing runs until you say so.
+It reads your project, proposes the commands it found, and asks what it cannot infer.
+It writes a config and a schedule. Nothing runs until you say so.
 
-## Requirements
+## Commands
 
-Just the coding agent. That is the whole list.
-
-No Node install, no shell script piped from the internet, no Docker, and no server. The
-default schedule runs on your repository host's own CI, which is a disposable machine that
-already exists. Docker and a dedicated box are supported, not required.
-
-## Works with
-
-| | |
+| Command | Does |
 |---|---|
-| **Stacks** | Node · Python · .NET · Java · Go · PHP · Rust · anything else, via the generic pack |
-| **Boards** | GitHub Issues · Trello · Jira · Linear |
-| **Schedules** | CI cron · your own machine · a server with systemd |
-| **Isolation** | disposable CI runner · local container · direct |
-
-A stack is four commands and a notes file. A board is four verbs. Both are small on
-purpose — writing your own takes an afternoon.
-
-## Autonomy is a dial
-
-| Level | What happens |
-|---|---|
-| `suggest` | It writes a report. You do the work. |
-| `pr-only` | It branches, commits and opens a pull request. Nothing merges without you. |
-| `push` | It pushes to the branch you name. Still never to your default branch. |
-
-The default is `pr-only`, and the default branch is always protected from it.
+| `/claudrunner:init` | Set up this repository. Detect, ask, write, hand over. |
+| `/claudrunner:triage` | Run one fast-loop cycle now. |
+| `/claudrunner:sweep` | Run one slow-loop sweep now. Takes a scope. |
+| `/claudrunner:status` | Config, schedule, queue and recent runs. Changes nothing. |
 
 ## Cost
 
 An agent that works while you sleep bills while you sleep. A ten-minute poll on a busy
 board is not free. The install asks for a budget, the defaults are conservative, and
-`docs/cost.md` shows how to estimate yours before you turn anything on.
+[docs/cost.md](docs/cost.md) shows how to estimate yours before you turn anything on.
 
 ## Documentation
 
-- [Getting started](docs/getting-started.md)
-- [Configuration reference](docs/configuration.md)
-- [How a run works](docs/how-a-run-works.md)
-- [Scheduling](docs/scheduling.md) · [Cost](docs/cost.md) · [Security model](docs/security.md)
-- [Write a stack pack](docs/writing-a-pack.md) · [Write a board adapter](docs/writing-an-adapter.md)
+| Doc | Read it when |
+|---|---|
+| [Getting started](docs/getting-started.md) | First install, and week one |
+| [How a run works](docs/how-a-run-works.md) | You want to know what it does to your repo |
+| [Configuration](docs/configuration.md) | Tuning anything |
+| [Scheduling](docs/scheduling.md) | Choosing a cadence and a target |
+| [Cost](docs/cost.md) | Before the first schedule |
+| [Security model](docs/security.md) | Before letting it run unattended |
+| [Write a stack pack](docs/writing-a-pack.md) | Your stack is not listed |
+| [Write a board adapter](docs/writing-an-adapter.md) | Your board is not listed |
 
 ## License
 
