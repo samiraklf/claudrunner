@@ -4,9 +4,9 @@
 
 ### An autonomous AI coding agent that finds bugs, fixes your tickets and opens the pull requests.
 
-A plugin for Claude Code that runs on a schedule. Every 10 minutes it takes ready tickets
+A plugin for Claude Code that runs on the schedule you choose. It takes ready tickets
 from **Jira, Trello, GitHub Issues, Linear** or 7 other boards, writes the code, runs your
-tests, reviews its own diff and opens a pull request. Every night it scans your codebase
+tests, reviews its own diff and opens a pull request. On a slower rhythm it scans your codebase
 for security holes, silent bugs, performance traps and missing tests, and files each one
 as a ticket with evidence.
 
@@ -28,7 +28,7 @@ On the page, press `P` to play the scene's gag now, `R` to make the reviewer thr
 | | |
 |---|---|
 | 🎫 **Ticket to pull request** | Picks up ready work from your board, implements it, tests it and opens the PR. No one has to start it. |
-| 🐞 **Bug and vulnerability scanning** | A nightly or weekly sweep for security holes, logic bugs, N+1 queries, scale traps and untested code. |
+| 🐞 **Bug and vulnerability scanning** | A regular sweep, nightly or weekly or whenever you like, for security holes, logic bugs, N+1 queries, scale traps and untested code. |
 | 🔍 **AI code review on every change** | A fresh reviewer that did not write the code attacks the diff and grades findings P0 / P1 / P2 before anything ships. |
 | 🧪 **Tests and regression tests** | Every bug fix comes with a test that fails before the fix and passes after it. |
 | 🙋 **Hands-off, safely** | It never stops mid-run to ask. Anything too big or unclear gets a *needs human* label, and you decide. |
@@ -37,8 +37,8 @@ On the page, press `P` to play the scene's gag now, `R` to make the reviewer thr
 
 | Loop | Runs | Does | You get |
 |---|---|---|---|
-| **Fast** | every ~10 min | Takes ready work, implements it, tests it, reviews it | A pull request, or a question |
-| **Slow** | nightly or weekly | Hunts defects: security holes, silent bugs, scale traps, missing tests | New cards, each with evidence |
+| **Fast** | often — every 10 min by default | Takes ready work, implements it, tests it, reviews it | A pull request, or a question |
+| **Slow** | nightly by default, or weekly, or your own cron | Hunts defects: security holes, silent bugs, scale traps, missing tests | New cards, each with evidence |
 
 ## What the sweep looks for
 
