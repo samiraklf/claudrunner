@@ -6,3 +6,7 @@ node_modules/
 .namecheck
 plugins/claudrunner/evals/results/
 dashboard/status.json
+
+# editor settings
+.idea/
+.vscode/
