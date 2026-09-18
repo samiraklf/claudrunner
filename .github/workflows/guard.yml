@@ -8,7 +8,7 @@ jobs:
   selftest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Self test
         run: ./scripts/selftest.sh
       - name: Validate the dogfood config
@@ -21,7 +21,7 @@ jobs:
   shell:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Pinned: shellcheck releases disagree, and the local lint script checks for this version.
       - name: Install shellcheck 0.11.0
         run: |
