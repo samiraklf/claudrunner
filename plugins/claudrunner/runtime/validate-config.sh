@@ -60,8 +60,27 @@ if [ "$adapter" != "none" ]; then
   done
 fi
 
+# How the board is reached. "api": the shell adapters, with credentials in the environment.
+# "connector": the agent uses the board's claude.ai connector — how a cloud routine reaches
+# a board without keys. Then the agent finds the lists by name at run time.
+via=$(cr_get '.board.via' 'api')
+case "$via" in
+  api) ;;
+  connector)
+    [ -n "$(cr_get '.board.connector.board' '')" ] || err "board.via is connector: set board.connector.board (the board's URL)" ;;
+  *) err "board.via must be api or connector (got '$via')" ;;
+esac
+
+# Where the scheduled runs happen.
+runs_on=$(cr_get '.schedule.runs_on' 'github-actions')
+case "$runs_on" in
+  routine|github-actions|cron|systemd|manual) ;;
+  *) err "schedule.runs_on must be routine, github-actions, cron, systemd or manual (got '$runs_on')" ;;
+esac
+
 # Adapter-specific settings, checked by name so a half-configured board fails here rather
-# than at 02:00 with the queue silently empty.
+# than at 02:00 with the queue silently empty. A connector finds its lists at run time.
+[ "$via" = "connector" ] && adapter="connector:$adapter"
 case "$adapter" in
   trello)
     for k in lists.ready lists.review lists.parked claim_label_id; do
@@ -113,7 +132,11 @@ fi
 
 where=$(cr_get '.dashboard.where' 'local')
 case "$where" in
-  local|none) ;;
+  local|none)
+    [ "$where" = "local" ] && [ "$runs_on" = "routine" ] && \
+      warn "runs happen in a cloud routine but dashboard.where is local: this computer never sees them — use branch"
+    ;;
+  branch) ;;
   github-pages)
     [ "$(cr_get '.dashboard.show_titles' 'false')" = "true" ] && \
       warn "dashboard.show_titles is true on a GitHub Pages site: anyone with the link can read your task titles"
@@ -123,7 +146,7 @@ case "$where" in
       err "dashboard.where is server: set dashboard.server.webroot or dashboard.server.ssh_target"
     fi
     ;;
-  *) err "dashboard.where must be local, github-pages, server or none (got '$where')" ;;
+  *) err "dashboard.where must be local, branch, github-pages, server or none (got '$where')" ;;
 esac
 
 [ "$fail" -eq 0 ] && echo "config ok"

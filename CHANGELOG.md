@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.2.0 — 2026-09-18
+
+### Added
+- **Claude Code routines**, now the recommended way to run. `init` offers them first: the crew
+  runs in Anthropic's cloud on your Claude subscription, with no API key, no server and no CI
+  minutes. `init` creates the triage and sweep routines and prints their claude.ai links.
+- `install-into-repo.sh`: installs the crew into a repository's own `.claude/` and
+  `.claudrunner/`, committed. A cloud routine cannot install plugins; this is how it gets them.
+- `board.via: connector`: the agent reaches the board through its claude.ai connector, so a
+  routine needs no board keys.
+- `dashboard.where: branch`: every run publishes its status to a `claudrunner-status` branch and
+  `/claudrunner:dashboard` shows it live. Runs in a routine or in CI on a private repository
+  now appear on your screen while they happen, and today's count carries across runs.
+- `claudrunner-mark.sh`: run records for a cycle the agent drives itself, so a routine or a
+  run by hand shows up on the status page like an orchestrated one.
+- `stack.commands.setup`, for preparing a bare checkout.
+
+### Changed
+- Opening a pull request without `gh` (a cloud routine) falls back to the session's GitHub
+  tool, or to a one-click compare link.
+
 ## 0.1.16 — 2026-09-18
 
 ### Changed

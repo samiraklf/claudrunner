@@ -25,7 +25,24 @@ if [ "${1:-}" = "--stop" ]; then stop; echo "dashboard stopped"; exit 0; fi
 # github-pages or server mode would push or upload on every refresh.
 page="$here/dashboard/index.html"; [ -f "$page" ] || page="$here/../dashboard/index.html"
 cp "$page" "$state/index.html"
+# Where the crew runs decides where its status is. Runs on this machine leave records here;
+# runs elsewhere — a cloud routine, CI — publish to a branch, and this page reads that.
+where=local; branch=claudrunner-status
+if [ -f .claudrunner/config.yml ]; then
+  # shellcheck source=lib/config.sh
+  source "$here/lib/config.sh"
+  if cr_load 2>/dev/null; then
+    where=$(cr_get '.dashboard.where' 'local'); branch=$(cr_get '.dashboard.branch' 'claudrunner-status')
+  fi
+fi
 refresh() {
+  if [ "$where" = "branch" ] || [ "$where" = "github-pages" ]; then
+    git fetch -q origin "$branch" 2>/dev/null
+    if git show "origin/$branch:status.json" > "$state/status.json.new" 2>/dev/null; then
+      mv "$state/status.json.new" "$state/status.json"; return
+    fi
+    rm -f "$state/status.json.new"
+  fi
   # With no config yet the page still works: it shows its simulation instead.
   "$here/claudrunner-status.sh" "$state/status.json" >/dev/null 2>&1 || rm -f "$state/status.json"
 }

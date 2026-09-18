@@ -4,6 +4,8 @@
 #
 #   local         .claudrunner/dashboard/ — /claudrunner:dashboard serves it
 #   github-pages  the claudrunner-status branch, which GitHub Pages serves
+#   branch        the same branch, without Pages: /claudrunner:dashboard reads it. For private
+#                 repositories, and for runs in the cloud that have no disk you can open
 #   server        a folder on this machine (webroot), or another one over SSH (ssh_target)
 #   none          nothing
 #
@@ -26,7 +28,15 @@ done
 build=$(mktemp -d)
 trap 'rm -rf "$build"' EXIT
 cp "$page" "$build/index.html"
-"$here/claudrunner-status.sh" "$build/status.json" >/dev/null || exit 1
+branch=$(cr_get '.dashboard.branch' 'claudrunner-status')
+# The page on the branch is the one being replaced: hand it to the status builder, so a
+# fresh sandbox carries on today's count instead of starting from zero.
+if [ "$where" = "github-pages" ] || [ "$where" = "branch" ]; then
+  git fetch -q origin "$branch" 2>/dev/null
+  git show "origin/$branch:status.json" > "$build/.previous.json" 2>/dev/null || rm -f "$build/.previous.json"
+fi
+CLAUDRUNNER_PREV_STATUS="$build/.previous.json" "$here/claudrunner-status.sh" "$build/status.json" >/dev/null || exit 1
+rm -f "$build/.previous.json"
 domain=$(cr_get '.dashboard.domain' '')
 
 case "$where" in
@@ -35,12 +45,12 @@ case "$where" in
     cp "$build/index.html" "$build/status.json" .claudrunner/dashboard/
     ;;
 
-  github-pages)
-    branch=$(cr_get '.dashboard.branch' 'claudrunner-status')
-    [ -n "$domain" ] && printf '%s\n' "$domain" > "$build/CNAME"
-    touch "$build/.nojekyll"
+  github-pages|branch)
+    if [ "$where" = "github-pages" ]; then
+      [ -n "$domain" ] && printf '%s\n' "$domain" > "$build/CNAME"
+      touch "$build/.nojekyll"
+    fi
     tree=$(mktemp -d)
-    git fetch -q origin "$branch" 2>/dev/null
     if git rev-parse -q --verify "origin/$branch" >/dev/null; then
       git worktree add -q --detach "$tree" "origin/$branch" || exit 1
     else

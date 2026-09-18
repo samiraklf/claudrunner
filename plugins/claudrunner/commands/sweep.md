@@ -21,6 +21,13 @@ consumers were never updated, and drift between a producer and its consumers.
 **tests** — behavior that would ship broken in silence: untested calculations, untested money
 or billing paths, untested authorization.
 
+## When you run it yourself
+
+In a Claude Code routine or by hand there is no orchestrator. If `stack.commands.setup` is
+set, run it once first. File findings through the board as `board.via` says: the shell
+adapter (`board.via: api`), or the board's claude.ai connector on `board.connector.board`
+(`board.via: connector`), into the list named by `board.queues.filed`.
+
 ## Never pause
 
 Nobody is watching. Do not ask a question, do not wait for confirmation, and do not stop

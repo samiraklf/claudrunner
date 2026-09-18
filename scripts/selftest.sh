@@ -93,6 +93,43 @@ for var in $(grep -ohE '\$\{?[A-Z][A-Z0-9_]*(_TOKEN|_KEY|_PAT|_URL|_EMAIL|_HOST)
   done
 done
 
+echo "a routine-style run: install into a repo, record a run, publish it to the status branch"
+# The whole path a Claude Code routine takes, in a throwaway repository with a local remote.
+routine_test() (
+  set -e
+  plugin="$(pwd)/plugins/claudrunner"
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  git init -q --bare "$tmp/remote.git"
+  git init -q -b main "$tmp/repo" && cd "$tmp/repo"
+  git config user.name t && git config user.email t@t
+  git remote add origin "$tmp/remote.git"
+  git commit -q --allow-empty -m init && git push -q origin main
+  "$plugin/runtime/install-into-repo.sh" "$plugin" --with-commands >/dev/null
+  test -f .claude/commands/claudrunner/triage.md
+  test -f .claude/skills/work-a-card/SKILL.md
+  test -f .claude/agents/inspector.md
+  test -x .claudrunner/bin/claudrunner-mark.sh
+  # a routine only sees what is committed
+  [ -z "$(git check-ignore .claude/skills/ship/SKILL.md .claudrunner/bin/lib/config.sh || true)" ]
+  cat > .claudrunner/config.yml <<'YML'
+version: 1
+project: {name: t, base_branch: main, host: github}
+stack: {commands: {test: "true"}}
+policy: {autonomy: pr-only}
+board: {adapter: none}
+dashboard: {where: branch}
+YML
+  echo '[{"id":"c1","title":"Fix the export","url":"https://example.test/c1"}]' > "$tmp/items.json"
+  run=$(.claudrunner/bin/claudrunner-mark.sh start triage "$tmp/items.json" 4 | tail -1)
+  git fetch -q origin claudrunner-status
+  git show origin/claudrunner-status:status.json | jq -e '.runs[0].title == "Fix the export" and .queue == 4' >/dev/null
+  echo '{"done":["c1"],"skipped":[]}' > "$run/summary.json"
+  .claudrunner/bin/claudrunner-mark.sh finish "$run" "$run/summary.json" >/dev/null
+  git fetch -q origin claudrunner-status
+  git show origin/claudrunner-status:status.json | jq -e '(.runs | length) == 0 and .retired_today == 1' >/dev/null
+)
+if routine_test >/dev/null 2>&1; then ok "install, record, publish, finish"; else bad "install, record, publish, finish"; fi
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in plugins/claudrunner/templates/github-actions/*.yml; do

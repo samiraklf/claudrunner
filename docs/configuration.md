@@ -19,6 +19,13 @@ stack:
     lint: "npm run lint"
     format: "npm run format"
     build: "npm run build"
+    setup: ""                # optional: prepares a bare checkout (dependencies, a database)
+
+schedule:
+  runs_on: routine           # routine | github-actions | cron | systemd | manual
+  routines:                  # written by init: the routines it created, so it updates them later
+    triage: ""
+    sweep: ""
 
 executor:
   mode: direct               # direct | container
@@ -28,6 +35,9 @@ executor:
 
 board:
   adapter: github-issues     # or trello, jira, linear, none
+  via: api                   # api: shell adapters + credentials | connector: the claude.ai connector
+  connector:
+    board: ""                # connector only: the board's URL
   queues:
     ready: "claudrunner:ready"
     claimed: "claudrunner:running"
@@ -76,7 +86,7 @@ review:
     command: null            # a read-only CLI from another model vendor
 
 dashboard:
-  where: local               # local | github-pages | server | none
+  where: local               # local | branch | github-pages | server | none
   domain: ""                 # github-pages: your own domain, e.g. crew.example.com
   show_titles: true          # github-pages defaults to false: public pages show task numbers only
   branch: claudrunner-status # github-pages: the branch Pages serves
@@ -94,6 +104,19 @@ never resolves it from `HEAD`.
 **`project.host`** — where the branch is pushed and the change proposed. Independent of
 your board: code on GitHub with work items in Jira is a normal combination.
 
+**`schedule.runs_on`** — `routine` runs in Anthropic's cloud on your Claude subscription: no
+API key, no server, no CI minutes, and the shortest interval is one hour. `init` creates the
+routines and installs the crew into the repository's `.claude/`, because a routine cannot
+install plugins. `github-actions` needs an `ANTHROPIC_API_KEY` secret and is billed by the API.
+
+**`board.via`** — `connector` lets the agent use the board's claude.ai connector: the natural
+choice in a routine, with no keys to store. The trade-off is stated plainly: with `api` the
+shell holds the board credential and the agent never sees it; with `connector` the agent
+itself can reach the board. It is still told to touch only the cards it claimed.
+
+**`stack.commands.setup`** — a routine starts from a bare checkout every time. Put what the
+tests need (installing dependencies, starting a database) in one script and point this at it.
+
 **`executor.mode`** — `direct` is correct on a CI runner, which is already disposable.
 Choose `container` when runs happen on a machine you care about.
 
@@ -104,7 +127,9 @@ get reviewed properly by anyone, including you.
 same diff. Two vendors disagreeing is a much stronger signal than one model checking itself.
 
 **`dashboard.where`** — where the status page lives. `local` is opened with
-`/claudrunner:dashboard`. `github-pages` publishes to a branch after every run. `server` copies
+`/claudrunner:dashboard`. `branch` publishes the status to a `claudrunner-status` branch and
+`/claudrunner:dashboard` shows it live — the way to watch a routine or CI on a private
+repository. `github-pages` publishes the same branch as a public site. `server` copies
 the page into a folder, or uploads it over SSH from CI. See the hosting guide in the plugin's
 `templates/hosting/`.
 

@@ -106,7 +106,7 @@ fix. A finding it cannot anchor in your code does not get filed.
 | **Claude Code** | The crew ships as a plugin for it | The only hard dependency |
 | **A git repository** | It works in branches and pull requests | GitHub for the default schedule |
 | **`jq`** | Reads the config and the agent's run summary | Already on every CI runner |
-| **An API key** | Only for runs on a schedule | Running by hand uses your own session |
+| **An API key** | Only for GitHub Actions or another CI | A Claude Code routine, cron on your machine and running by hand all use your Claude subscription |
 
 ## What is supported but optional
 
@@ -167,7 +167,8 @@ plenty of teams split them.
 
 | Target | Needs | Best for |
 |---|---|---|
-| CI cron | A repository and one secret | **Default.** Almost everyone |
+| **Claude Code routine** | A GitHub repository and your Claude login | **Recommended.** Runs in Anthropic's cloud on your Claude subscription: no API key, no server, no CI minutes. Hourly at most. |
+| CI cron | A repository and an `ANTHROPIC_API_KEY` secret | Teams that want it in their own CI. Billed per use by the API |
 | Plain cron | A machine you leave running | The simplest thing that works |
 | systemd | Root on a Linux box | Many repositories, many lanes |
 | By hand | Nothing | Trying it, and calibrating week one |
