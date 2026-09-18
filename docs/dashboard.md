@@ -58,6 +58,12 @@ remembers whatever you choose after that.
 The robots are deliberately the same in both. A dark scene where you cannot find the
 characters is a wallpaper, not a status page.
 
+## Any screen
+
+The page fits phones, tablets, laptops, TVs and ultrawide monitors. Wide screens lose a
+little sky. Narrow ones zoom to the crew and grow the sky upwards, so every robot, its card
+and the reviewer stay in view. On a phone the controls wrap onto a second row.
+
 ## Scenes
 
 Four, on the **SCENE** button. The crew changes with the world — different uniform,

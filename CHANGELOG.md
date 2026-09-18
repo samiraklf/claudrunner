@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.8 — 2026-09-18
+
+### Fixed
+- On a portrait phone the scene was cropped to its middle, so most of the crew and the
+  reviewer were off screen. Narrow screens now zoom to fit the crew instead, and the gags
+  play where the screen can see them.
+- The top bar ran off the edge of small phones and broke its labels on tablets. It wraps
+  onto a second row now.
+
 ## 0.1.7 — 2026-09-18
 
 ### Fixed

@@ -60,6 +60,22 @@
     background:var(--panel);color:var(--text);letter-spacing:.14em;font-size:11px;
     box-shadow:0 2px 0 rgba(0,0,0,.18);transition:transform .12s ease}
   button:hover{transform:translateY(-1px)}
+  .chip,button{white-space:nowrap}
+  /* small screens: the brand on one row, the controls on the next */
+  @media (max-width:820px){
+    .hud{flex-wrap:wrap;gap:8px;padding:10px 12px}
+    .spacer{flex-basis:100%;height:0}
+    .brand{font-size:13px;letter-spacing:.3em}
+  }
+  @media (max-width:440px){
+    .hud{gap:6px;padding:10px 8px}
+    .chip,button{font-size:10px;padding:5px 8px;letter-spacing:.04em}
+    .brand{letter-spacing:.22em}
+  }
+  @media (max-width:380px){
+    .hud{gap:5px}
+    .chip,button{font-size:9.5px;padding:4px 6px;letter-spacing:0}
+  }
   button:active{transform:translateY(1px)}
 
   /* ---- task drawer, hidden by default ------------------------------------ */
@@ -1132,6 +1148,41 @@ if (!theme) { const h = new Date().getHours(); theme = (h >= 7 && h < 19) ? 'day
 setTheme(theme);
 el('theme').onclick = () => setTheme(document.documentElement.dataset.theme === 'day' ? 'night' : 'day');
 
+// ---------------------------------------------------------------- fit
+// The scene is 1600×900. On wide screens it fills the window and only loses sky. On narrow
+// ones filling the window would cut off the sides — and the crew, the reviewer and his
+// lines live on the sides — so there the scene shrinks until they all fit and the sky grows
+// upwards instead (the page behind it is the sky's top colour, so the join never shows).
+// What must stay on screen: every robot with its card, and the reviewer with his lines. A
+// crew of one leaves the left half empty, so a phone can zoom in that much further.
+function actionBox() {
+  const xOf = g => Number(g.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]);
+  let left = 1180;                                     // the reviewer's widest line starts here
+  document.querySelectorAll('#crew .unit').forEach(u => {
+    const card = Number(u.querySelector('.card rect.prog-bg')?.getAttribute('width')) || 320;
+    left = Math.min(left, xOf(u) - Math.max(60, card / 2) - 16);
+  });
+  document.querySelectorAll('#crew .idle').forEach(u => { left = Math.min(left, xOf(u) - 70); });
+  // Sprint's chase ends by the left wall of the maze, so there the whole floor stays in view
+  if (document.documentElement.dataset.scene === 'maze') left = Math.min(left, 110);
+  left = Math.max(0, Math.min(left, 640));             // never zoom in past a crew of one
+  return { x: left, w: 1560 - left };
+}
+function fitStage() {
+  const svg = el('stage'), a = innerWidth / Math.max(1, innerHeight);
+  const ACTION = actionBox();
+  if (900 * a >= 1520) {
+    svg.setAttribute('viewBox', '0 0 1600 900');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMax slice');
+  } else {
+    const h = ACTION.w / a;
+    svg.setAttribute('viewBox', `${ACTION.x} ${(900 - h).toFixed(1)} ${ACTION.w} ${h.toFixed(1)}`);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMax meet');
+  }
+}
+fitStage();
+addEventListener('resize', fitStage);
+
 // ---------------------------------------------------------------- scene
 const SCENES = [['city', '🌆 CITY'], ['beach', '🏝 BEACH'], ['space', '🌑 SPACE'], ['maze', '🧱 MAZE']];
 function setScene(name) {
@@ -1645,6 +1696,7 @@ function render(d, live) {
   }
 
   reviewScan();
+  fitStage();                           // the crew changed size: a narrow screen re-zooms
 
   // the companion goes in last so it walks in front of the crew, and is made once per scene
   let pet = crew.querySelector('.pet') || (document.documentElement.dataset.gag === '1' ? document.querySelector('#gag .pet') : null);
@@ -2233,8 +2285,11 @@ async function beachGag() {
   // dog vanishes behind a head — which is exactly what happened with three tasks running.
   const taken = [...document.querySelectorAll('#crew .unit')].map(u =>
     Number(u.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]));
+  // and only where the screen shows: a phone zoomed on a small crew hides the far left
+  const vb = el('stage').viewBox.baseVal;
+  const lo = Math.max(240, vb.x + 120), hi = Math.min(1120, vb.x + vb.width - 200);
   let SPOT = 700, best = -1;
-  for (let x = 240; x <= 1120; x += 10) {
+  for (let x = lo; x <= hi; x += 10) {
     const clear = taken.length ? Math.min(...taken.map(r => x < r - 60 ? r - 60 - x : x > r + 60 ? x - r - 60 : -1)) : 999;
     if (clear > best) { best = clear; SPOT = x; }
   }
