@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.11 — 2026-09-18
+
+### Changed
+- The README opens with what claudrunner does, in the words people search for: an autonomous
+  AI coding agent that finds bugs, fixes tickets from Jira, Trello, GitHub Issues, Linear and
+  7 other boards, and opens the pull requests. A short table lists what it automates.
+- The plugin and marketplace descriptions say the same, and list keywords.
+
+### Fixed
+- The README said 4 task boards; there are 11.
+
 ## 0.1.10 — 2026-09-18
 
 ### Changed

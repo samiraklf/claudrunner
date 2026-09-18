@@ -1,18 +1,34 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claudrunner",
-  "description": "An autonomous dev crew for your repository. Picks work off your board, fixes it, proves the fix, opens the pull request.",
+  "description": "Autonomous AI coding agent: finds bugs and security holes, fixes your Jira, Trello, GitHub Issues or Linear tickets, reviews the diff and opens the pull request. Any language, 11 task boards, runs on a schedule.",
   "owner": {
     "name": "samiraklf"
   },
   "plugins": [
     {
       "name": "claudrunner",
-      "description": "Rules, skills, review gates and scheduled routines that turn a coding agent into a teammate that ships. Any language, any stack, any task board.",
-      "author": { "name": "samiraklf" },
+      "description": "Autonomous AI coding agent: finds bugs and security holes, fixes your Jira, Trello, GitHub Issues or Linear tickets, reviews the diff and opens the pull request. Any language, 11 task boards, runs on a schedule.",
+      "author": {
+        "name": "samiraklf"
+      },
       "category": "development",
       "source": "./plugins/claudrunner",
-      "homepage": "https://github.com/samiraklf/claudrunner"
+      "homepage": "https://github.com/samiraklf/claudrunner",
+      "keywords": [
+        "autonomous-agent",
+        "ai-coding-agent",
+        "bug-fixing",
+        "code-review",
+        "security-scan",
+        "jira",
+        "trello",
+        "github-issues",
+        "linear",
+        "pull-request",
+        "automation",
+        "ci"
+      ]
     }
   ]
 }

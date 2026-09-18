@@ -2,12 +2,15 @@
 
 # claudrunner
 
-**More human than human.**
+### An autonomous AI coding agent that finds bugs, fixes your tickets and opens the pull requests.
 
-An autonomous dev crew for your repository. It takes work off your board, fixes it,
-proves the fix, and opens the pull request — then tells you what it refused to build.
+A plugin for Claude Code that runs on a schedule. Every 10 minutes it takes ready tickets
+from **Jira, Trello, GitHub Issues, Linear** or 7 other boards, writes the code, runs your
+tests, reviews its own diff and opens a pull request. Every night it scans your codebase
+for security holes, silent bugs, performance traps and missing tests, and files each one
+as a ticket with evidence.
 
-Any language. Any stack. Any task board. No server required.
+Any language · any stack · 11 task boards · GitHub, GitLab, Bitbucket, Azure Repos · no server required
 
 <a href="https://samiraklf.github.io/claudrunner/"><img src="docs/assets/preview.gif" width="800"
 alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard runs to rescue a dog from the sea, and a runner flees through a maze"></a>
@@ -19,6 +22,16 @@ On the page, press `P` to play the scene's gag now, `R` to make the reviewer thr
 </div>
 
 ---
+
+## What it automates
+
+| | |
+|---|---|
+| 🎫 **Ticket to pull request** | Picks up ready work from your board, implements it, tests it and opens the PR. No one has to start it. |
+| 🐞 **Bug and vulnerability scanning** | A nightly or weekly sweep for security holes, logic bugs, N+1 queries, scale traps and untested code. |
+| 🔍 **AI code review on every change** | A fresh reviewer that did not write the code attacks the diff and grades findings P0 / P1 / P2 before anything ships. |
+| 🧪 **Tests and regression tests** | Every bug fix comes with a test that fails before the fix and passes after it. |
+| 🙋 **Hands-off, safely** | It never stops mid-run to ask. Anything too big or unclear gets a *needs human* label, and you decide. |
 
 ## The two loops
 
@@ -54,7 +67,7 @@ fix. A finding it cannot anchor in your code does not get filed.
 |---|---|---|---|
 | **Docker / Podman** | ✅ | Runs tests inside a container, on machines you care about | Tests run directly — which is correct on a CI runner, since it is destroyed after the job |
 | **Your own server** | ✅ systemd lanes | Many repositories in parallel, no CI minutes, full control | CI cron runs it instead. No machine to maintain |
-| **A task board** | ✅ 4 boards | The fast loop: work gets picked up on its own | The sweep still runs and writes its findings to files |
+| **A task board** | ✅ 11 boards | The fast loop: work gets picked up on its own | The sweep still runs and writes its findings to files |
 | **A second model CLI** | ✅ any read-only CLI | A reviewer from a different vendor on the same diff | One fresh-context reviewer, which is already the main gate |
 | **Node.js** | ✅ | Nothing you do — the CI template installs the agent with it | Nothing. You never install it yourself |
 | **A monorepo** | ✅ | `code_dir` points the crew at one directory | — |
