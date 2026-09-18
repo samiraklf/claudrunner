@@ -1,0 +1,26 @@
+<footer class="foot">
+  <div>
+    <a class="brand small" href="{{ '/' | relative_url }}"><span>claud<b>runner</b></span></a>
+    <p>An open-source autonomous AI coding agent. It finds bugs, fixes your tickets and opens
+      the pull requests, on your schedule.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <h4>Guides</h4>
+      {% for item in site.data.nav.guides %}<a href="{{ item.url | relative_url }}">{{ item.title }}</a>{% endfor %}
+    </div>
+    <div>
+      <h4>Docs</h4>
+      {% for item in site.data.nav.docs %}<a href="{{ item.url | relative_url }}">{{ item.title }}</a>{% endfor %}
+    </div>
+    <div>
+      <h4>Project</h4>
+      <a href="https://github.com/{{ site.repository }}">Source on GitHub</a>
+      <a href="{{ '/demo/' | relative_url }}">Live demo</a>
+      <a href="https://github.com/{{ site.repository }}/blob/main/CHANGELOG.md">Changelog</a>
+      <a href="https://github.com/{{ site.repository }}/issues">Report an issue</a>
+    </div>
+  </div>
+  <p class="credit">Designed and built by <a href="https://github.com/samiraklf">samiraklf</a> ·
+    MIT licensed · free, no account, no telemetry</p>
+</footer>

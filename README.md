@@ -12,10 +12,10 @@ as a ticket with evidence.
 
 Any language · any stack · 11 task boards · GitHub, GitLab, Bitbucket, Azure Repos · no server required
 
-<a href="https://samiraklf.github.io/claudrunner/"><img src="docs/assets/preview.gif" width="800"
+<a href="https://samiraklf.github.io/claudrunner/demo/"><img src="docs/assets/preview.gif" width="800"
 alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard runs to rescue a dog from the sea, and a runner flees through a maze"></a>
 
-**[▶ Open the live demo](https://samiraklf.github.io/claudrunner/)** — the status page with sample tasks.
+**[▶ Open the live demo](https://samiraklf.github.io/claudrunner/demo/)** — the status page with sample tasks. · **[Website and guides](https://samiraklf.github.io/claudrunner/)**
 On the page, press `P` to play the scene's gag now, `R` to make the reviewer throw his rope,
 `D` for a dance, and `T` for the task list.
 

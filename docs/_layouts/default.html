@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+<head>
+{% include head.html %}
+</head>
+<body>
+{% include header.html %}
+<div class="page">
+  <aside class="side" aria-label="Contents">
+    <h4>Guides</h4>
+    {% for item in site.data.nav.guides %}<a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>{% endfor %}
+    <h4>Docs</h4>
+    {% for item in site.data.nav.docs %}<a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>{% endfor %}
+  </aside>
+  <main class="doc">
+    {% if page.title %}<h1>{{ page.title }}</h1>{% endif %}
+    {% if page.lead %}<p class="lead">{{ page.lead }}</p>{% endif %}
+    {{ content }}
+    <section class="cta">
+      <h2>Try it on your own repository</h2>
+      <pre><code>/plugin marketplace add samiraklf/claudrunner
+/plugin install claudrunner
+/claudrunner:init</code></pre>
+      <p>Free and open source. It runs on your own Claude Code subscription, and nothing runs
+        until you turn the schedule on. <a href="{{ '/getting-started/' | relative_url }}">Getting started →</a></p>
+    </section>
+    {% unless page.path contains 'guides/index' %}
+    <p class="edit"><a href="https://github.com/{{ site.repository }}/blob/main/docs/{{ page.path }}">Edit this page on GitHub</a></p>
+    {% endunless %}
+  </main>
+</div>
+{% include footer.html %}
+</body>
+</html>

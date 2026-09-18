@@ -1,0 +1,37 @@
+guides:
+  - title: Automate Jira tickets with AI
+    url: /guides/automate-jira-tickets-with-ai/
+  - title: Trello cards to pull requests
+    url: /guides/trello-ai-coding-agent/
+  - title: GitHub Issues to pull requests
+    url: /guides/github-issues-to-pull-requests/
+  - title: Linear issues to pull requests
+    url: /guides/linear-ai-coding-agent/
+  - title: Nightly AI security scan
+    url: /guides/ai-security-scan/
+  - title: AI code review before every PR
+    url: /guides/ai-code-review/
+  - title: Compared with other ways
+    url: /guides/compare/
+  - title: FAQ
+    url: /guides/faq/
+
+docs:
+  - title: Getting started
+    url: /getting-started/
+  - title: How a run works
+    url: /how-a-run-works/
+  - title: Configuration
+    url: /configuration/
+  - title: Scheduling
+    url: /scheduling/
+  - title: Security model
+    url: /security/
+  - title: The status page
+    url: /dashboard/
+  - title: Write a stack pack
+    url: /writing-a-pack/
+  - title: Write a board adapter
+    url: /writing-an-adapter/
+  - title: Write a code host
+    url: /writing-a-host/

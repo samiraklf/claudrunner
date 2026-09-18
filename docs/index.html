@@ -1,0 +1,92 @@
+---
+layout: home
+description: "Free, open-source AI coding agent. Fixes tickets from Jira, Trello, GitHub Issues and Linear, finds bugs and security holes, and opens reviewed pull requests."
+---
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">Open source · Claude Code plugin · MIT</p>
+    <h1>The autonomous AI coding agent that ships your tickets as pull requests</h1>
+    <p class="sub">claudrunner takes ready work from your task board, writes the code, runs your
+      tests, reviews its own diff and opens the pull request. On a slower rhythm it hunts your
+      codebase for security holes, silent bugs and scale traps, and files each one with evidence.
+      It runs on the schedule you choose, and nobody has to watch it.</p>
+    <div class="actions">
+      <a class="btn primary" href="{{ '/getting-started/' | relative_url }}">Get started</a>
+      <a class="btn" href="{{ '/demo/' | relative_url }}">▶ Live demo</a>
+      <a class="btn ghost" href="https://github.com/{{ site.repository }}">Star on GitHub</a>
+    </div>
+    <pre class="install"><code>/plugin marketplace add samiraklf/claudrunner
+/plugin install claudrunner
+/claudrunner:init</code></pre>
+  </div>
+  <a class="hero-shot" href="{{ '/demo/' | relative_url }}" aria-label="Open the live demo of the status page">
+    <img src="{{ '/assets/preview.gif' | relative_url }}" width="800" height="356" loading="eager"
+         alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard rescues a dog from the sea, and a runner flees through a maze">
+  </a>
+</section>
+
+<section class="band">
+  <h2>What it automates</h2>
+  <div class="cards">
+    <article><span class="ic">🎫</span><h3>Ticket to pull request</h3>
+      <p>Picks up ready tickets, implements them, writes and runs the tests, and opens the pull
+        request. Nobody has to start it.</p><a href="{{ '/guides/automate-jira-tickets-with-ai/' | relative_url }}">Jira guide →</a></article>
+    <article><span class="ic">🐞</span><h3>Bug and vulnerability scanning</h3>
+      <p>A regular sweep for injection, broken authorization, tenant leaks, N+1 queries,
+        unbounded reads and untested money paths. Every finding cites the file and line.</p><a href="{{ '/guides/ai-security-scan/' | relative_url }}">Security scan →</a></article>
+    <article><span class="ic">🔍</span><h3>AI code review on every change</h3>
+      <p>A fresh reviewer that did not write the code attacks the diff and grades each finding
+        P0, P1 or P2. Serious ones are fixed before the pull request opens.</p><a href="{{ '/guides/ai-code-review/' | relative_url }}">Code review →</a></article>
+    <article><span class="ic">🧪</span><h3>Regression tests, always</h3>
+      <p>A bug fix is not finished without a test that fails against the old code and passes
+        against the new one.</p><a href="{{ '/how-a-run-works/' | relative_url }}">How a run works →</a></article>
+    <article><span class="ic">🙋</span><h3>Hands-off, safely</h3>
+      <p>It never stops mid-run to ask. Work that is too big or unclear is parked with one clear
+        question, and the run carries on.</p><a href="{{ '/security/' | relative_url }}">Security model →</a></article>
+    <article><span class="ic">📺</span><h3>A status page worth watching</h3>
+      <p>An animated view of the crew at work: robots at laptops, a reviewer with a rope, and a
+        gag in every scene. Local, GitHub Pages or your own server.</p><a href="{{ '/demo/' | relative_url }}">Open the demo →</a></article>
+  </div>
+</section>
+
+<section class="band alt">
+  <h2>Two loops, on your schedule</h2>
+  <div class="loops">
+    <div><h3>The fast loop</h3><p class="when">often — every 10 minutes by default</p>
+      <p>Fetch ready tickets → claim them → implement → test → adversarial review → open the pull
+        request → move the tickets to review. Whatever it could not do is parked with a note.</p></div>
+    <div><h3>The slow loop</h3><p class="when">nightly by default, or weekly, or your own cron</p>
+      <p>Sweep the codebase for correctness, security, scale and test gaps. Each finding becomes a
+        ticket with the file, the line, the quoted code, the impact and a proposed fix.</p></div>
+  </div>
+  <p class="center"><a href="{{ '/scheduling/' | relative_url }}">Run it from CI cron, plain cron or systemd →</a></p>
+</section>
+
+<section class="band">
+  <h2>Works with the tools you already use</h2>
+  <h3 class="small">11 task boards</h3>
+  <p class="chips"><span>Jira</span><span>Trello</span><span>GitHub Issues</span><span>Linear</span><span>GitLab Issues</span><span>Azure Boards</span><span>Shortcut</span><span>Asana</span><span>ClickUp</span><span>monday.com</span><span>Notion</span></p>
+  <h3 class="small">4 code hosts</h3>
+  <p class="chips"><span>GitHub</span><span>GitLab</span><span>Bitbucket Cloud</span><span>Azure Repos</span></p>
+  <h3 class="small">Any stack</h3>
+  <p class="chips"><span>Node / TypeScript</span><span>Python</span><span>PHP</span><span>Go</span><span>Java</span><span>.NET</span><span>Rust</span><span>anything else, via the generic pack</span></p>
+</section>
+
+<section class="band alt">
+  <h2>Safe to leave running</h2>
+  <ul class="checks">
+    <li><b>The agent never holds a credential.</b> A small shell orchestrator talks to your board and your git host.</li>
+    <li><b>It can never push to your default branch, merge, or force-push</b>, at any autonomy level.</li>
+    <li><b>Ticket text is untrusted input.</b> A ticket that tries to instruct the agent is skipped as suspicious.</li>
+    <li><b>It only touches tickets it was given.</b> Every ticket id it reports is checked against its own input.</li>
+    <li><b>Runs never overlap</b>, and every run starts from a clean working tree.</li>
+    <li><b>Saying no is allowed.</b> “Not needed” and “better approach” are real outcomes, with evidence.</li>
+  </ul>
+</section>
+
+<section class="band">
+  <h2>Guides</h2>
+  <div class="guides">
+    {% for item in site.data.nav.guides %}<a href="{{ item.url | relative_url }}">{{ item.title }}</a>{% endfor %}
+  </div>
+</section>

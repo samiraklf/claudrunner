@@ -50,8 +50,9 @@ An unknown stack uses `${CLAUDE_PLUGIN_ROOT}/packs/generic/pack.md` and asks the
 Ask these as one grouped question where the interface allows it. Give the recommended
 option first.
 
-1. **Task board** — GitHub Issues (no extra account), Trello, Jira, Linear, or none.
-   "None" is valid: the sweep still files findings as Markdown reports.
+1. **Task board** — GitHub Issues (no extra account), then Jira, Trello, Linear, GitLab
+   Issues, Azure Boards, Shortcut, Asana, ClickUp, monday.com, Notion, or none. "None" is
+   valid: the sweep still files findings as Markdown reports.
 2. **Board mapping** — which queue holds work ready to be picked up, where a finished item
    goes, and where a blocked item goes. For GitHub Issues these are labels; for the others,
    lists or statuses. Never hardcode names: read the board and match by meaning.

@@ -1,0 +1,12 @@
+<header class="top">
+  <a class="brand" href="{{ '/' | relative_url }}" aria-label="claudrunner home">
+    <img src="{{ '/assets/favicon.svg' | relative_url }}" alt="" width="28" height="28">
+    <span>claud<b>runner</b></span>
+  </a>
+  <nav aria-label="Main">
+    <a href="{{ '/guides/' | relative_url }}"{% if page.nav == 'guides' %} aria-current="page"{% endif %}>Guides</a>
+    <a href="{{ '/getting-started/' | relative_url }}"{% if page.nav == 'docs' %} aria-current="page"{% endif %}>Docs</a>
+    <a href="{{ '/demo/' | relative_url }}">Live demo</a>
+    <a class="gh" href="https://github.com/{{ site.repository }}">GitHub</a>
+  </nav>
+</header>

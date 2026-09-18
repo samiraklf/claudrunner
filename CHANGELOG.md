@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.13 — 2026-09-18
+
+### Added
+- A website at https://samiraklf.github.io/claudrunner/: a home page, eight guides written for
+  what people search for (Jira, Trello, GitHub Issues and Linear to pull requests, an AI
+  security scan, AI code review, a comparison and an FAQ), and every doc as a web page. Titles,
+  descriptions, share images, a sitemap and structured data for search engines.
+- The status page demo moved to https://samiraklf.github.io/claudrunner/demo/.
+
+### Fixed
+- `init` offered 5 task boards; it now offers all 11.
+
 ## 0.1.12 — 2026-09-18
 
 ### Fixed
