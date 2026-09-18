@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Changed
+- The README's install steps moved from the bottom to a Quick start right under the preview,
+  with the commands after it and a jump link at the top.
 - The website got a design pass: search across every page (`/` or Ctrl+K), a light/dark switch
   that remembers your choice, copy buttons on commands, an "On this page" list and linkable
   headings on guides, previous and next links, SVG icons, a three-step "how it works", and a

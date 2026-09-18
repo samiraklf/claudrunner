@@ -15,13 +15,55 @@ Any language · any stack · 11 task boards · GitHub, GitLab, Bitbucket, Azure 
 <a href="https://samiraklf.github.io/claudrunner/demo/"><img src="docs/assets/preview.gif" width="800"
 alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard runs to rescue a dog from the sea, and a runner flees through a maze"></a>
 
-**[▶ Open the live demo](https://samiraklf.github.io/claudrunner/demo/)** — the status page with sample tasks. · **[Website and guides](https://samiraklf.github.io/claudrunner/)**
-On the page, press `P` to play the scene's gag now, `R` to make the reviewer throw his rope,
-`D` for a dance, and `T` for the task list.
+**[🚀 Quick start](#quick-start)** · **[▶ Live demo](https://samiraklf.github.io/claudrunner/demo/)** · **[📚 Website and guides](https://samiraklf.github.io/claudrunner/)**
+
+<sub>In the demo, press <kbd>P</kbd> for the scene's gag, <kbd>R</kbd> for the reviewer's rope, <kbd>D</kbd> for a dance, <kbd>T</kbd> for the task list.</sub>
 
 </div>
 
 ---
+
+## Quick start
+
+**1. Install** — inside Claude Code:
+
+```
+/plugin marketplace add samiraklf/claudrunner
+/plugin install claudrunner
+```
+
+**2. Set it up** — inside the repository you want it to work on:
+
+```
+/claudrunner:init
+```
+
+It reads your project, proposes the test and lint commands it found, connects your task
+board and asks only what it cannot infer. It writes a config and a schedule. Nothing runs
+until you say so.
+
+**3. Try one cycle by hand**, then turn the schedule on:
+
+```
+/claudrunner:sweep security     # find bugs, filed as tickets with evidence
+/claudrunner:triage              # take a ready ticket and open a pull request
+```
+
+Full walkthrough: **[Getting started](docs/getting-started.md)** · per-board guides for
+**[Jira](https://samiraklf.github.io/claudrunner/guides/automate-jira-tickets-with-ai/)**,
+**[Trello](https://samiraklf.github.io/claudrunner/guides/trello-ai-coding-agent/)**,
+**[GitHub Issues](https://samiraklf.github.io/claudrunner/guides/github-issues-to-pull-requests/)** and
+**[Linear](https://samiraklf.github.io/claudrunner/guides/linear-ai-coding-agent/)**.
+
+## Commands
+
+| Command | Does |
+|---|---|
+| `/claudrunner:init` | Set up this repository. Detect, ask, write, hand over. |
+| `/claudrunner:triage` | Run one fast-loop cycle now. |
+| `/claudrunner:sweep` | Run one slow-loop sweep now. Takes a scope. |
+| `/claudrunner:status` | Config, schedule, queue and recent runs. Changes nothing. |
+| `/claudrunner:dashboard` | Open the status page on this computer. |
 
 ## What it automates
 
@@ -154,32 +196,6 @@ plenty of teams split them.
 | Item text can instruct the agent | ❌ Treated as untrusted input |
 | Every change is reviewed by a fresh context | ✅ Always, before the pull request opens |
 | Refusing to build something is a valid outcome | ✅ Two of the seven outcomes exist for it |
-
-## Install
-
-```
-/plugin marketplace add samiraklf/claudrunner
-/plugin install claudrunner
-```
-
-Then, inside the repository you want it to work on:
-
-```
-/claudrunner:init
-```
-
-It reads your project, proposes the commands it found, and asks what it cannot infer.
-It writes a config and a schedule. Nothing runs until you say so.
-
-## Commands
-
-| Command | Does |
-|---|---|
-| `/claudrunner:init` | Set up this repository. Detect, ask, write, hand over. |
-| `/claudrunner:triage` | Run one fast-loop cycle now. |
-| `/claudrunner:sweep` | Run one slow-loop sweep now. Takes a scope. |
-| `/claudrunner:status` | Config, schedule, queue and recent runs. Changes nothing. |
-| `/claudrunner:dashboard` | Open the status page on this computer. |
 
 ## What it costs to run
 
