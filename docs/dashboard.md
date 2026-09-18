@@ -129,10 +129,17 @@ into the sea, and discovers he cannot swim. *"BLUB. HELP. BLUB."* *"I AM A RETRI
 THE RETURN STATEMENT."*
 
 A whistle. From the right, in slow motion, comes **Rollback**: lifeguard, superhero, red trunks,
-red cape, orange rescue can, and hair that moves on its own. He dives in, swims out, and brings
+red cape, orange rescue can, and hair that moves on its own. *"HERE I COME!"* *"HOLD ON, BUDDY!
+I'M COMING!"* He dives in, swims out, and brings
 Sandbox back under one arm: *"HOLD ON, BUDDY. ROLLING YOU BACK."* Sandbox shakes himself dry
 all over him. *"ROLLED BACK TO LAST KNOWN GOOD STATE."* Then Sandbox notices the ball is still
 out there. Rollback puts his face in his hand: *"NO. NO NO NO NO."*
+
+Not this time. He leaps and catches Sandbox before the water — *"GOTCHA!"* — sets him down
+(*"STAY."*), wades out for the ball himself (*"FINE. I WILL GET THE BALL."*) and throws it up
+the beach: *"FETCH. ON LAND. LIKE A PROFESSIONAL."* Sandbox catches it. *"BEST. DAY. EVER."*
+The ball goes *pffffffff…* in his mouth. *"…ball?"* Rollback walks back to his post —
+*"ANOTHER DAY. ANOTHER ROLLBACK."* — and Sandbox trots on from where he stands.
 
 ## Captain Latency, in space
 

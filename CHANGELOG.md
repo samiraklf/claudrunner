@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.9 — 2026-09-18
+
+### Changed
+- Rollback shouts as he runs to the rescue: *HERE I COME!*, *HOLD ON, BUDDY! I'M COMING!*
+- The beach rescue has an ending. It used to stop dead as the dog ran back into the sea; now
+  Rollback catches him, fetches the ball himself and throws it up the beach, and the dog
+  walks on from where he stands instead of jumping back to the start of his walk.
+
 ## 0.1.8 — 2026-09-18
 
 ### Fixed

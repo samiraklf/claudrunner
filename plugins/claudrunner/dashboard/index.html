@@ -1792,6 +1792,7 @@ addEventListener('keydown', e => { if (e.key === 'd' || e.key === 'D') dancePart
 // beat lands in order; city only, and never under reduced motion.
 const E = {
   lin: t => t,
+  in: t => t * t,
   io: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
   out: t => 1 - Math.pow(1 - t, 3),
   back: t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }
@@ -2152,7 +2153,7 @@ async function mazeGag() {
 
     // 6. and he RUNS — arms everywhere, gut going, faster than he has moved in years
     sprintBody.classList.add('runlegs');
-    const flee = tween(1900, t => put(sprint, lerp(640, 290, t), FLOOR, 1, true), E.in || (t => t * t));
+    const flee = tween(1900, t => put(sprint, lerp(640, 290, t), FLOOR, 1, true), E.in);
     await wait(250);
     creepBody.classList.add('crawl');
     const chase = tween(2000, t => put(creep, lerp(790, 480, t), lerp(790, FLOOR, t), lerp(.8, 1.1, t), true), E.lin);
@@ -2270,6 +2271,21 @@ WHO.rollback = { name: 'Rollback', role: 'lifeguard · superhero · rolls back a
   'last known good state: the dog, dry, on the sand.',
   'i put on the cape so people know i am a professional.' ] };
 
+// The dog's walk is a 26s loop: right from 240 to 1180 in the first 46%, back from 1180 to
+// 260 in 50–96%, each leg eased. Pick up that loop at the moment he is at x, facing that way,
+// so he walks on from where a gag left him instead of jumping back to the start.
+function resumeTrot(pet, x, facingLeft) {
+  const ease = u => {                                  // CSS ease-in-out as (time, progress)
+    const b = (p1, p2, v) => 3 * p1 * v * (1 - v) ** 2 + 3 * p2 * v * v * (1 - v) + v ** 3;
+    return [b(.42, .58, u), b(0, 1, u)];
+  };
+  const [a, bx, start, span] = facingLeft ? [1180, 260, .5, .46] : [240, 1180, 0, .46];
+  const want = Math.min(1, Math.max(0, (x - a) / (bx - a)));
+  let time = 0;
+  for (let u = 0; u <= 1; u += .002) { const [tt, pp] = ease(u); if (pp >= want) { time = tt; break; } }
+  pet.style.animationDelay = `${(-(start + span * time) * 26).toFixed(2)}s`;
+}
+
 async function beachGag() {
   const root = document.documentElement;
   if (gagRunning || root.dataset.scene !== 'beach' || document.hidden) return;
@@ -2294,6 +2310,7 @@ async function beachGag() {
     if (clear > best) { best = clear; SPOT = x; }
   }
   const DS = .95;                                   // dog scale in the water: big enough to see
+  let endX = null, endFlip = false;                  // where the gag leaves him, for the trot
 
   const dog = (x, y, sc = 1, flip = false, rot = 0) => {
     if (pet.isConnected) pet.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${flip ? -sc : sc},${sc})`);
@@ -2357,7 +2374,17 @@ async function beachGag() {
     layer.insertBefore(hero, underwater);
     worldSay(layer, Math.min(1300, SPOT + 420), 500, '* slow-motion running *', 2600);
     const dogStruggle = tween(3000, (t, raw) => flail(raw, 4), E.lin);
-    await tween(3000, (t, raw) => hput(lerp(1700, SPOT + 240, t), SAND - Math.abs(Math.sin(raw * Math.PI * 5)) * 8, 1.05, true), E.lin);
+    let shout = null, shouted = 0;
+    const SHOUTS = ['HERE I COME!', "HOLD ON, BUDDY! I'M COMING!"];
+    await tween(3000, (t, raw) => {
+      const hx = lerp(1700, SPOT + 240, t);
+      hput(hx, SAND - Math.abs(Math.sin(raw * Math.PI * 5)) * 8, 1.05, true);
+      const want = raw < .25 ? 0 : raw < .6 ? 1 : 2;     // once he is on screen, two shouts
+      if (want > shouted) { shout?.remove(); shout = worldSay(layer, 0, 0, SHOUTS[want - 1], 3000); shouted = want; }
+      // over his head, but never hanging off the right edge while he is still coming in
+      if (shout) shout.setAttribute('transform', `translate(${Math.min(hx, 1450).toFixed(1)},${SAND - 205})`);
+    }, E.lin);
+    shout?.remove();
     await dogStruggle;
 
     // 5. the dive
@@ -2404,20 +2431,91 @@ async function beachGag() {
     worldSay(layer, Math.min(1160, Math.max(340, SPOT + 120)), 520, 'ROLLED BACK TO LAST KNOWN GOOD STATE.', 2000);
     await wait(2000);
 
-    // 9. the dog notices the ball is still out there
-    worldSay(layer, Math.max(220, SPOT + 20), 690, '…ball.', 1100);
+    // 9. the dog notices the ball is still out there, and goes for it again
+    // one bubble each at a time, so a new line never lands on top of the last one
+    let heroLine = null, dogLine = null;
+    const heroSay = (text, ms, x) => {
+      heroLine?.remove();
+      return (heroLine = worldSay(layer, Math.min(1450, Math.max(180, x)), SAND - 205, text, ms));
+    };
+    const dogSay = (text, ms, x) => { dogLine?.remove(); return (dogLine = worldSay(layer, Math.max(220, x), 690, text, ms)); };
+    dogSay('…ball.', 1100, SPOT + 20);
     await wait(900);
     heroBody.classList.add('facepalm');
-    worldSay(layer, Math.min(1200, Math.max(300, SPOT + 120)), 520, 'NO. NO NO NO NO.', 1700);
+    heroSay('NO. NO NO NO NO.', 1300, SPOT + 100);
     if (inner) inner.style.animation = '';
-    await tween(1300, t => dog(lerp(SPOT + 20, SPOT - 20, t), lerp(SAND, WATER + 30, t), lerp(1, DS, t)), E.in || (t => t * t));
+    await wait(500);
     heroBody.classList.remove('facepalm');
+
+    // 10. not this time: he leaps and catches him before the water
+    const MID = { x: SPOT - 4, y: lerp(SAND, WATER + 30, .45) };
+    const dash = tween(600, t => dog(lerp(SPOT + 20, MID.x, t), lerp(SAND, MID.y, t), 1), E.in);
+    await tween(600, (t, raw) => hput(lerp(SPOT + 100, SPOT + 20, t), SAND - Math.sin(raw * Math.PI) * 60, 1.05, true, lerp(0, -24, t)), E.out);
+    await dash;
+    heroSay('GOTCHA!', 1200, SPOT + 20);
+    await tween(450, t => {
+      hput(lerp(SPOT + 20, SPOT + 40, t), SAND, 1.05, true, lerp(-24, 0, t));
+      dog(lerp(MID.x, SPOT + 20, t), lerp(MID.y, SAND - 64, t), .9);
+    }, E.out);
+    await wait(300);
+    await tween(400, t => dog(lerp(SPOT + 20, SPOT - 30, t), lerp(SAND - 64, SAND, t), 1), E.out);
+    heroSay('STAY.', 1000, SPOT + 40);
+    await wait(1100);
+
+    // 11. he fetches the ball himself, wading out to it
+    heroSay('FINE. I WILL GET THE BALL.', 1000, SPOT + 40);
     heroBody.classList.add('rb-run');
-    await tween(900, t => hput(lerp(SPOT + 100, SPOT + 40, t), SAND, 1.05, true), E.lin);
+    layer.appendChild(underwater);
+    underwater.appendChild(hero);
+    // walk right up to where the ball actually floats, not to where it was meant to be
+    const bx = Number(ball.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]);
+    await tween(1200, t => hput(lerp(SPOT + 40, bx - 34, t), lerp(SAND, WATER + 12, t), lerp(1.05, .95, t), false), E.io);
+    await tween(300, t => at(ball, lerp(bx, bx - 34 + 30 * .95, t), lerp(WATER - 4, WATER + 12 - 80 * .95, t)), E.out);
+    await tween(1200, t => {
+      const hx = lerp(bx - 34, SPOT + 70, t), hy = lerp(WATER + 12, SAND, t), sc = lerp(.95, 1.05, t);
+      hput(hx, hy, sc, true);
+      at(ball, hx - 30 * sc, hy - 80 * sc);
+    }, E.io);
+    layer.appendChild(hero);
+    underwater.remove();
+    heroBody.classList.remove('rb-run');
+
+    // 12. and throws it up the beach, where there is room, and where the screen can see it
+    const vb2 = el('stage').viewBox.baseVal;
+    const roomL = SPOT - Math.max(300, vb2.x + 140), roomR = Math.min(1120, vb2.x + vb2.width - 220) - (SPOT + 70);
+    const dir = roomL >= roomR ? -1 : 1;
+    const LAND = dir < 0 ? SPOT - Math.min(360, Math.max(120, roomL)) : SPOT + 70 + Math.min(360, Math.max(120, roomR));
+    const from = { x: SPOT + 70 - 30 * 1.05, y: SAND - 84 };
+    heroSay('FETCH. ON LAND. LIKE A PROFESSIONAL.', 2200, SPOT + 70);
+    const fly = tween(1000, (t, raw) => at(ball, lerp(from.x, LAND, t),
+      lerp(from.y, SAND, raw) - Math.sin(raw * Math.PI) * 190), E.lin);
+    await wait(250);
+    dogSay('BALL!!!!', 1200, SPOT - 30);
+    const flip = dir < 0;
+    await tween(1500, (t, raw) => dog(lerp(SPOT - 30, LAND - dir * 20, t), SAND - Math.abs(Math.sin(raw * Math.PI * 6)) * 6, 1, flip), E.io);
+    await fly;
+
+    // 13. got it. it was not built for a dog. the lifeguard goes back to his tower
+    const mouth = () => ({ x: LAND - dir * 20 + dir * 26, y: SAND - 16 });
+    const leave = tween(2600, t => hput(lerp(SPOT + 70, 1760, t), SAND - Math.abs(Math.sin(t * Math.PI * 9)) * 6, 1.05, false), E.lin);
+    heroBody.classList.add('rb-run');
+    heroSay('ANOTHER DAY. ANOTHER ROLLBACK.', 1800, SPOT + 100);
+    await tween(300, t => at(ball, lerp(LAND, mouth().x, t), lerp(SAND, mouth().y, t), lerp(1, .7, t)), E.out);
+    dogSay('BEST. DAY. EVER.', 1300, LAND);
+    await wait(1300);
+    dogSay('pffffffff…', 1100, LAND);
+    await tween(900, t => ball.setAttribute('transform',
+      `translate(${mouth().x},${mouth().y}) scale(${lerp(.7, .5, t)},${lerp(.7, .08, t)})`), E.io);
+    dogSay('…ball?', 1300, LAND);
+    await wait(1400);
+    ball.remove();
+    await leave;
+    endX = LAND - dir * 20; endFlip = flip;
   } finally {
     if (gagStopped) pet.remove(); else home.appendChild(pet);
     layer.textContent = '';
     pet.style.animation = '';
+    if (endX !== null && !gagStopped) resumeTrot(pet, endX, endFlip);
     if (inner) { inner.style.animation = ''; inner.classList.remove('dog-shake'); }
     delete root.dataset.gag;
     gagRunning = false;
@@ -2577,7 +2675,7 @@ async function spaceGag() {
     await tween(700, t => {
       const x = lerp(1320, 1900, t), y = lerp(G, -200, t);
       place(cap, x, y, 1, false, lerp(0, 28, t)); streak(x, y, 1320, G);
-    }, E.in || (t => t * t));
+    }, E.in);
     trail.remove(); cap.remove();
     await wait(1200);
     lateSay(layer, 1320, 640, 'BYE!', '1 second', 1600);
