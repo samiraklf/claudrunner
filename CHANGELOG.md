@@ -7,6 +7,9 @@
   orchestrator, the CI templates, the stack packs and the board adapters stayed behind in the
   repository, so nobody but us could set it up. Everything that must ship now lives inside
   `plugins/claudrunner/`, and `init` copies the runtime into the user's repository.
+- Changing the scene in the middle of a gag let it play on in the new scene: the beach dog and
+  its rescuer swam on across the moon. A scene change now stops the gag at once and clears it.
+- A closed task drawer still cast its shadow, a grey strip down the right edge of every scene.
 
 ### Added
 - `init` asks where the status page should live: on this computer, on GitHub Pages (with an

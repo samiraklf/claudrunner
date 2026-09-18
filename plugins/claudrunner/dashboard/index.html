@@ -65,9 +65,12 @@
   /* ---- task drawer, hidden by default ------------------------------------ */
   .drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,92vw);z-index:6;
     background:var(--panel);backdrop-filter:blur(10px);padding:66px 18px 18px;
-    transform:translateX(102%);transition:transform .32s cubic-bezier(.3,.9,.3,1);
-    box-shadow:-20px 0 60px -30px #000;overflow:auto}
-  .drawer.open{transform:none}
+    transform:translateX(102%);overflow:auto;visibility:hidden;
+    transition:transform .32s cubic-bezier(.3,.9,.3,1),visibility 0s .32s}
+  /* the shadow and the element itself only exist while open: a closed drawer's shadow
+     used to show as a grey strip down the right edge of every scene */
+  .drawer.open{transform:none;visibility:visible;box-shadow:-20px 0 60px -30px #000;
+    transition:transform .32s cubic-bezier(.3,.9,.3,1)}
   .drawer h2{font-size:10px;letter-spacing:.3em;color:var(--muted);margin:0 0 12px;
     text-transform:uppercase;font-weight:500}
   .task{padding:11px 12px;border-radius:8px;margin-bottom:9px;
@@ -1126,6 +1129,7 @@ let scene = params.get('scene');
 if (!scene) { try { scene = localStorage.getItem('cr-scene'); } catch {} }
 setScene(scene || 'city');
 el('scene').onclick = () => {
+  stopGag();   // a gag belongs to its scene: without this the beach dog swam on in space
   const i = SCENES.findIndex(x => x[0] === document.documentElement.dataset.scene);
   setScene(SCENES[(i + 1) % SCENES.length][0]);
   if (lastData) render(lastData, lastLive);
@@ -1708,20 +1712,44 @@ const E = {
 const lerp = (a, b, t) => a + (b - a) * t;
 // ?slow=4 plays the gag at a quarter speed, which is handy for checking every beat
 const SLOW = Math.max(1, Number(params.get('slow')) || 1);
-const wait = ms => new Promise(r => setTimeout(r, ms * SLOW));
+// stopGag() cuts a running gag short. Every pending wait and tween fails at once, so the gag
+// jumps straight to its finally block and tidies up. The failures are pre-marked as handled,
+// because a gag does not await every tween it starts (the ball flies while the dog runs).
+let gagStopped = false;
+const gagWakers = new Set();
+class GagStopped extends Error {}
+function stopGag() {
+  if (!gagRunning) return;
+  gagStopped = true;
+  gagWakers.forEach(w => w()); gagWakers.clear();
+  el('gag').textContent = '';          // off the screen now, not on the next frame
+  delete document.documentElement.dataset.gag;
+}
+const quiet = p => { p.catch(() => {}); return p; };
+function wait(ms) {
+  if (gagStopped) throw new GagStopped();
+  return quiet(new Promise((resolve, reject) => {
+    const t = setTimeout(() => { gagWakers.delete(stop); resolve(); }, ms * SLOW);
+    const stop = () => { clearTimeout(t); reject(new GagStopped()); };
+    gagWakers.add(stop);
+  }));
+}
 function tween(ms, fn, ease = E.io) {
+  if (gagStopped) throw new GagStopped();
   // Driven by wall-clock time, advanced by whichever arrives first: an animation frame or a
   // short timer. A browser that stops painting frames — a hidden tab, a headless render, a
   // throttled laptop — used to freeze the whole sequence half-way. Now it only gets choppier.
   ms *= SLOW;
-  return new Promise(resolve => {
+  return quiet(new Promise((resolve, reject) => {
     const t0 = performance.now();
     let finished = false;
+    const stop = () => { finished = true; reject(new GagStopped()); };
+    gagWakers.add(stop);
     function frame() {
       if (finished) return;
       const raw = Math.min(1, (performance.now() - t0) / ms);
       fn(ease(raw), raw);
-      if (raw >= 1) { finished = true; resolve(); } else schedule();
+      if (raw >= 1) { finished = true; gagWakers.delete(stop); resolve(); } else schedule();
     }
     function schedule() {
       let fired = false;
@@ -1730,7 +1758,7 @@ function tween(ms, fn, ease = E.io) {
       setTimeout(go, 34);
     }
     schedule();
-  });
+  }));
 }
 
 const POOP = `
@@ -1856,6 +1884,7 @@ async function poopGag() {
     if (inner) inner.style.animation = '';
     delete root.dataset.gag;
     gagRunning = false;
+    gagStopped = false;
   }
 }
 
@@ -2103,6 +2132,7 @@ async function mazeGag() {
     stage.classList.remove('shake');
     delete root.dataset.gag;
     gagRunning = false;
+    gagStopped = false;
   }
 }
 
@@ -2295,12 +2325,13 @@ async function beachGag() {
     heroBody.classList.add('rb-run');
     await tween(900, t => hput(lerp(SPOT + 100, SPOT + 40, t), SAND, 1.05, true), E.lin);
   } finally {
-    home.appendChild(pet);
+    if (gagStopped) pet.remove(); else home.appendChild(pet);
     layer.textContent = '';
     pet.style.animation = '';
     if (inner) { inner.style.animation = ''; inner.classList.remove('dog-shake'); }
     delete root.dataset.gag;
     gagRunning = false;
+    gagStopped = false;
   }
 }
 
@@ -2466,16 +2497,19 @@ async function spaceGag() {
     layer.textContent = '';
     delete root.dataset.gag;
     gagRunning = false;
+    gagStopped = false;
   }
 }
 
 // P plays whichever scene's gag is on screen; the timer does the same.
-function sceneGag() {
+async function sceneGag() {
   const scene = document.documentElement.dataset.scene;
-  if (scene === 'city') return poopGag();
-  if (scene === 'maze') return mazeGag();
-  if (scene === 'beach') return beachGag();
-  if (scene === 'space') return spaceGag();
+  const gag = { city: poopGag, maze: mazeGag, beach: beachGag, space: spaceGag }[scene];
+  try {
+    await gag?.();
+  } catch (e) {
+    if (!(e instanceof GagStopped)) throw e;   // a scene change cut it short: not an error
+  }
 }
 addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') sceneGag(); });
 
@@ -2484,7 +2518,7 @@ document.querySelector('.swinger')?.addEventListener('animationiteration', e => 
   if (e.animationName !== 'swingby') return;
   const root = document.documentElement;
   if (root.dataset.scene !== 'city' || root.dataset.gag === '1') return;
-  if (Math.random() < .6) setTimeout(() => say(pick(SWING_SHOUTS)), 1400);
+  if (Math.random() < .6) setTimeout(() => { if (root.dataset.scene === 'city') say(pick(SWING_SHOUTS)); }, 1400);
 });
 
 // Hover anyone with a name to see who they are and what they are thinking. The tag follows
@@ -2524,7 +2558,7 @@ const GAG_GAP = { beach: 10000, city: 40000, maze: 40000, space: 30000 };
   // ?gag=1 plays the current scene's gag straight away — a link you can send someone
   await new Promise(r => setTimeout(r, params.get('gag') ? 600 : 5000));
   for (;;) {
-    await sceneGag();
+    try { await sceneGag(); } catch (e) { console.error(e); }   // one bad gag must not end the show
     const scene = document.documentElement.dataset.scene;
     await new Promise(r => setTimeout(r, GAG_GAP[scene] || 40000));
   }
