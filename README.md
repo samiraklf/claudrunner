@@ -9,7 +9,12 @@ proves the fix, and opens the pull request — then tells you what it refused to
 
 Any language. Any stack. Any task board. No server required.
 
-**[▶ See the status page live](https://samiraklf.github.io/claudrunner/)** — a demo crew at work. Press `P` for a gag, `R` for a pep talk.
+<a href="https://samiraklf.github.io/claudrunner/"><img src="docs/assets/preview.gif" width="800"
+alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard runs to rescue a dog from the sea, and a runner flees through a maze"></a>
+
+**[▶ Open the live demo](https://samiraklf.github.io/claudrunner/)** — the status page with sample tasks.
+On the page, press `P` to play the scene's gag now, `R` to make the reviewer throw his rope,
+`D` for a dance, and `T` for the task list.
 
 </div>
 

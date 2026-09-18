@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- An animated preview of the status page at the top of the README, linked to the live demo.
+
 ## 0.1.9 — 2026-09-18
 
 ### Changed
