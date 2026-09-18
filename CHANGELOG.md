@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- The website got a design pass: search across every page (`/` or Ctrl+K), a light/dark switch
+  that remembers your choice, copy buttons on commands, an "On this page" list and linkable
+  headings on guides, previous and next links, SVG icons, a three-step "how it works", and a
+  folding docs menu on phones. Keyboard focus is always visible, text meets WCAG AA contrast,
+  and motion stops when the system asks for reduced motion.
+
 ## 0.1.14 — 2026-09-18
 
 ### Fixed

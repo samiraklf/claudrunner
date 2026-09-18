@@ -5,29 +5,49 @@
 </head>
 <body>
 {% include header.html %}
+{%- assign all = site.data.nav.guides | concat: site.data.nav.docs -%}
+{%- assign idx = -1 -%}
+{%- for item in all -%}{%- if item.url == page.url -%}{%- assign idx = forloop.index0 -%}{%- endif -%}{%- endfor -%}
 <div class="page">
-  <aside class="side" aria-label="Contents">
-    <h4>Guides</h4>
-    {% for item in site.data.nav.guides %}<a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>{% endfor %}
-    <h4>Docs</h4>
-    {% for item in site.data.nav.docs %}<a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>{% endfor %}
+  <aside class="side" aria-label="Guides and docs">
+    <details class="side-nav" open>
+      <summary>{% include icon.html name="book" px=18 %}<span>Browse guides and docs</span>{% include icon.html name="chevron" px=18 %}</summary>
+      <h4>Guides</h4>
+      {% for item in site.data.nav.guides %}<a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>{% endfor %}
+      <h4>Docs</h4>
+      {% for item in site.data.nav.docs %}<a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>{% endfor %}
+    </details>
   </aside>
-  <main class="doc">
+
+  <main class="doc" id="main" tabindex="-1">
+    {% if page.nav %}<p class="crumb"><a href="{% if page.nav == 'guides' %}{{ '/guides/' | relative_url }}{% else %}{{ '/getting-started/' | relative_url }}{% endif %}">{% if page.nav == 'guides' %}Guides{% else %}Docs{% endif %}</a></p>{% endif %}
     {% if page.title %}<h1>{{ page.title }}</h1>{% endif %}
     {% if page.lead %}<p class="lead">{{ page.lead }}</p>{% endif %}
-    {{ content }}
+    <div class="prose">{{ content }}</div>
+
+    {% if idx >= 0 %}
+    <nav class="pager" aria-label="Previous and next page">
+      {%- assign prev = idx | minus: 1 -%}{%- assign next = idx | plus: 1 -%}
+      {% if prev >= 0 %}{% assign p = all[prev] %}<a class="prev" href="{{ p.url | relative_url }}"><small>{% include icon.html name="arrow-left" px=15 %} Previous</small><span>{{ p.title }}</span></a>{% else %}<span></span>{% endif %}
+      {% if next < all.size %}{% assign n = all[next] %}<a class="next" href="{{ n.url | relative_url }}"><small>Next {% include icon.html name="arrow-right" px=15 %}</small><span>{{ n.title }}</span></a>{% endif %}
+    </nav>
+    {% endif %}
+
     <section class="cta">
       <h2>Try it on your own repository</h2>
       <pre><code>/plugin marketplace add samiraklf/claudrunner
 /plugin install claudrunner
 /claudrunner:init</code></pre>
       <p>Free and open source. It runs on your own Claude Code subscription, and nothing runs
-        until you turn the schedule on. <a href="{{ '/getting-started/' | relative_url }}">Getting started →</a></p>
+        until you turn the schedule on. <a href="{{ '/getting-started/' | relative_url }}">Getting started {% include icon.html name="arrow-right" px=15 %}</a></p>
     </section>
-    {% unless page.path contains 'guides/index' %}
-    <p class="edit"><a href="https://github.com/{{ site.repository }}/blob/main/docs/{{ page.path }}">Edit this page on GitHub</a></p>
-    {% endunless %}
+    <p class="edit"><a href="https://github.com/{{ site.repository }}/blob/main/docs/{{ page.path }}">{% include icon.html name="github" %} Edit this page on GitHub</a></p>
   </main>
+
+  <aside class="toc" aria-label="On this page" hidden>
+    <h4>On this page</h4>
+    <ol></ol>
+  </aside>
 </div>
 {% include footer.html %}
 </body>
