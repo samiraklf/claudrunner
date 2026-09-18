@@ -66,6 +66,12 @@ case "$adapter" in
   trello)
     for k in lists.ready lists.review lists.parked claim_label_id; do
       [ -n "$(cr_get ".board.settings.$k" '')" ] || err "board.settings.$k is not set"
+    done
+    # Trello ids are 24 hex characters. Anything else is a name or a placeholder, and
+    # would only fail later, on the first scheduled run.
+    for k in lists.ready lists.claimed lists.review lists.parked lists.filed claim_label_id; do
+      v=$(cr_get ".board.settings.$k" '')
+      [ -z "$v" ] || [[ "$v" =~ ^[0-9a-f]{24}$ ]] || err "board.settings.$k is '$v', not a Trello id (24 hex characters)"
     done ;;
   linear)
     for role in ready claimed review parked; do

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.16 — 2026-09-18
+
+### Changed
+- Trello: with an in-progress list configured (`board.settings.lists.claimed`), a claimed card
+  moves there, so the board shows what the crew is working on.
+
+### Fixed
+- Trello settings that are not ids (a list name, or a placeholder) passed validation and only
+  failed on the first scheduled run. `validate-config.sh` now rejects them up front.
+
 ## 0.1.15 — 2026-09-18
 
 ### Fixed
