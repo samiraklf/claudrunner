@@ -50,16 +50,44 @@ An unknown stack uses `${CLAUDE_PLUGIN_ROOT}/packs/generic/pack.md` and asks the
 Ask these as one grouped question where the interface allows it. Give the recommended
 option first.
 
-1. **Task board** — GitHub Issues (no extra account), Trello, Jira, Linear, or none.
-   "None" is valid: the sweep still files findings as Markdown reports.
+1. **Task board** — GitHub Issues (no extra account), then Jira, Trello, Linear, GitLab
+   Issues, Azure Boards, Shortcut, Asana, ClickUp, monday.com, Notion, or none. "None" is
+   valid: the sweep still files findings as Markdown reports.
 2. **Board mapping** — which queue holds work ready to be picked up, where a finished item
    goes, and where a blocked item goes. For GitHub Issues these are labels; for the others,
    lists or statuses. Never hardcode names: read the board and match by meaning.
-3. **Cadence** — fast loop interval (default 10 minutes) and slow loop schedule
-   (default nightly; weekly suits a stable codebase).
-4. **Autonomy** — `suggest`, `pr-only` (default), or `push`.
-5. **Where it runs** — this session only, CI cron (default), or a server with systemd.
-6. **Where the status page lives** — see the next step. Ask it last; it is optional.
+3. **Where it runs** — offer these, in this order, and recommend the first:
+
+   | Choice | Say |
+   |---|---|
+   | **Claude Code routine** (`routine`) — recommended | "Runs in Anthropic's cloud on your Claude subscription. No API key, no server, no CI minutes. You can see and edit it on claude.ai." |
+   | **GitHub Actions** (`github-actions`) | "Runs in your CI. Needs an `ANTHROPIC_API_KEY` secret, billed per use by the API." |
+   | **Cron on this machine** (`cron`) | "Runs on a machine you leave on, on your subscription." |
+   | **systemd lanes** (`systemd`) | "For a server that runs many repositories." |
+   | **By hand only** (`manual`) | "Nothing scheduled; you run `/claudrunner:triage` yourself." |
+
+   Routines need the repository on GitHub and a claude.ai login in this session. If either is
+   missing, say so and recommend the next choice.
+4. **Cadence** — for a routine the shortest interval is one hour; default the fast loop to
+   hourly and the slow loop to weekly. Elsewhere, fast loop 10 minutes, slow loop nightly.
+   Ask for times in the user's own timezone and convert to UTC.
+5. **Board access** — with a routine and a board that has a claude.ai connector (Trello,
+   Jira, Linear, Asana, Notion and others), recommend `board.via: connector`: no keys to
+   store. Check the connector can see the board before relying on it. Otherwise
+   `board.via: api`, with the credentials in the environment.
+6. **How the crew tests its changes** (`verify.mode`) — offer, recommended first:
+
+   | Choice | Say |
+   |---|---|
+   | **Auto** (`auto`) — recommended | "The crew decides per change: no setup for text or docs, and only the part of the project it changed for code. Fewest minutes and tokens." |
+   | **Always here** (`here`) | "Every change is tested before the pull request opens. Slower, most certain." |
+   | **Leave it to CI** (`ci`) | "The crew writes the tests and never installs anything; your CI runs them on the pull request." Recommend only when CI runs the tests on pull requests. |
+
+   Then look at what the project needs to run its tests. If it has separable parts (a backend
+   and a frontend, several services), write the setup so it takes a part name and list the
+   parts in `stack.commands.setup_parts`.
+7. **Autonomy** — `suggest`, `pr-only` (default), or `push`.
+8. **Where the status page lives** — see the next step. Ask it last; it is optional.
 
 ## Step 2b — The status page
 
@@ -68,12 +96,15 @@ Offer these four, recommended first. Explain each in one line, in these words:
 | Choice | Say |
 |---|---|
 | **On this computer** (`local`) | "Open it any time with `/claudrunner:dashboard`. Only you can see it. Nothing to set up." |
+| **From a branch** (`branch`) | "Each run publishes its status to a `claudrunner-status` branch; `/claudrunner:dashboard` shows it live on your computer. Private." |
 | **GitHub Pages** (`github-pages`) | "A link for your whole team, updated after every run. Free on a public repo. Anyone with the link can see it." |
 | **Your own server** (`server`) | "A subdomain such as `crew.example.com`, or a path such as `example.com/claudrunner/`, on a server you run." |
 | **No page** (`none`) | "Skip it. You can add it later by editing the config." |
 
-Recommend **GitHub Pages** when the repository is public and runs happen in CI — the team gets
-a link and nobody runs anything. Otherwise recommend **On this computer**.
+Recommend **GitHub Pages** when the repository is public and runs happen in CI or a routine —
+the team gets a link and nobody runs anything. When runs happen in a routine or CI on a
+private repository, recommend **From a branch**: this computer never sees those runs any
+other way. Otherwise recommend **On this computer**.
 
 Follow-up questions, only for the choice made:
 
@@ -100,11 +131,13 @@ State these back and let the user change them:
 
 ## Step 4 — Write the files
 
-0. **Install the runtime into the repository**, so scheduled runs work without the plugin's
-   files: copy `${CLAUDE_PLUGIN_ROOT}/runtime/` to `.claudrunner/bin/`, and
-   `${CLAUDE_PLUGIN_ROOT}/dashboard/index.html` to `.claudrunner/bin/dashboard/index.html`.
-   Keep the files executable. Add `.claudrunner/runs/` and `.claudrunner/dashboard/` to the
-   repository's `.gitignore` — they are run records and a generated page, not source.
+0. **Install claudrunner into the repository**, so scheduled runs work without the plugin:
+   run `${CLAUDE_PLUGIN_ROOT}/runtime/install-into-repo.sh ${CLAUDE_PLUGIN_ROOT}`, adding
+   `--with-commands` for a routine — a cloud routine cannot install plugins, so the crew's
+   commands, skills and agents go into the repository's own `.claude/`, which every Claude
+   Code session loads. Everything it installs is committed; only `.claudrunner/runs/` and
+   `.claudrunner/dashboard/` are ignored, and the script refuses a `.gitignore` that would
+   hide the rest.
 1. `.claudrunner/config.yml` — the answers above, including the `dashboard:` section. Follow
    the configuration reference in the claudrunner repository exactly.
 2. `.claudrunner/gotchas.md` — an empty catalog with its header. It grows from real
@@ -112,14 +145,50 @@ State these back and let the user change them:
 3. `.claudrunner/notes.md` — anything you learned about the project that a future run
    needs and cannot re-derive cheaply: scale-sensitive tables, slow test paths, areas that
    are deliberately unconventional.
-4. The schedule file for the chosen target, from `${CLAUDE_PLUGIN_ROOT}/templates/`.
+4. The schedule for the chosen target: a workflow, crontab line or unit from
+   `${CLAUDE_PLUGIN_ROOT}/templates/` — or, for a routine, nothing here; see Step 4b.
+5. If the tests need preparation in a fresh machine (dependencies, a database), put it in a
+   script such as `.claudrunner/setup.sh` and set `stack.commands.setup` to it. A routine
+   starts from a bare checkout every time. In a routine, **do not use Docker images**:
+   Docker Hub rate-limits the shared cloud addresses and the pull fails. Install services
+   from the system's own packages instead (for example `apt-get install -y mysql-server`),
+   and keep the script quiet — send its output to a log file and print one line when done.
+
+## Step 4b — Create the routines
+
+Only for `routine`, and only after the files from Step 4 are committed and pushed to the
+base branch: a routine checks out the base branch and sees nothing that is not there. If
+they are not on the base branch yet, open the pull request, say the routines will be created
+once it is merged, and stop here.
+
+Create two routines with the `RemoteTrigger` tool (`action: create`). For each:
+
+- `name`: `claudrunner triage — <project.name>` and `claudrunner sweep — <project.name>`.
+- `cron_expression`: the cadence from Step 2 in UTC, at least one hour apart. Start the
+  triage at a minute other than :00 so it does not queue behind everyone else's.
+- `enabled`: `true`.
+- `job_config.ccr.environment_id`: the user's cloud environment. If there is more than one,
+  ask which.
+- `job_config.ccr.session_context.sources`: this repository's GitHub URL, nothing else.
+- `job_config.ccr.session_context.allowed_tools`: `Bash, Read, Write, Edit, Glob, Grep, Skill, Agent`.
+- `job_config.ccr.events`: one user message whose content is
+  `${CLAUDE_PLUGIN_ROOT}/templates/routine/triage-prompt.md` (or `sweep-prompt.md`), verbatim.
+  Do not add anything to it: it is written so an unattended session reads it as the plain
+  development work it is.
+- `mcp_connections`: only the board's connector when `board.via` is `connector`, and nothing
+  else. A routine starts with every connector the account has; send the list explicitly.
+
+The response gives each routine's id. Store them as `schedule.routines.triage` and
+`schedule.routines.sweep` in `.claudrunner/config.yml` so later runs of `init` update the
+same routines instead of creating new ones.
 
 ## Step 5 — Hand over
 
 Print, in this order:
 
 1. The secrets the user must add, by name, and where to add them. Never print a value.
-2. The one command that turns the schedule on.
+2. The one command that turns the schedule on — for a routine, the two claude.ai links
+   `https://claude.ai/code/routines/<id>`, where the user can see, edit, pause or run them.
 3. The command to try one cycle by hand first: `/claudrunner:triage`.
 4. Where to see the crew:
    - `local` — "`/claudrunner:dashboard`"

@@ -1,6 +1,197 @@
 # Changelog
 
+## 0.2.3 — 2026-09-18
+
+### Added
+- `verify.mode` — how the crew tests its changes, chosen in `init`: `auto` (recommended) lets
+  the crew decide per change, `here` always tests before the pull request, `ci` never installs
+  anything and leaves the tests to CI.
+
+### Changed
+- Setup happens at the last moment, when the crew knows what it changed: no setup for text and
+  docs, only the changed part for code. Reading code and planning never set anything up. A
+  sweep, which only reads, needs no setup at all.
+- A pull request always says honestly whether its tests ran here or are left to CI.
+
+## 0.2.2 — 2026-09-18
+
+### Fixed
+- A run driven by the agent (a routine) set the project up before looking at the board, so an
+  empty queue still cost a full setup — minutes of installing, every hour. It now fetches and
+  claims first, records the start, and only then sets up.
+
+### Added
+- `stack.commands.setup_parts`: a setup that accepts a part name (`setup.sh backend`) lets a run
+  install only what its task touches.
+
+## 0.2.1 — 2026-09-18
+
+### Fixed
+- A setup that failed in a routine sent the agent improvising — starting daemons, trying
+  registry mirrors and proxies — which is slow, noisy and alarming to read. Setup is now one
+  step: if it fails, the run reports the failing command and stops. `init` also steers routine
+  setups away from Docker images, which Docker Hub rate-limits on shared cloud addresses.
+
+## 0.2.0 — 2026-09-18
+
+### Added
+- **Claude Code routines**, now the recommended way to run. `init` offers them first: the crew
+  runs in Anthropic's cloud on your Claude subscription, with no API key, no server and no CI
+  minutes. `init` creates the triage and sweep routines and prints their claude.ai links.
+- `install-into-repo.sh`: installs the crew into a repository's own `.claude/` and
+  `.claudrunner/`, committed. A cloud routine cannot install plugins; this is how it gets them.
+- `board.via: connector`: the agent reaches the board through its claude.ai connector, so a
+  routine needs no board keys.
+- `dashboard.where: branch`: every run publishes its status to a `claudrunner-status` branch and
+  `/claudrunner:dashboard` shows it live. Runs in a routine or in CI on a private repository
+  now appear on your screen while they happen, and today's count carries across runs.
+- `claudrunner-mark.sh`: run records for a cycle the agent drives itself, so a routine or a
+  run by hand shows up on the status page like an orchestrated one.
+- `stack.commands.setup`, for preparing a bare checkout.
+
+### Changed
+- Opening a pull request without `gh` (a cloud routine) falls back to the session's GitHub
+  tool, or to a one-click compare link.
+
+## 0.1.16 — 2026-09-18
+
+### Changed
+- Trello: with an in-progress list configured (`board.settings.lists.claimed`), a claimed card
+  moves there, so the board shows what the crew is working on.
+
+### Fixed
+- Trello settings that are not ids (a list name, or a placeholder) passed validation and only
+  failed on the first scheduled run. `validate-config.sh` now rejects them up front.
+
+## 0.1.15 — 2026-09-18
+
+### Fixed
+- On GitHub Actions only GitHub Issues could work: the CI templates passed the run no board
+  credentials, so Trello, Jira, Linear and the rest failed on their first scheduled run. Both
+  templates now pass every board's secrets, and the self-test checks that each credential an
+  adapter reads reaches both templates. Found by the first real install.
+
 ## Unreleased
+
+### Changed
+- The preview is an animated WebP in full colour, recorded at quarter speed and played back at
+  full speed for smooth motion, at 1100px. The GIF stays as a fallback and is re-recorded too.
+- The README's install steps moved from the bottom to a Quick start right under the preview,
+  with the commands after it and a jump link at the top.
+- The website got a design pass: search across every page (`/` or Ctrl+K), a light/dark switch
+  that remembers your choice, copy buttons on commands, an "On this page" list and linkable
+  headings on guides, previous and next links, SVG icons, a three-step "how it works", and a
+  folding docs menu on phones. Keyboard focus is always visible, text meets WCAG AA contrast,
+  and motion stops when the system asks for reduced motion.
+
+## 0.1.14 — 2026-09-18
+
+### Fixed
+- Jira fetched tickets through `/rest/api/3/search`, which Atlassian retired; it now answers
+  410 Gone, so a Jira board never handed the crew any work. Fetching uses
+  `/rest/api/3/search/jql`. The self-test runs the real fetch against a stand-in Jira that
+  refuses the old address.
+
+## 0.1.13 — 2026-09-18
+
+### Added
+- A website at https://samiraklf.github.io/claudrunner/: a home page, eight guides written for
+  what people search for (Jira, Trello, GitHub Issues and Linear to pull requests, an AI
+  security scan, AI code review, a comparison and an FAQ), and every doc as a web page. Titles,
+  descriptions, share images, a sitemap and structured data for search engines.
+- The status page demo moved to https://samiraklf.github.io/claudrunner/demo/.
+
+### Fixed
+- `init` offered 5 task boards; it now offers all 11.
+
+## 0.1.12 — 2026-09-18
+
+### Fixed
+- Speech bubbles guessed their width from the character count, so text spilled out: the
+  *sent 4 seconds ago* line under Captain Latency's short lines, a long line from the Intern,
+  and some robot chatter. Every bubble now measures its text and fits the longest line.
+
+## 0.1.11 — 2026-09-18
+
+### Changed
+- The README opens with what claudrunner does, in the words people search for: an autonomous
+  AI coding agent that finds bugs, fixes tickets from Jira, Trello, GitHub Issues, Linear and
+  7 other boards, and opens the pull requests. A short table lists what it automates.
+- The plugin and marketplace descriptions say the same, and list keywords.
+
+### Fixed
+- The README said 4 task boards; there are 11.
+
+## 0.1.10 — 2026-09-18
+
+### Changed
+- The pep talk runs alongside the scene gags instead of waiting for them: the rope can fly
+  while Crawler catches the dog's feature request.
+
+### Added
+- An animated preview of the status page at the top of the README, linked to the live demo.
+  It shows the rope and Crawler's catch in the same shot.
+
+## 0.1.9 — 2026-09-18
+
+### Changed
+- Rollback shouts as he runs to the rescue: *HERE I COME!*, *HOLD ON, BUDDY! I'M COMING!*
+- The beach rescue has an ending. It used to stop dead as the dog ran back into the sea; now
+  Rollback catches him, fetches the ball himself and throws it up the beach, and the dog
+  walks on from where he stands instead of jumping back to the start of his walk.
+
+## 0.1.8 — 2026-09-18
+
+### Fixed
+- On a portrait phone the scene was cropped to its middle, so most of the crew and the
+  reviewer were off screen. Narrow screens now zoom to fit the crew instead, and the gags
+  play where the screen can see them.
+- The top bar ran off the edge of small phones and broke its labels on tablets. It wraps
+  onto a second row now.
+
+## 0.1.7 — 2026-09-18
+
+### Fixed
+- The reviewer's lines floated off to his left. They now sit centred over his head, and the
+  opening line rides above the lasso he twirls.
+
+## 0.1.6 — 2026-09-18
+
+### Changed
+- The rope is only as long as the way from his hand to the robot's head, so it lands nearly
+  straight instead of hanging in a long loop.
+- He shouts at every bonk: *WORK HARDER!*, *WORK FASTER!*, *BE SMARTER!* and more.
+
+## 0.1.5 — 2026-09-18
+
+### Changed
+- The pep talk comes round every 15 seconds instead of once a minute. Scene gags wait for it
+  to finish instead of losing their turn.
+
+## 0.1.4 — 2026-09-18
+
+### Changed
+- The reviewer's rope is a real rope now: twisted strands, a lasso loop he twirls over his
+  head, and a chain of points under gravity, so it sags, swings and whips on the throw and
+  dangles as he reels it back in.
+
+## 0.1.3 — 2026-09-18
+
+### Changed
+- The robots type on laptops instead of hammering at a bench, with the screen lighting their
+  faces and what they type floating up now and then.
+
+### Added
+- The pep talk: the reviewer bonks each robot on the head with a rope, nearest first, and
+  asks it, as a friend, to type faster. It aims at wherever each robot actually is. `R` starts it.
+
+## 0.1.2 — 2026-09-18
+
+### Fixed
+- The city's big red aerial sat at a fixed spot while the buildings are generated, so it floated
+  in front of a facade. It now stands on the roof of the tallest front building.
+
+## 0.1.1 — 2026-09-18
 
 ### Fixed
 - An installed plugin shipped only its agents, commands, hooks and skills. The dashboard, the
@@ -12,6 +203,8 @@
 - A closed task drawer still cast its shadow, a grey strip down the right edge of every scene.
 
 ### Added
+- A public demo of the status page at https://samiraklf.github.io/claudrunner/, redeployed
+  whenever the page changes. It runs the built-in simulation and never shows real tasks.
 - `init` asks where the status page should live: on this computer, on GitHub Pages (with an
   optional custom domain), on your own server (a subdomain or a path), or nowhere.
 - `/claudrunner:dashboard` serves the page locally and opens it, with python3 or node —

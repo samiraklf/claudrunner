@@ -40,6 +40,8 @@ Read the pull request. That is exactly what will arrive while you sleep.
 
 `init` printed the command. It is one of:
 
+- for a Claude Code routine: merge the setup pull request, then open the two routine links
+  `init` printed — they run on your Claude subscription, and you can pause or run them there
 - commit the workflow files, for the CI target
 - add two lines to a crontab
 - `systemctl enable --now` two timers

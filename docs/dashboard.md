@@ -1,7 +1,11 @@
 # The status page
 
-A full-screen scene showing what the crew is doing. One HTML file and one JSON file, so any
-host that can serve a folder can serve it.
+A cute, funny status dashboard for your AI crew. At a glance you see the agents' ongoing
+tasks, what is in review and what shipped today, while robots type at laptops, the reviewer
+cracks his rope to keep them going, and every scene has its own gag.
+[Try the live demo](https://samiraklf.github.io/claudrunner/demo/).
+
+It is one HTML file and one JSON file, so any host that can serve a folder can serve it.
 
 ## Where it lives
 
@@ -33,7 +37,7 @@ subdomain and for a path ship in the plugin's `templates/hosting/`.
 
 ## What you are looking at
 
-**Every active run is a robot at a bench**, hammering, with its task and progress on a card
+**Every active run is a robot typing at a laptop**, with its task and progress on a card
 above its head. The colour follows the phase — orange while it works, cyan once it reaches
 review. When the queue empties the robots sit down with a coffee and start snoring, so you
 can tell from across the room whether anything is happening without reading a number.
@@ -58,10 +62,13 @@ remembers whatever you choose after that.
 The robots are deliberately the same in both. A dark scene where you cannot find the
 characters is a wallpaper, not a status page.
 
-## Scenes
+## Any screen
 
-Three, on the **SCENE** button. The crew, their benches and the progress cards are the same
-in all of them; only the world changes.
+The page fits phones, tablets, laptops, TVs and ultrawide monitors. Wide screens lose a
+little sky. Narrow ones zoom to the crew and grow the sky upwards, so every robot, its card
+and the reviewer stay in view. On a phone the controls wrap onto a second row.
+
+## Scenes
 
 Four, on the **SCENE** button. The crew changes with the world — different uniform,
 different animal, different jokes.
@@ -108,6 +115,18 @@ screams *"NOPE."* and is gone.
 `P` plays whichever scene's gag is on screen. `?gag=1` plays it as soon as the page loads — a
 link you can send someone.
 
+## The pep talk, in every scene
+
+Every 15 seconds or so, Professor Well-Actually takes the rope off his belt, twirls the lasso
+over his head, and throws. He bonks every robot on the head, one at a time, nearest first —
+*"WE ARE FRIENDS. TYPE FASTER, FRIEND."* — and shouts at every bonk: *"WORK HARDER!"*,
+*"BE SMARTER!"*. The rope is just long enough to reach. The robot sees stars and types twice as fast for a few seconds (*"is this team building?"*). He aims
+at where each robot is right now, so one robot gets one bonk and three get three. An empty
+crew gets none.
+
+It runs alongside the scene's own gag, so the rope can fly while Crawler chases the dog's
+feature request. `R` starts it. `?rope=1` starts it as soon as the page loads.
+
 ## Rollback, on the beach
 
 Every half minute or so on the beach, Sandbox chases the ball — *"BALL. BALL. BALL. BALL."* — straight
@@ -115,10 +134,17 @@ into the sea, and discovers he cannot swim. *"BLUB. HELP. BLUB."* *"I AM A RETRI
 THE RETURN STATEMENT."*
 
 A whistle. From the right, in slow motion, comes **Rollback**: lifeguard, superhero, red trunks,
-red cape, orange rescue can, and hair that moves on its own. He dives in, swims out, and brings
+red cape, orange rescue can, and hair that moves on its own. *"HERE I COME!"* *"HOLD ON, BUDDY!
+I'M COMING!"* He dives in, swims out, and brings
 Sandbox back under one arm: *"HOLD ON, BUDDY. ROLLING YOU BACK."* Sandbox shakes himself dry
 all over him. *"ROLLED BACK TO LAST KNOWN GOOD STATE."* Then Sandbox notices the ball is still
 out there. Rollback puts his face in his hand: *"NO. NO NO NO NO."*
+
+Not this time. He leaps and catches Sandbox before the water — *"GOTCHA!"* — sets him down
+(*"STAY."*), wades out for the ball himself (*"FINE. I WILL GET THE BALL."*) and throws it up
+the beach: *"FETCH. ON LAND. LIKE A PROFESSIONAL."* Sandbox catches it. *"BEST. DAY. EVER."*
+The ball goes *pffffffff…* in his mouth. *"…ball?"* Rollback walks back to his post —
+*"ANOTHER DAY. ANOTHER ROLLBACK."* — and Sandbox trots on from where he stands.
 
 ## Captain Latency, in space
 

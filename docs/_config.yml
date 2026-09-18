@@ -1,0 +1,98 @@
+# The claudrunner website: https://samiraklf.github.io/claudrunner/
+# Built by .github/workflows/demo-page.yml with GitHub's own Pages builder. The guides in this
+# folder stay plain Markdown, so they still read well on GitHub; everything a search engine
+# needs (titles, descriptions, the sitemap) is set here instead of in their front matter.
+
+title: claudrunner
+tagline: Autonomous AI coding agent for your task board
+description: >-
+  Open-source autonomous AI coding agent: finds bugs, fixes Jira, Trello, GitHub Issues and
+  Linear tickets, reviews the diff and opens the pull request.
+url: https://samiraklf.github.io
+baseurl: /claudrunner
+repository: samiraklf/claudrunner
+lang: en
+logo: /assets/logo.png
+
+permalink: pretty
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter_opts:
+    disable: true
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+  - jekyll-titles-from-headings
+  - jekyll-default-layout
+
+optional_front_matter:
+  remove_originals: true     # no raw .md copies next to the pages: duplicate content
+relative_links:
+  enabled: true
+  collections: false
+titles_from_headings:
+  enabled: true
+  strip_title: true
+
+# The status page ships as a plain file and is copied in after the build; keep the build
+# away from anything that is not the website.
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+
+defaults:
+  - scope: { path: "" }
+    values:
+      layout: default
+      image: /assets/social-card.png
+  - scope: { path: "getting-started.md" }
+    values:
+      title: "Getting started with claudrunner"
+      nav: docs
+      description: Install claudrunner, set it up in a repository with one command, try one cycle by hand, then turn on the schedule. What to watch in the first week.
+  - scope: { path: "how-a-run-works.md" }
+    values:
+      title: "How an autonomous AI coding agent run works"
+      nav: docs
+      description: One claudrunner run step by step — fetch, claim, prepare the tree, implement, review, ship, move the tickets — and why the agent never holds a credential.
+  - scope: { path: "configuration.md" }
+    values:
+      title: "claudrunner configuration reference"
+      nav: docs
+      description: Every claudrunner setting in .claudrunner/config.yml — stack commands, task board mapping, schedule, autonomy level, review and the status page — plus the credentials for each board.
+  - scope: { path: "scheduling.md" }
+    values:
+      title: "Scheduling an AI coding agent: CI cron, cron or systemd"
+      nav: docs
+      description: Run the AI coding agent on a schedule with CI cron, plain cron or systemd. How often to poll the board, nightly or weekly sweeps, and the failure that silently stops every run.
+  - scope: { path: "security.md" }
+    values:
+      title: "Security model for an unattended AI coding agent"
+      nav: docs
+      description: The claudrunner security model for an unattended AI coding agent — no credentials in the agent, item text as untrusted input, no pushes to the default branch, no merges.
+  - scope: { path: "dashboard.md" }
+    values:
+      title: "The status page: watch your AI crew at work"
+      nav: docs
+      description: The claudrunner status page — a live, animated view of the AI crew at work. Where it can live (local, GitHub Pages, your own server), what it shows and what it hides.
+  - scope: { path: "writing-a-pack.md" }
+    values:
+      nav: docs
+      description: Teach claudrunner a new language or framework with a stack pack — five commands and the failure modes that ecosystem is known for.
+  - scope: { path: "writing-an-adapter.md" }
+    values:
+      nav: docs
+      description: Connect claudrunner to a new task board by writing an adapter — four verbs (fetch, claim, comment, move) and the rules every board must follow.
+  - scope: { path: "writing-a-host.md" }
+    values:
+      nav: docs
+      description: Teach claudrunner a new git host, so it can push branches and open pull or merge requests there.
+  - scope: { path: "guides" }
+    values:
+      nav: guides

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>claudrunner</title>
+<meta name="description" content="The claudrunner status page: the AI coding crew at work, what is in progress, what is in review and what shipped today.">
 <style>
   :root{
     --hazard:#ff8a2b; --neon:#35e0e0; --ok:#5ddc8a; --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
@@ -60,6 +61,22 @@
     background:var(--panel);color:var(--text);letter-spacing:.14em;font-size:11px;
     box-shadow:0 2px 0 rgba(0,0,0,.18);transition:transform .12s ease}
   button:hover{transform:translateY(-1px)}
+  .chip,button{white-space:nowrap}
+  /* small screens: the brand on one row, the controls on the next */
+  @media (max-width:820px){
+    .hud{flex-wrap:wrap;gap:8px;padding:10px 12px}
+    .spacer{flex-basis:100%;height:0}
+    .brand{font-size:13px;letter-spacing:.3em}
+  }
+  @media (max-width:440px){
+    .hud{gap:6px;padding:10px 8px}
+    .chip,button{font-size:10px;padding:5px 8px;letter-spacing:.04em}
+    .brand{letter-spacing:.22em}
+  }
+  @media (max-width:380px){
+    .hud{gap:5px}
+    .chip,button{font-size:9.5px;padding:4px 6px;letter-spacing:0}
+  }
   button:active{transform:translateY(1px)}
 
   /* ---- task drawer, hidden by default ------------------------------------ */
@@ -119,11 +136,25 @@
   .orb{filter:drop-shadow(0 0 26px var(--orb-glow))}
   .bob{animation:bob 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-  .hammer{animation:hammer .62s ease-in-out infinite;transform-box:fill-box;transform-origin:70% 20%}
-  @keyframes hammer{0%,100%{transform:rotate(-8deg)}45%{transform:rotate(46deg)}}
-  .spark{animation:spark .62s ease-in-out infinite}
-  @keyframes spark{0%,48%{opacity:0;transform:translate(0,0) scale(.6)}
-    52%{opacity:1}100%{opacity:0;transform:translate(14px,-18px) scale(1.2)}}
+  /* typing: bursts of taps with a short think in between, the two hands out of step */
+  .type-l,.type-r{animation:tap .9s linear infinite}
+  .type-r{animation-delay:-.4s}
+  .turbo .type-l,.turbo .type-r{animation-duration:.28s}
+  @keyframes tap{0%,62%,100%{transform:translateY(0)}8%{transform:translateY(-3px)}16%{transform:translateY(0)}
+    24%{transform:translateY(-3px)}32%{transform:translateY(0)}40%{transform:translateY(-2px)}48%{transform:translateY(0)}}
+  .screen-glow{animation:glow 2.8s ease-in-out infinite}
+  @keyframes glow{0%,100%{opacity:.16}40%{opacity:.26}55%{opacity:.12}}
+  /* what they type floats up out of the laptop now and then */
+  /* the reviewer's pep talk: arm up, rope out, a bonk on the head, back to work faster */
+  .throwing .coil{opacity:0}
+  .bonked{animation:bonk .75s ease-out 1 !important;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes bonk{0%{transform:none}14%{transform:scale(1.14,.8)}34%{transform:scale(.94,1.08) rotate(-5deg)}
+    56%{transform:rotate(4deg)}78%{transform:rotate(-2deg)}100%{transform:none}}
+  .dizzy{animation:dizzy 1s linear infinite}
+  @keyframes dizzy{to{transform:rotate(360deg)}}
+  .spark{animation:spark 2.6s ease-out infinite}
+  @keyframes spark{0%,40%{opacity:0;transform:translate(0,0) scale(.7)}
+    50%{opacity:1}100%{opacity:0;transform:translate(10px,-34px) scale(1.1)}}
   .cape{animation:cape 3.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
   @keyframes cape{0%,100%{transform:skewX(0)}50%{transform:skewX(-11deg)}}
   .beam{animation:beam 5s ease-in-out infinite}
@@ -425,10 +456,6 @@
   </g>
   <!-- city props -->
   <g id="city-props">
-    <g transform="translate(300,470)">
-      <rect x="-3" y="-64" width="6" height="64" fill="var(--near)"/>
-      <circle class="blink" cx="0" cy="-70" r="6" fill="#ff5a5a"/>
-    </g>
     <g class="swinger" data-who="crawler">
       <g class="swing">
         <rect x="-34" y="-46" width="72" height="96" fill="none" pointer-events="all"/>
@@ -1037,7 +1064,12 @@
       <rect class="visor" x="-12" y="-94" width="24" height="9" rx="4.5" fill="var(--neon)"/>
       <rect x="-13" y="-22" width="11" height="22" rx="5" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
       <rect x="2" y="-22" width="11" height="22" rx="5" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
-      <rect x="-30" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
+      <g class="coil" fill="none" stroke-linecap="round">
+        <ellipse cx="22" cy="-30" rx="10" ry="7" stroke="#3b2410" stroke-width="6"/>
+        <ellipse cx="22" cy="-30" rx="10" ry="7" stroke="#c58a4a" stroke-width="3.5"/>
+        <ellipse cx="22" cy="-30" rx="6" ry="4" stroke="#c58a4a" stroke-width="2.5"/>
+      </g>
+      <rect class="rope-arm" x="-30" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       <rect x="19" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       <g id="hero-costume"></g>
     </g></g>
@@ -1076,6 +1108,7 @@
   <g id="crew"></g>
   <g id="scan"></g>
   <g id="gag"></g>
+  <g id="rope-layer"></g>
 </svg>
 
 <div class="hud">
@@ -1116,6 +1149,41 @@ if (!theme) { try { theme = localStorage.getItem('cr-theme'); } catch {} }
 if (!theme) { const h = new Date().getHours(); theme = (h >= 7 && h < 19) ? 'day' : 'night'; }
 setTheme(theme);
 el('theme').onclick = () => setTheme(document.documentElement.dataset.theme === 'day' ? 'night' : 'day');
+
+// ---------------------------------------------------------------- fit
+// The scene is 1600×900. On wide screens it fills the window and only loses sky. On narrow
+// ones filling the window would cut off the sides — and the crew, the reviewer and his
+// lines live on the sides — so there the scene shrinks until they all fit and the sky grows
+// upwards instead (the page behind it is the sky's top colour, so the join never shows).
+// What must stay on screen: every robot with its card, and the reviewer with his lines. A
+// crew of one leaves the left half empty, so a phone can zoom in that much further.
+function actionBox() {
+  const xOf = g => Number(g.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]);
+  let left = 1180;                                     // the reviewer's widest line starts here
+  document.querySelectorAll('#crew .unit').forEach(u => {
+    const card = Number(u.querySelector('.card rect.prog-bg')?.getAttribute('width')) || 320;
+    left = Math.min(left, xOf(u) - Math.max(60, card / 2) - 16);
+  });
+  document.querySelectorAll('#crew .idle').forEach(u => { left = Math.min(left, xOf(u) - 70); });
+  // Sprint's chase ends by the left wall of the maze, so there the whole floor stays in view
+  if (document.documentElement.dataset.scene === 'maze') left = Math.min(left, 110);
+  left = Math.max(0, Math.min(left, 640));             // never zoom in past a crew of one
+  return { x: left, w: 1560 - left };
+}
+function fitStage() {
+  const svg = el('stage'), a = innerWidth / Math.max(1, innerHeight);
+  const ACTION = actionBox();
+  if (900 * a >= 1520) {
+    svg.setAttribute('viewBox', '0 0 1600 900');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMax slice');
+  } else {
+    const h = ACTION.w / a;
+    svg.setAttribute('viewBox', `${ACTION.x} ${(900 - h).toFixed(1)} ${ACTION.w} ${h.toFixed(1)}`);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMax meet');
+  }
+}
+fitStage();
+addEventListener('resize', fitStage);
 
 // ---------------------------------------------------------------- scene
 const SCENES = [['city', '🌆 CITY'], ['beach', '🏝 BEACH'], ['space', '🌑 SPACE'], ['maze', '🧱 MAZE']];
@@ -1166,10 +1234,13 @@ const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
 
 function buildLayer(id, { top, base, minW, maxW, fill, winW, winH, gapX, gapY, lit, roof }) {
   const g = el(id);
+  let tallest = null;
   for (let x = -40; x < 1640;) {
     const w = ri(minW, maxW);
     const h = ri(top[0], top[1]);
     const y = base - h;
+    // the tallest block that is fully on screen, for the big aerial below
+    if (x > 40 && x + w < 1100 && (!tallest || y < tallest.y)) tallest = { x, y, w };
     g.appendChild(node('rect', { x, y, width: w, height: h, fill }));
     // a lighter face on one side gives the block some volume
     g.appendChild(node('rect', { x, y, width: Math.min(9, w * .12), height: h,
@@ -1210,14 +1281,23 @@ function buildLayer(id, { top, base, minW, maxW, fill, winW, winH, gapX, gapY, l
     }
     x += w + ri(2, 12);
   }
+  return tallest;
 }
 
 buildLayer('sky-far',  { top: [170, 330], base: 604, minW: 46, maxW: 104, fill: 'var(--far)',
   winW: 4, winH: 5, gapX: 7, gapY: 9, lit: .22, roof: false });
 buildLayer('sky-mid',  { top: [150, 300], base: 690, minW: 62, maxW: 132, fill: 'var(--mid)',
   winW: 6, winH: 7, gapX: 9, gapY: 12, lit: .3, roof: true });
-buildLayer('sky-near', { top: [90, 190],  base: 772, minW: 96, maxW: 190, fill: 'var(--near)',
+const tallestNear = buildLayer('sky-near', { top: [90, 190],  base: 772, minW: 96, maxW: 190, fill: 'var(--near)',
   winW: 8, winH: 10, gapX: 13, gapY: 16, lit: .34, roof: true });
+// The city's big aerial stands on the roof of the tallest front block. It used to sit at a
+// fixed spot, and since the blocks are generated it ended up floating in front of a facade.
+if (tallestNear) {
+  const g = el('sky-near'), top = tallestNear, ax = top.x + top.w - 22;
+  g.appendChild(node('rect', { x: ax - 3, y: top.y - 64, width: 6, height: 64, fill: 'var(--near)' }));
+  g.appendChild(node('rect', { x: ax - 9, y: top.y - 4, width: 18, height: 4, fill: 'var(--near)' }));
+  g.appendChild(node('circle', { cx: ax, cy: top.y - 70, r: 6, fill: '#ff5a5a', class: 'blink' }));
+}
 
 // ---------------------------------------------------------------- starfield
 (() => {
@@ -1272,21 +1352,29 @@ function robot(x, phase, title, progress, index) {
       <circle class="acc" cx="0" cy="-114" r="5"/>
       <rect x="-16" y="-18" width="13" height="18" rx="6" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
       <rect x="3" y="-18" width="13" height="18" rx="6" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
-      <g class="hammer">
-        <rect x="22" y="-58" width="12" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
-        <rect x="24" y="-34" width="8" height="22" rx="3" fill="var(--trim)"/>
-        <rect x="16" y="-16" width="26" height="12" rx="3" fill="var(--ink)"/>
-      </g>
-      <rect x="-34" y="-58" width="12" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       ${(COSTUME[document.documentElement.dataset.scene] || COSTUME.city)()}
+      <!-- both arms reach down to the keyboard, behind the lid -->
+      <g class="type-l"><rect x="-34" y="-58" width="12" height="24" rx="5" transform="rotate(-38 -28 -58)"
+            fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/></g>
+      <g class="type-r"><rect x="22" y="-58" width="12" height="24" rx="5" transform="rotate(38 28 -58)"
+            fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/></g>
+      <!-- the screen lights up the face from below -->
+      <rect class="screen-glow" x="-21" y="-82" width="42" height="22" rx="9" fill="var(--neon)"/>
     </g>
-    <g>
-      <rect x="28" y="-22" width="74" height="9" rx="3" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5"/>
-      <rect x="33" y="-13" width="7" height="13" fill="var(--near)"/>
-      <rect x="90" y="-13" width="7" height="13" fill="var(--near)"/>
-      <rect x="52" y="-32" width="20" height="10" rx="3" fill="var(--trim)" stroke="var(--ink)" stroke-width="2"/>
+    <g class="desk">
+      <rect x="-44" y="-30" width="6" height="30" fill="var(--near)" stroke="var(--ink)" stroke-width="2"/>
+      <rect x="38" y="-30" width="6" height="30" fill="var(--near)" stroke="var(--ink)" stroke-width="2"/>
+      <rect x="-52" y="-36" width="104" height="8" rx="3" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5"/>
+      <!-- the laptop, seen from behind: base, then the lid leaning back towards the robot -->
+      <rect x="-28" y="-41" width="56" height="5" rx="2" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2"/>
+      <path d="M-22,-40 L-20,-64 Q-20,-66 -18,-66 L18,-66 Q20,-66 20,-64 L22,-40 Z"
+            fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path class="acc" d="M0,-59 l6,7 -6,7 -6,-7 z" opacity=".9"/>
+      <path d="M-16,-62 L-15,-45" stroke="#ffffff" stroke-width="2" opacity=".25" stroke-linecap="round"/>
     </g>
-    <g class="spark acc"><circle cx="46" cy="-18" r="3"/><circle cx="54" cy="-22" r="2"/></g>
+    <g class="spark acc" style="animation-delay:-${(index * .9) % 2.6}s">
+      <text x="10" y="-84" font-family="var(--mono)" font-size="12" font-weight="700"
+            stroke="var(--ink)" stroke-width=".6">${['{ }', '</>', '=>', '();', '[ ]', '!=='][index % 6]}</text></g>
     <g class="card"></g></g>`;
   return g;
 }
@@ -1528,6 +1616,7 @@ function miniSay(g, text) {
      <text x="0" y="-2" text-anchor="middle" font-size="12" font-family="var(--mono)"
            fill="var(--text)">${text.replace(/[<&]/g, '')}</text>`;
   g.appendChild(b);
+  fitBubble(inner, 18);
   setTimeout(() => b.remove(), 5600);
 }
 
@@ -1610,6 +1699,7 @@ function render(d, live) {
   }
 
   reviewScan();
+  fitStage();                           // the crew changed size: a narrow screen re-zooms
 
   // the companion goes in last so it walks in front of the crew, and is made once per scene
   let pet = crew.querySelector('.pet') || (document.documentElement.dataset.gag === '1' ? document.querySelector('#gag .pet') : null);
@@ -1705,6 +1795,7 @@ addEventListener('keydown', e => { if (e.key === 'd' || e.key === 'D') dancePart
 // beat lands in order; city only, and never under reduced motion.
 const E = {
   lin: t => t,
+  in: t => t * t,
   io: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
   out: t => 1 - Math.pow(1 - t, 3),
   back: t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }
@@ -1719,10 +1810,11 @@ let gagStopped = false;
 const gagWakers = new Set();
 class GagStopped extends Error {}
 function stopGag() {
-  if (!gagRunning) return;
+  if (!gagRunning && !ropeRunning) return;
   gagStopped = true;
   gagWakers.forEach(w => w()); gagWakers.clear();
   el('gag').textContent = '';          // off the screen now, not on the next frame
+  el('rope-layer').textContent = '';
   delete document.documentElement.dataset.gag;
 }
 const quiet = p => { p.catch(() => {}); return p; };
@@ -1793,6 +1885,8 @@ const SPIDEY = `<g class="body">
 </g>`;
 
 let gagRunning = false;
+// The rope runs alongside the scene gags, so it has its own flag and its own layer.
+let ropeRunning = false;
 async function poopGag() {
   const root = document.documentElement;
   if (gagRunning || root.dataset.scene !== 'city' || document.hidden) return;
@@ -1884,7 +1978,7 @@ async function poopGag() {
     if (inner) inner.style.animation = '';
     delete root.dataset.gag;
     gagRunning = false;
-    gagStopped = false;
+    if (!ropeRunning) gagStopped = false;
   }
 }
 
@@ -2003,6 +2097,7 @@ function worldSay(layer, x, y, text, ms = 2200) {
     <text x="0" y="-4" text-anchor="middle" font-size="13" font-weight="700"
           font-family="var(--mono)" fill="var(--text)">${text}</text>`;
   layer.appendChild(b);
+  fitBubble(b, 30);
   setTimeout(() => b.remove(), ms * SLOW);
   return b;
 }
@@ -2065,7 +2160,7 @@ async function mazeGag() {
 
     // 6. and he RUNS — arms everywhere, gut going, faster than he has moved in years
     sprintBody.classList.add('runlegs');
-    const flee = tween(1900, t => put(sprint, lerp(640, 290, t), FLOOR, 1, true), E.in || (t => t * t));
+    const flee = tween(1900, t => put(sprint, lerp(640, 290, t), FLOOR, 1, true), E.in);
     await wait(250);
     creepBody.classList.add('crawl');
     const chase = tween(2000, t => put(creep, lerp(790, 480, t), lerp(790, FLOOR, t), lerp(.8, 1.1, t), true), E.lin);
@@ -2132,7 +2227,7 @@ async function mazeGag() {
     stage.classList.remove('shake');
     delete root.dataset.gag;
     gagRunning = false;
-    gagStopped = false;
+    if (!ropeRunning) gagStopped = false;
   }
 }
 
@@ -2183,6 +2278,21 @@ WHO.rollback = { name: 'Rollback', role: 'lifeguard · superhero · rolls back a
   'last known good state: the dog, dry, on the sand.',
   'i put on the cape so people know i am a professional.' ] };
 
+// The dog's walk is a 26s loop: right from 240 to 1180 in the first 46%, back from 1180 to
+// 260 in 50–96%, each leg eased. Pick up that loop at the moment he is at x, facing that way,
+// so he walks on from where a gag left him instead of jumping back to the start.
+function resumeTrot(pet, x, facingLeft) {
+  const ease = u => {                                  // CSS ease-in-out as (time, progress)
+    const b = (p1, p2, v) => 3 * p1 * v * (1 - v) ** 2 + 3 * p2 * v * v * (1 - v) + v ** 3;
+    return [b(.42, .58, u), b(0, 1, u)];
+  };
+  const [a, bx, start, span] = facingLeft ? [1180, 260, .5, .46] : [240, 1180, 0, .46];
+  const want = Math.min(1, Math.max(0, (x - a) / (bx - a)));
+  let time = 0;
+  for (let u = 0; u <= 1; u += .002) { const [tt, pp] = ease(u); if (pp >= want) { time = tt; break; } }
+  pet.style.animationDelay = `${(-(start + span * time) * 26).toFixed(2)}s`;
+}
+
 async function beachGag() {
   const root = document.documentElement;
   if (gagRunning || root.dataset.scene !== 'beach' || document.hidden) return;
@@ -2194,16 +2304,20 @@ async function beachGag() {
   const layer = el('gag'); layer.textContent = '';
   const inner = pet.firstElementChild;
   const SAND = 782, WATER = 652;
-  // Robots stand at x and their workbench runs to x+100. Drown where none of them is, or the
+  // Robots stand at x behind a desk from x-52 to x+52. Drown where none of them is, or the
   // dog vanishes behind a head — which is exactly what happened with three tasks running.
   const taken = [...document.querySelectorAll('#crew .unit')].map(u =>
     Number(u.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]));
+  // and only where the screen shows: a phone zoomed on a small crew hides the far left
+  const vb = el('stage').viewBox.baseVal;
+  const lo = Math.max(240, vb.x + 120), hi = Math.min(1120, vb.x + vb.width - 200);
   let SPOT = 700, best = -1;
-  for (let x = 240; x <= 1120; x += 10) {
-    const clear = taken.length ? Math.min(...taken.map(r => x < r - 50 ? r - 50 - x : x > r + 110 ? x - r - 110 : -1)) : 999;
+  for (let x = lo; x <= hi; x += 10) {
+    const clear = taken.length ? Math.min(...taken.map(r => x < r - 60 ? r - 60 - x : x > r + 60 ? x - r - 60 : -1)) : 999;
     if (clear > best) { best = clear; SPOT = x; }
   }
   const DS = .95;                                   // dog scale in the water: big enough to see
+  let endX = null, endFlip = false;                  // where the gag leaves him, for the trot
 
   const dog = (x, y, sc = 1, flip = false, rot = 0) => {
     if (pet.isConnected) pet.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${flip ? -sc : sc},${sc})`);
@@ -2267,7 +2381,17 @@ async function beachGag() {
     layer.insertBefore(hero, underwater);
     worldSay(layer, Math.min(1300, SPOT + 420), 500, '* slow-motion running *', 2600);
     const dogStruggle = tween(3000, (t, raw) => flail(raw, 4), E.lin);
-    await tween(3000, (t, raw) => hput(lerp(1700, SPOT + 240, t), SAND - Math.abs(Math.sin(raw * Math.PI * 5)) * 8, 1.05, true), E.lin);
+    let shout = null, shouted = 0;
+    const SHOUTS = ['HERE I COME!', "HOLD ON, BUDDY! I'M COMING!"];
+    await tween(3000, (t, raw) => {
+      const hx = lerp(1700, SPOT + 240, t);
+      hput(hx, SAND - Math.abs(Math.sin(raw * Math.PI * 5)) * 8, 1.05, true);
+      const want = raw < .25 ? 0 : raw < .6 ? 1 : 2;     // once he is on screen, two shouts
+      if (want > shouted) { shout?.remove(); shout = worldSay(layer, 0, 0, SHOUTS[want - 1], 3000); shouted = want; }
+      // over his head, but never hanging off the right edge while he is still coming in
+      if (shout) shout.setAttribute('transform', `translate(${Math.min(hx, 1450).toFixed(1)},${SAND - 205})`);
+    }, E.lin);
+    shout?.remove();
     await dogStruggle;
 
     // 5. the dive
@@ -2314,24 +2438,95 @@ async function beachGag() {
     worldSay(layer, Math.min(1160, Math.max(340, SPOT + 120)), 520, 'ROLLED BACK TO LAST KNOWN GOOD STATE.', 2000);
     await wait(2000);
 
-    // 9. the dog notices the ball is still out there
-    worldSay(layer, Math.max(220, SPOT + 20), 690, '…ball.', 1100);
+    // 9. the dog notices the ball is still out there, and goes for it again
+    // one bubble each at a time, so a new line never lands on top of the last one
+    let heroLine = null, dogLine = null;
+    const heroSay = (text, ms, x) => {
+      heroLine?.remove();
+      return (heroLine = worldSay(layer, Math.min(1450, Math.max(180, x)), SAND - 205, text, ms));
+    };
+    const dogSay = (text, ms, x) => { dogLine?.remove(); return (dogLine = worldSay(layer, Math.max(220, x), 690, text, ms)); };
+    dogSay('…ball.', 1100, SPOT + 20);
     await wait(900);
     heroBody.classList.add('facepalm');
-    worldSay(layer, Math.min(1200, Math.max(300, SPOT + 120)), 520, 'NO. NO NO NO NO.', 1700);
+    heroSay('NO. NO NO NO NO.', 1300, SPOT + 100);
     if (inner) inner.style.animation = '';
-    await tween(1300, t => dog(lerp(SPOT + 20, SPOT - 20, t), lerp(SAND, WATER + 30, t), lerp(1, DS, t)), E.in || (t => t * t));
+    await wait(500);
     heroBody.classList.remove('facepalm');
+
+    // 10. not this time: he leaps and catches him before the water
+    const MID = { x: SPOT - 4, y: lerp(SAND, WATER + 30, .45) };
+    const dash = tween(600, t => dog(lerp(SPOT + 20, MID.x, t), lerp(SAND, MID.y, t), 1), E.in);
+    await tween(600, (t, raw) => hput(lerp(SPOT + 100, SPOT + 20, t), SAND - Math.sin(raw * Math.PI) * 60, 1.05, true, lerp(0, -24, t)), E.out);
+    await dash;
+    heroSay('GOTCHA!', 1200, SPOT + 20);
+    await tween(450, t => {
+      hput(lerp(SPOT + 20, SPOT + 40, t), SAND, 1.05, true, lerp(-24, 0, t));
+      dog(lerp(MID.x, SPOT + 20, t), lerp(MID.y, SAND - 64, t), .9);
+    }, E.out);
+    await wait(300);
+    await tween(400, t => dog(lerp(SPOT + 20, SPOT - 30, t), lerp(SAND - 64, SAND, t), 1), E.out);
+    heroSay('STAY.', 1000, SPOT + 40);
+    await wait(1100);
+
+    // 11. he fetches the ball himself, wading out to it
+    heroSay('FINE. I WILL GET THE BALL.', 1000, SPOT + 40);
     heroBody.classList.add('rb-run');
-    await tween(900, t => hput(lerp(SPOT + 100, SPOT + 40, t), SAND, 1.05, true), E.lin);
+    layer.appendChild(underwater);
+    underwater.appendChild(hero);
+    // walk right up to where the ball actually floats, not to where it was meant to be
+    const bx = Number(ball.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]);
+    await tween(1200, t => hput(lerp(SPOT + 40, bx - 34, t), lerp(SAND, WATER + 12, t), lerp(1.05, .95, t), false), E.io);
+    await tween(300, t => at(ball, lerp(bx, bx - 34 + 30 * .95, t), lerp(WATER - 4, WATER + 12 - 80 * .95, t)), E.out);
+    await tween(1200, t => {
+      const hx = lerp(bx - 34, SPOT + 70, t), hy = lerp(WATER + 12, SAND, t), sc = lerp(.95, 1.05, t);
+      hput(hx, hy, sc, true);
+      at(ball, hx - 30 * sc, hy - 80 * sc);
+    }, E.io);
+    layer.appendChild(hero);
+    underwater.remove();
+    heroBody.classList.remove('rb-run');
+
+    // 12. and throws it up the beach, where there is room, and where the screen can see it
+    const vb2 = el('stage').viewBox.baseVal;
+    const roomL = SPOT - Math.max(300, vb2.x + 140), roomR = Math.min(1120, vb2.x + vb2.width - 220) - (SPOT + 70);
+    const dir = roomL >= roomR ? -1 : 1;
+    const LAND = dir < 0 ? SPOT - Math.min(360, Math.max(120, roomL)) : SPOT + 70 + Math.min(360, Math.max(120, roomR));
+    const from = { x: SPOT + 70 - 30 * 1.05, y: SAND - 84 };
+    heroSay('FETCH. ON LAND. LIKE A PROFESSIONAL.', 2200, SPOT + 70);
+    const fly = tween(1000, (t, raw) => at(ball, lerp(from.x, LAND, t),
+      lerp(from.y, SAND, raw) - Math.sin(raw * Math.PI) * 190), E.lin);
+    await wait(250);
+    dogSay('BALL!!!!', 1200, SPOT - 30);
+    const flip = dir < 0;
+    await tween(1500, (t, raw) => dog(lerp(SPOT - 30, LAND - dir * 20, t), SAND - Math.abs(Math.sin(raw * Math.PI * 6)) * 6, 1, flip), E.io);
+    await fly;
+
+    // 13. got it. it was not built for a dog. the lifeguard goes back to his tower
+    const mouth = () => ({ x: LAND - dir * 20 + dir * 26, y: SAND - 16 });
+    const leave = tween(2600, t => hput(lerp(SPOT + 70, 1760, t), SAND - Math.abs(Math.sin(t * Math.PI * 9)) * 6, 1.05, false), E.lin);
+    heroBody.classList.add('rb-run');
+    heroSay('ANOTHER DAY. ANOTHER ROLLBACK.', 1800, SPOT + 100);
+    await tween(300, t => at(ball, lerp(LAND, mouth().x, t), lerp(SAND, mouth().y, t), lerp(1, .7, t)), E.out);
+    dogSay('BEST. DAY. EVER.', 1300, LAND);
+    await wait(1300);
+    dogSay('pffffffff…', 1100, LAND);
+    await tween(900, t => ball.setAttribute('transform',
+      `translate(${mouth().x},${mouth().y}) scale(${lerp(.7, .5, t)},${lerp(.7, .08, t)})`), E.io);
+    dogSay('…ball?', 1300, LAND);
+    await wait(1400);
+    ball.remove();
+    await leave;
+    endX = LAND - dir * 20; endFlip = flip;
   } finally {
     if (gagStopped) pet.remove(); else home.appendChild(pet);
     layer.textContent = '';
     pet.style.animation = '';
+    if (endX !== null && !gagStopped) resumeTrot(pet, endX, endFlip);
     if (inner) { inner.style.animation = ''; inner.classList.remove('dog-shake'); }
     delete root.dataset.gag;
     gagRunning = false;
-    gagStopped = false;
+    if (!ropeRunning) gagStopped = false;
   }
 }
 
@@ -2401,6 +2596,20 @@ WHO.latency = { name: 'Captain Latency', role: 'space superhero · always arrive
   'if you can read this, i sent it a while ago.' ] };
 
 // Speech that was sent a while ago, and says so.
+// Size a bubble to its real text. The width used to be guessed from the character count,
+// which undercounts emoji and ignores a second line — "📡 sent 4 seconds ago" spilled out
+// of "GOT YOU!". Measure every line once it is on the page and fit the box to the longest.
+function fitBubble(g, pad = 32) {
+  const rect = g.querySelector('rect.prog-bg');
+  if (!rect) return;
+  let widest = 0;
+  g.querySelectorAll('text').forEach(t => { try { widest = Math.max(widest, t.getComputedTextLength()); } catch {} });
+  if (!widest) return;                                 // not rendered (hidden tab): keep the guess
+  const w = Math.max(Number(rect.getAttribute('width')), widest + pad);
+  rect.setAttribute('x', (-w / 2).toFixed(1));
+  rect.setAttribute('width', w.toFixed(1));
+}
+
 function lateSay(layer, x, y, text, ago, ms = 1600) {
   const w = Math.min(420, 36 + text.length * 8.2);
   const b = node('g', { transform: `translate(${x},${y})` });
@@ -2411,6 +2620,7 @@ function lateSay(layer, x, y, text, ago, ms = 1600) {
     <text x="0" y="6" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--muted)"
           letter-spacing=".5">📡 sent ${ago} ago</text>`;
   layer.appendChild(b);
+  fitBubble(b);
   setTimeout(() => b.remove(), ms * SLOW);
 }
 
@@ -2487,7 +2697,7 @@ async function spaceGag() {
     await tween(700, t => {
       const x = lerp(1320, 1900, t), y = lerp(G, -200, t);
       place(cap, x, y, 1, false, lerp(0, 28, t)); streak(x, y, 1320, G);
-    }, E.in || (t => t * t));
+    }, E.in);
     trail.remove(); cap.remove();
     await wait(1200);
     lateSay(layer, 1320, 640, 'BYE!', '1 second', 1600);
@@ -2497,8 +2707,198 @@ async function spaceGag() {
     layer.textContent = '';
     delete root.dataset.gag;
     gagRunning = false;
-    gagStopped = false;
+    if (!ropeRunning) gagStopped = false;
   }
+}
+
+// ---------------------------------------------------------------- the pep talk
+// Now and then the reviewer takes the rope off his belt and bonks every robot on the head,
+// one after the other, nearest first. It reads each robot's position live, so it hits
+// whoever is actually there: one robot, three, or none at all (then it does not happen).
+const PEP_LINES = ['WE ARE FRIENDS. TYPE FASTER, FRIEND.', 'THIS IS A SAFE SPACE. NOW SHIP.',
+  'I BELIEVE IN YOU. ALSO IN THE DEADLINE.', 'TEAMWORK! YOU WORK. I WATCH.',
+  'FRIENDLY REMINDER. WITH A ROPE.', 'I SAID FRIENDLY. I DID NOT SAY SLOW.',
+  'HUGS AFTER THE PR. HUGS ARE FASTER.', 'MORE COMMITS. FEWER FEELINGS.',
+  'MOTIVATION HAS ARRIVED. IT IS A ROPE.', 'WORK HARDER. BUT, LIKE, WITH LOVE.'];
+// what he shouts at the moment the loop lands
+const HIT_LINES = ['WORK HARDER!', 'WORK FASTER!', 'BE SMARTER!', 'TYPE FASTER, FRIEND!',
+  'LESS THINKING. MORE TYPING!', 'FASTER! BUT, YOU KNOW, FRIENDLY!', 'SMARTER, NOT HARDER! NO. BOTH!',
+  'MORE CODE! FEWER BUGS!', 'GO GO GO, BUDDY!', 'HARDER! FASTER! KINDER!'];
+const OUCH_LINES = ['ow. ok. typing.', 'is this team building?', 'filing that under feedback.',
+  'typing at 110%.', 'that was a merge conflict with my head.', 'love you too, boss.',
+  'my skull is now asynchronous.', 'reporting this to HR. HR is also you.'];
+
+// A real rope: a chain of points under gravity (Verlet), held at the hand. The tip is steered
+// — twirled, thrown, held on a head — or let go, and every point between follows by itself,
+// so it sags, swings and whips like rope instead of bending like a wire.
+function makeRope(layer, n = 26) {
+  const pts = Array.from({ length: n }, () => ({ x: 0, y: 0, px: 0, py: 0 }));
+  const line = (stroke, w, extra = {}) => node('path', { fill: 'none', stroke, 'stroke-width': w,
+    'stroke-linecap': 'round', 'stroke-linejoin': 'round', ...extra });
+  const paths = [line('#3b2410', 6.5), line('#c58a4a', 4),
+    line('#8a5a2b', 4, { 'stroke-dasharray': '3 4' }),                       // the twist of the strands
+    line('#f3cf94', 1.2, { 'stroke-dasharray': '3 4', 'stroke-dashoffset': 3.5, opacity: .8 })];
+  const noose = node('g');
+  noose.innerHTML = `<ellipse rx="12" ry="7" fill="none" stroke="#3b2410" stroke-width="6.5"/>
+    <ellipse rx="12" ry="7" fill="none" stroke="#c58a4a" stroke-width="4"/>
+    <ellipse rx="12" ry="7" fill="none" stroke="#8a5a2b" stroke-width="4" stroke-dasharray="3 4"/>
+    <rect x="-15" y="-3.5" width="6" height="7" rx="2" fill="#8a5a2b" stroke="#3b2410" stroke-width="1.5"/>`;
+  const G = .0016;                                     // px per ms², a touch lighter than the moon
+  const r = {
+    pts, seg: 2, tip: null, hand: { x: 0, y: 0 }, damp: .985,
+    show() { layer.append(...paths, noose); },
+    hide() { paths.forEach(p => p.remove()); noose.remove(); },
+    reset(h) { this.hand = h; pts.forEach(p => { p.x = p.px = h.x; p.y = p.py = h.y; }); },
+    step(ms) {
+      const k = Math.max(1, Math.ceil(ms / 8)), dt = ms / k, last = n - 1;
+      for (let s = 0; s < k; s++) {
+        for (let i = 1; i < n; i++) {
+          const p = pts[i], vx = (p.x - p.px) * this.damp, vy = (p.y - p.py) * this.damp;
+          p.px = p.x; p.py = p.y; p.x += vx; p.y += vy + G * dt * dt;
+        }
+        pts[0].x = this.hand.x; pts[0].y = this.hand.y;
+        if (this.tip) { pts[last].x = this.tip.x; pts[last].y = this.tip.y; }
+        for (let it = 0; it < 14; it++) {
+          for (let i = 0; i < last; i++) {
+            const a = pts[i], b = pts[i + 1];
+            const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+            if (d <= this.seg || !d) continue;            // rope goes slack; it never pushes
+            const wa = i === 0 ? 0 : 1, wb = (i + 1 === last && this.tip) ? 0 : 1;
+            if (!wa && !wb) continue;
+            const f = (d - this.seg) / d / (wa + wb);
+            a.x += dx * f * wa; a.y += dy * f * wa; b.x -= dx * f * wb; b.y -= dy * f * wb;
+          }
+        }
+      }
+    },
+    draw() {
+      let d = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+      for (let i = 1; i < n - 1; i++) {
+        const a = pts[i], b = pts[i + 1];
+        d += ` Q${a.x.toFixed(1)},${a.y.toFixed(1)} ${((a.x + b.x) / 2).toFixed(1)},${((a.y + b.y) / 2).toFixed(1)}`;
+      }
+      const e = pts[n - 1], f = pts[n - 3];
+      d += ` L${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+      paths.forEach(p => p.setAttribute('d', d));
+      const ang = Math.atan2(e.y - f.y, e.x - f.x) * 180 / Math.PI;
+      noose.setAttribute('transform', `translate(${(e.x + Math.cos(ang * Math.PI / 180) * 9).toFixed(1)},` +
+        `${(e.y + Math.sin(ang * Math.PI / 180) * 9).toFixed(1)}) rotate(${ang.toFixed(1)})`);
+    },
+    // wrap a tween callback: steer first, then let physics run for the time that passed
+    live(fn) {
+      let t0 = performance.now();
+      return (t, raw) => { const now = performance.now(); fn(t, raw); this.step(Math.min(40, now - t0)); t0 = now; this.draw(); };
+    }
+  };
+  return r;
+}
+
+async function ropeGag() {
+  if (ropeRunning || document.hidden) return false;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  const HX = 1350, HY = 762;
+  const xOf = u => Number(u.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]);
+  const units = [...document.querySelectorAll('#crew .unit')].sort((a, b) => xOf(b) - xOf(a));
+  if (!units.length) return false;
+
+  ropeRunning = true;
+  const layer = el('rope-layer'); layer.textContent = '';
+  const heroBody = document.querySelector('#hero .hero-body');
+  const rope = makeRope(layer);
+  // His lines sit right over his head: centred on him, the tail just clearing his helmet.
+  const SAY = { x: HX, y: HY - 92 - 104 - 26 };
+  const SAY_HIGH = { x: HX, y: SAY.y - 42 };          // while the lasso circles over his head
+  // The throwing arm turns about its shoulder; the rope is held wherever the hand ends up.
+  const arm = document.querySelector('#hero .rope-arm');
+  const SH = { x: -24.5, y: -65.6 }, ARM = 28;
+  const setArm = deg => {
+    arm?.setAttribute('transform', `rotate(${deg.toFixed(1)} ${SH.x} ${SH.y})`);
+    const r = deg * Math.PI / 180;
+    return { x: HX + SH.x - ARM * Math.sin(r), y: HY - 92 + SH.y + ARM * Math.cos(r) };
+  };
+
+  try {
+    let first = true;
+    for (const unit of units) {
+      if (!unit.isConnected) continue;                 // its run finished while we were busy
+      const body = unit.querySelector('.bob');
+      const head = () => ({ x: xOf(unit) + 4, y: HY - 100 });
+
+      // 1. the lasso goes round over his head, picking up speed
+      heroBody?.classList.add('throwing');
+      let shout = first ? worldSay(layer, SAY_HIGH.x, SAY_HIGH.y, pick(PEP_LINES), 2000) : null;
+      first = false;
+      rope.reset(setArm(0)); rope.seg = 64 / 25; rope.damp = .985; rope.show();
+      const ring = (a, c) => ({ x: c.x + Math.cos(a) * 36, y: c.y - 34 + Math.sin(a) * 11 });
+      // the arm comes up, then circles with the loop
+      await tween(260, rope.live(t => { rope.hand = setArm(lerp(0, 172, t)); rope.tip = null; }), E.out);
+      await tween(1000, rope.live((t, raw) => {
+        const a = -(raw * raw) * Math.PI * 5;
+        rope.hand = setArm(172 + Math.sin(a) * 9);
+        rope.tip = ring(a, rope.hand);
+      }), E.lin);
+
+      // 2. the throw: the arm whips forward, the loop flies in an arc, the rope pays out behind
+      const from = { ...rope.tip }, dist = Math.hypot(head().x - from.x, head().y - from.y);
+      const lift = 50 + dist * .12;
+      // Just enough rope to reach the head from the hand, with a hand's width of slack.
+      // It pays out as the loop flies and never runs longer than that.
+      const reach = h => Math.hypot(h.x - setArm(74).x, h.y - setArm(74).y) + 18;
+      await tween(Math.min(1100, 420 + dist * .6), rope.live((t, raw) => {
+        rope.hand = setArm(lerp(172, 74, Math.min(1, raw * 4)));
+        const h = head();
+        const tip = { x: lerp(from.x, h.x, t), y: lerp(from.y, h.y, t) - lift * 4 * t * (1 - t) };
+        rope.tip = tip;
+        rope.seg = Math.max(rope.seg, Math.min(reach(h), Math.hypot(tip.x - rope.hand.x, tip.y - rope.hand.y)) / 25);
+      }), E.out);
+
+      // bonk
+      const h = head();
+      body?.classList.remove(...DANCES, ...ACTS);
+      body?.classList.add('bonked');
+      unit.classList.add('turbo');
+      // beside the head, not above it: the task card lives above it
+      const boom = node('g', { transform: `translate(${h.x + 34},${h.y + 12}) rotate(-12)` });
+      boom.innerHTML = `<text x="0" y="0" text-anchor="start" font-size="18" font-weight="900" font-family="var(--mono)"
+        fill="#ffd54f" stroke="var(--ink)" stroke-width="1.2">BONK!</text>`;
+      const stars = node('g', { transform: `translate(${h.x},${h.y + 4})` });
+      stars.innerHTML = `<g class="dizzy">${[0, 120, 240].map(a =>
+        `<path transform="rotate(${a}) translate(22,0)" d="M0,-6 l2,4 4,1 -3,3 1,4 -4,-2 -4,2 1,-4 -3,-3 4,-1 z"
+               fill="#ffd54f" stroke="var(--ink)" stroke-width="1"/>`).join('')}</g>`;
+      layer.append(boom, stars);
+      shout?.remove();
+      shout = worldSay(layer, SAY.x, SAY.y, pick(HIT_LINES), 1800);
+      if (Math.random() < .75) setTimeout(() => miniSay(unit, pick(OUCH_LINES)), 500 * SLOW);
+      // the hit sends a wave back up the rope
+      rope.pts.slice(8, 18).forEach((p, i) => { p.py += 3 * Math.sin(i / 9 * Math.PI); });
+      await tween(450, rope.live(() => { rope.tip = head(); }), E.lin);
+
+      // 3. he lets go of the head and reels it in; the loose end swings home
+      rope.tip = null; rope.damp = .95;                // a reeled rope loses its swing fast
+      const full = rope.seg;
+      await tween(900, rope.live(t => {
+        rope.seg = lerp(full, .6, t);
+        rope.hand = setArm(74 + Math.sin(t * Math.PI * 6) * 10 * (1 - t));   // hand over hand
+      }), E.io);
+      rope.hide();
+      await tween(220, t => setArm(lerp(74, 0, t)), E.io);
+      arm?.removeAttribute('transform');
+      heroBody?.classList.remove('throwing');
+      await wait(500);
+      boom.remove(); stars.remove();
+      body?.classList.remove('bonked');
+      setTimeout(() => unit.classList.remove('turbo'), 5000 * SLOW);
+      await wait(500);
+    }
+  } finally {
+    layer.textContent = '';
+    heroBody?.classList.remove('throwing');
+    document.querySelector('#hero .rope-arm')?.removeAttribute('transform');
+    document.querySelectorAll('#crew .bonked').forEach(b => b.classList.remove('bonked'));
+    ropeRunning = false;
+    if (!gagRunning) gagStopped = false;
+  }
+  return true;
 }
 
 // P plays whichever scene's gag is on screen; the timer does the same.
@@ -2511,7 +2911,10 @@ async function sceneGag() {
     if (!(e instanceof GagStopped)) throw e;   // a scene change cut it short: not an error
   }
 }
-addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') sceneGag(); });
+addEventListener('keydown', e => {
+  if (e.key === 'p' || e.key === 'P') sceneGag();
+  if (e.key === 'r' || e.key === 'R') ropeGag().catch(err => { if (!(err instanceof GagStopped)) throw err; });
+});
 
 // Each time Crawler starts a new swing across the city, he may announce himself.
 document.querySelector('.swinger')?.addEventListener('animationiteration', e => {
@@ -2561,6 +2964,15 @@ const GAG_GAP = { beach: 10000, city: 40000, maze: 40000, space: 30000 };
     try { await sceneGag(); } catch (e) { console.error(e); }   // one bad gag must not end the show
     const scene = document.documentElement.dataset.scene;
     await new Promise(r => setTimeout(r, GAG_GAP[scene] || 40000));
+  }
+})();
+// The pep talk has its own rhythm, in every scene. When a scene gag is on, it waits its turn.
+(async function ropeLoop() {
+  await new Promise(r => setTimeout(r, params.get('rope') ? 800 : 6000));
+  for (;;) {
+    let ran = false;
+    try { ran = await ropeGag(); } catch (e) { if (!(e instanceof GagStopped)) console.error(e); }
+    await new Promise(r => setTimeout(r, ran ? 15000 : 3000));
   }
 })();
 </script>

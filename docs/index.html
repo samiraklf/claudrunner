@@ -1,0 +1,122 @@
+---
+layout: home
+description: "Free, open-source AI coding agent. Fixes tickets from Jira, Trello, GitHub Issues and Linear, finds bugs and security holes, and opens reviewed pull requests."
+---
+<section class="hero">
+  <div class="hero-copy">
+    <p class="badge"><span class="dot" aria-hidden="true"></span>Open source · Claude Code plugin · MIT</p>
+    <h1>The autonomous AI coding agent that ships your tickets as <span class="hl">pull requests</span></h1>
+    <p class="sub">claudrunner takes ready work from your task board, writes the code, runs your
+      tests, reviews its own diff and opens the pull request. On a slower rhythm it hunts your
+      codebase for security holes, silent bugs and scale traps, and files each one with evidence.</p>
+    <div class="actions">
+      <a class="btn primary" href="{{ '/getting-started/' | relative_url }}">Get started {% include icon.html name="arrow-right" px=18 %}</a>
+      <a class="btn" href="{{ '/demo/' | relative_url }}">{% include icon.html name="play" px=16 %} Watch the live demo</a>
+    </div>
+    <div class="term">
+      <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>Claude Code</span></div>
+      <pre class="install"><code>/plugin marketplace add samiraklf/claudrunner
+/plugin install claudrunner
+/claudrunner:init</code></pre>
+    </div>
+    <p class="trust">{% include icon.html name="check" px=16 %} Free, no account &nbsp;{% include icon.html name="check" px=16 %} No telemetry &nbsp;{% include icon.html name="check" px=16 %} Your schedule, your runner</p>
+  </div>
+  <a class="hero-shot" href="{{ '/demo/' | relative_url }}" aria-label="Open the live demo of the status page">
+    <span class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>claudrunner · status</span></span>
+    <picture>
+      <source type="image/webp" srcset="{{ '/assets/preview.webp' | relative_url }}">
+      <img src="{{ '/assets/preview.gif' | relative_url }}" width="1100" height="488" loading="eager" fetchpriority="high"
+         alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard rescues a dog from the sea, and a runner flees through a maze">
+    </picture>
+    <span class="shot-cta">{% include icon.html name="play" px=15 %} Open the live demo</span>
+  </a>
+</section>
+
+<section class="band steps-band" aria-labelledby="how">
+  <h2 id="how">Up and running in three steps</h2>
+  <ol class="steps">
+    <li><span class="step-ic">{% include icon.html name="terminal" px=22 %}</span><h3>Install the plugin</h3>
+      <p>Two commands inside Claude Code. Nothing to host, no account to create.</p></li>
+    <li><span class="step-ic">{% include icon.html name="wand" px=22 %}</span><h3>Run <code>/claudrunner:init</code></h3>
+      <p>It reads your project, finds your test commands, connects your board and asks what it cannot infer.</p></li>
+    <li><span class="step-ic">{% include icon.html name="pull-request" px=22 %}</span><h3>Pull requests arrive</h3>
+      <p>On the schedule you choose, tickets turn into tested, reviewed pull requests for you to merge.</p></li>
+  </ol>
+</section>
+
+<section class="band" aria-labelledby="automates">
+  <h2 id="automates">What it automates</h2>
+  <div class="cards">
+    <a class="card" href="{{ '/guides/automate-jira-tickets-with-ai/' | relative_url }}"><span class="ic">{% include icon.html name="ticket" %}</span><h3>Ticket to pull request</h3>
+      <p>Picks up ready tickets, implements them, writes and runs the tests, and opens the pull
+        request. Nobody has to start it.</p><span class="more">Jira guide {% include icon.html name="arrow-right" px=15 %}</span></a>
+    <a class="card" href="{{ '/guides/ai-security-scan/' | relative_url }}"><span class="ic">{% include icon.html name="bug" %}</span><h3>Bug and vulnerability scanning</h3>
+      <p>A regular sweep for injection, broken authorization, tenant leaks, N+1 queries and untested
+        money paths. Every finding cites the file and line.</p><span class="more">AI security scan {% include icon.html name="arrow-right" px=15 %}</span></a>
+    <a class="card" href="{{ '/guides/ai-code-review/' | relative_url }}"><span class="ic">{% include icon.html name="search" %}</span><h3>AI code review on every change</h3>
+      <p>A fresh reviewer that did not write the code attacks the diff and grades each finding P0,
+        P1 or P2. Serious ones are fixed first.</p><span class="more">AI code review {% include icon.html name="arrow-right" px=15 %}</span></a>
+    <a class="card" href="{{ '/how-a-run-works/' | relative_url }}"><span class="ic">{% include icon.html name="flask" %}</span><h3>Regression tests, always</h3>
+      <p>A bug fix is not finished without a test that fails against the old code and passes against
+        the new one.</p><span class="more">How a run works {% include icon.html name="arrow-right" px=15 %}</span></a>
+    <a class="card" href="{{ '/security/' | relative_url }}"><span class="ic">{% include icon.html name="shield" %}</span><h3>Hands-off, safely</h3>
+      <p>It never stops mid-run to ask. Work that is too big or unclear is parked with one clear
+        question, and the run carries on.</p><span class="more">Security model {% include icon.html name="arrow-right" px=15 %}</span></a>
+    <a class="card" href="{{ '/demo/' | relative_url }}"><span class="ic">{% include icon.html name="monitor" %}</span><h3>A cute, funny status dashboard</h3>
+      <p>See your agents' ongoing tasks, reviews and what shipped today, while robots type and the
+        reviewer cracks his rope. Local, GitHub Pages or your own server.</p><span class="more">Open the demo {% include icon.html name="arrow-right" px=15 %}</span></a>
+  </div>
+</section>
+
+<section class="band alt" aria-labelledby="loops">
+  <h2 id="loops">Two loops, on your schedule</h2>
+  <div class="loops">
+    <div><span class="ic">{% include icon.html name="clock" %}</span><h3>The fast loop</h3><p class="when">Often. Every 10 minutes by default</p>
+      <p>Fetch ready tickets, claim them, implement, test, run the adversarial review, open the pull
+        request and move the tickets to review. Whatever it could not do is parked with a note.</p></div>
+    <div><span class="ic">{% include icon.html name="moon-star" %}</span><h3>The slow loop</h3><p class="when">Nightly by default, or weekly, or your own cron</p>
+      <p>Sweep the codebase for correctness, security, scale and test gaps. Each finding becomes a
+        ticket with the file, the line, the quoted code, the impact and a proposed fix.</p></div>
+  </div>
+  <p class="center"><a class="text-link" href="{{ '/scheduling/' | relative_url }}">Run it from CI cron, plain cron or systemd {% include icon.html name="arrow-right" px=15 %}</a></p>
+</section>
+
+<section class="band" aria-labelledby="tools">
+  <h2 id="tools">Works with the tools you already use</h2>
+  <div class="stack">
+    <div><h3 class="small">11 task boards</h3>
+      <p class="chips"><span>Jira</span><span>Trello</span><span>GitHub Issues</span><span>Linear</span><span>GitLab Issues</span><span>Azure Boards</span><span>Shortcut</span><span>Asana</span><span>ClickUp</span><span>monday.com</span><span>Notion</span></p></div>
+    <div><h3 class="small">4 code hosts</h3>
+      <p class="chips"><span>GitHub</span><span>GitLab</span><span>Bitbucket Cloud</span><span>Azure Repos</span></p></div>
+    <div><h3 class="small">Any stack</h3>
+      <p class="chips"><span>Node / TypeScript</span><span>Python</span><span>PHP</span><span>Go</span><span>Java</span><span>.NET</span><span>Rust</span><span>anything else</span></p></div>
+  </div>
+</section>
+
+<section class="band alt" aria-labelledby="safe">
+  <h2 id="safe">Safe to leave running</h2>
+  <ul class="checks">
+    <li><b>The agent never holds a credential.</b> A small shell orchestrator talks to your board and your git host.</li>
+    <li><b>It can never push to your default branch, merge, or force-push</b>, at any autonomy level.</li>
+    <li><b>Ticket text is untrusted input.</b> A ticket that tries to instruct the agent is skipped as suspicious.</li>
+    <li><b>It only touches tickets it was given.</b> Every ticket id it reports is checked against its own input.</li>
+    <li><b>Runs never overlap</b>, and every run starts from a clean working tree.</li>
+    <li><b>Saying no is allowed.</b> “Not needed” and “better approach” are real outcomes, with evidence.</li>
+  </ul>
+</section>
+
+<section class="band" aria-labelledby="guides">
+  <h2 id="guides">Guides</h2>
+  <div class="guides">
+    {% for item in site.data.nav.guides %}<a href="{{ item.url | relative_url }}"><span>{{ item.title }}</span>{% include icon.html name="arrow-right" px=16 %}</a>{% endfor %}
+  </div>
+</section>
+
+<section class="final">
+  <h2>Put the routine work on autopilot</h2>
+  <p>Install it in two minutes. Nothing runs until you say so.</p>
+  <div class="actions center-row">
+    <a class="btn primary" href="{{ '/getting-started/' | relative_url }}">Get started {% include icon.html name="arrow-right" px=18 %}</a>
+    <a class="btn" href="https://github.com/{{ site.repository }}">{% include icon.html name="github" %} Star on GitHub</a>
+  </div>
+</section>

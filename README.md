@@ -2,23 +2,90 @@
 
 # claudrunner
 
-**More human than human.**
+### An autonomous AI coding agent that finds bugs, fixes your tickets and opens the pull requests.
 
-An autonomous dev crew for your repository. It takes work off your board, fixes it,
-proves the fix, and opens the pull request — then tells you what it refused to build.
+A plugin for Claude Code that runs on the schedule you choose. It takes ready tickets
+from **Jira, Trello, GitHub Issues, Linear** or 7 other boards, writes the code, runs your
+tests, reviews its own diff and opens a pull request. On a slower rhythm it scans your codebase
+for security holes, silent bugs, performance traps and missing tests, and files each one
+as a ticket with evidence.
 
-Any language. Any stack. Any task board. No server required.
+Any language · any stack · 11 task boards · GitHub, GitLab, Bitbucket, Azure Repos · no server required
+
+<a href="https://samiraklf.github.io/claudrunner/demo/"><img src="docs/assets/preview.webp" width="880" alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard runs to rescue a dog from the sea, and a runner flees through a maze"></a>
+
+**You also get a cute, funny status dashboard.** Watch your agents' ongoing tasks, what is in
+review and what shipped today, while robots type at laptops, the reviewer cracks his rope to
+keep them going, and every scene has its own gag. Open it on your computer, on GitHub Pages or
+on your own server.
+
+**[🚀 Quick start](#quick-start)** · **[▶ Live demo](https://samiraklf.github.io/claudrunner/demo/)** · **[📚 Website and guides](https://samiraklf.github.io/claudrunner/)**
+
+<sub>In the demo, press <kbd>P</kbd> for the scene's gag, <kbd>R</kbd> for the reviewer's rope, <kbd>D</kbd> for a dance, <kbd>T</kbd> for the task list.</sub>
 
 </div>
 
 ---
 
+## Quick start
+
+**1. Install** — inside Claude Code:
+
+```
+/plugin marketplace add samiraklf/claudrunner
+/plugin install claudrunner
+```
+
+**2. Set it up** — inside the repository you want it to work on:
+
+```
+/claudrunner:init
+```
+
+It reads your project, proposes the test and lint commands it found, connects your task
+board and asks only what it cannot infer. It writes a config and a schedule. Nothing runs
+until you say so.
+
+**3. Try one cycle by hand**, then turn the schedule on:
+
+```
+/claudrunner:sweep security     # find bugs, filed as tickets with evidence
+/claudrunner:triage              # take a ready ticket and open a pull request
+```
+
+Full walkthrough: **[Getting started](docs/getting-started.md)** · per-board guides for
+**[Jira](https://samiraklf.github.io/claudrunner/guides/automate-jira-tickets-with-ai/)**,
+**[Trello](https://samiraklf.github.io/claudrunner/guides/trello-ai-coding-agent/)**,
+**[GitHub Issues](https://samiraklf.github.io/claudrunner/guides/github-issues-to-pull-requests/)** and
+**[Linear](https://samiraklf.github.io/claudrunner/guides/linear-ai-coding-agent/)**.
+
+## Commands
+
+| Command | Does |
+|---|---|
+| `/claudrunner:init` | Set up this repository. Detect, ask, write, hand over. |
+| `/claudrunner:triage` | Run one fast-loop cycle now. |
+| `/claudrunner:sweep` | Run one slow-loop sweep now. Takes a scope. |
+| `/claudrunner:status` | Config, schedule, queue and recent runs. Changes nothing. |
+| `/claudrunner:dashboard` | Open the status page on this computer. |
+
+## What it automates
+
+| | |
+|---|---|
+| 🎫 **Ticket to pull request** | Picks up ready work from your board, implements it, tests it and opens the PR. No one has to start it. |
+| 🐞 **Bug and vulnerability scanning** | A regular sweep, nightly or weekly or whenever you like, for security holes, logic bugs, N+1 queries, scale traps and untested code. |
+| 🔍 **AI code review on every change** | A fresh reviewer that did not write the code attacks the diff and grades findings P0 / P1 / P2 before anything ships. |
+| 🧪 **Tests and regression tests** | Every bug fix comes with a test that fails before the fix and passes after it. |
+| 🙋 **Hands-off, safely** | It never stops mid-run to ask. Anything too big or unclear gets a *needs human* label, and you decide. |
+| 📺 **A cute, funny status dashboard** | See the agents' ongoing tasks, reviews and today's shipped work at a glance, in four animated scenes with a gag in each. |
+
 ## The two loops
 
 | Loop | Runs | Does | You get |
 |---|---|---|---|
-| **Fast** | every ~10 min | Takes ready work, implements it, tests it, reviews it | A pull request, or a question |
-| **Slow** | nightly or weekly | Hunts defects: security holes, silent bugs, scale traps, missing tests | New cards, each with evidence |
+| **Fast** | often — every 10 min by default | Takes ready work, implements it, tests it, reviews it | A pull request, or a question |
+| **Slow** | nightly by default, or weekly, or your own cron | Hunts defects: security holes, silent bugs, scale traps, missing tests | New cards, each with evidence |
 
 ## What the sweep looks for
 
@@ -39,7 +106,7 @@ fix. A finding it cannot anchor in your code does not get filed.
 | **Claude Code** | The crew ships as a plugin for it | The only hard dependency |
 | **A git repository** | It works in branches and pull requests | GitHub for the default schedule |
 | **`jq`** | Reads the config and the agent's run summary | Already on every CI runner |
-| **An API key** | Only for runs on a schedule | Running by hand uses your own session |
+| **An API key** | Only for GitHub Actions or another CI | A Claude Code routine, cron on your machine and running by hand all use your Claude subscription |
 
 ## What is supported but optional
 
@@ -47,7 +114,7 @@ fix. A finding it cannot anchor in your code does not get filed.
 |---|---|---|---|
 | **Docker / Podman** | ✅ | Runs tests inside a container, on machines you care about | Tests run directly — which is correct on a CI runner, since it is destroyed after the job |
 | **Your own server** | ✅ systemd lanes | Many repositories in parallel, no CI minutes, full control | CI cron runs it instead. No machine to maintain |
-| **A task board** | ✅ 4 boards | The fast loop: work gets picked up on its own | The sweep still runs and writes its findings to files |
+| **A task board** | ✅ 11 boards | The fast loop: work gets picked up on its own | The sweep still runs and writes its findings to files |
 | **A second model CLI** | ✅ any read-only CLI | A reviewer from a different vendor on the same diff | One fresh-context reviewer, which is already the main gate |
 | **Node.js** | ✅ | Nothing you do — the CI template installs the agent with it | Nothing. You never install it yourself |
 | **A monorepo** | ✅ | `code_dir` points the crew at one directory | — |
@@ -100,7 +167,8 @@ plenty of teams split them.
 
 | Target | Needs | Best for |
 |---|---|---|
-| CI cron | A repository and one secret | **Default.** Almost everyone |
+| **Claude Code routine** | A GitHub repository and your Claude login | **Recommended.** Runs in Anthropic's cloud on your Claude subscription: no API key, no server, no CI minutes. Hourly at most. |
+| CI cron | A repository and an `ANTHROPIC_API_KEY` secret | Teams that want it in their own CI. Billed per use by the API |
 | Plain cron | A machine you leave running | The simplest thing that works |
 | systemd | Root on a Linux box | Many repositories, many lanes |
 | By hand | Nothing | Trying it, and calibrating week one |
@@ -134,32 +202,6 @@ plenty of teams split them.
 | Item text can instruct the agent | ❌ Treated as untrusted input |
 | Every change is reviewed by a fresh context | ✅ Always, before the pull request opens |
 | Refusing to build something is a valid outcome | ✅ Two of the seven outcomes exist for it |
-
-## Install
-
-```
-/plugin marketplace add samiraklf/claudrunner
-/plugin install claudrunner
-```
-
-Then, inside the repository you want it to work on:
-
-```
-/claudrunner:init
-```
-
-It reads your project, proposes the commands it found, and asks what it cannot infer.
-It writes a config and a schedule. Nothing runs until you say so.
-
-## Commands
-
-| Command | Does |
-|---|---|
-| `/claudrunner:init` | Set up this repository. Detect, ask, write, hand over. |
-| `/claudrunner:triage` | Run one fast-loop cycle now. |
-| `/claudrunner:sweep` | Run one slow-loop sweep now. Takes a scope. |
-| `/claudrunner:status` | Config, schedule, queue and recent runs. Changes nothing. |
-| `/claudrunner:dashboard` | Open the status page on this computer. |
 
 ## What it costs to run
 

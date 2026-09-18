@@ -27,6 +27,18 @@ read at 07:05. A failure at 02:00 gets discovered on Thursday.
 
 ## Choosing a target
 
+**A Claude Code routine** is the first choice when you use Claude Code with a subscription.
+It runs in Anthropic's cloud on that subscription — no API key, no server to keep on, no CI
+minutes — and you can see, edit, pause or run it on claude.ai. `/claudrunner:init` creates
+the routines and prints their links. Three things differ from the other targets:
+
+- **One hour is the shortest interval.** For most boards that is plenty.
+- **A routine cannot install plugins**, so `init` installs the crew into the repository's
+  own `.claude/` and `.claudrunner/`, and commits it. Keep those folders out of `.gitignore`:
+  a routine only sees what is on the base branch.
+- **It starts from a bare checkout.** Put what the tests need in `stack.commands.setup`.
+
+
 **CI cron** is the default because the runner already exists and is thrown away after every
 job. No machine to maintain, no isolation to configure.
 

@@ -50,12 +50,23 @@ if [ -d "$runs_dir" ]; then
   done < <(find "$runs_dir" -name summary.json -newermt "$today" 2>/dev/null)
 fi
 
-# No timestamp in the output: the page does not use one, and without it an unchanged state
-# produces an identical file — so the GitHub Pages publisher commits only real changes.
+# A run in a fresh sandbox (a cloud routine) only has its own records. The publisher hands
+# over the page it is replacing, so today's count carries on from the runs before this one.
+prev="${CLAUDRUNNER_PREV_STATUS:-}"
+if [ -n "$prev" ] && [ -f "$prev" ] && [ "$(jq -r '.day // ""' "$prev" 2>/dev/null)" = "$today" ]; then
+  retired=$(( retired + $(jq '.retired_today // 0' "$prev" 2>/dev/null || echo 0) ))
+fi
+
+# How many ready items a run left behind, when the run that took its share said so.
+queue=0
+[ -f "$runs_dir/queue" ] && queue=$(tr -dc '0-9' < "$runs_dir/queue")
+
+# No timestamp in the output, only the day: the page does not use a time, and without one
+# an unchanged state produces an identical file — so a publisher commits only real changes.
 jq -n --argjson runs "$active" --argjson retired "$retired" \
-      --argjson findings "$findings" --argjson fixed "$fixed" \
-      --arg incept "$(git log --reverse --format=%cs 2>/dev/null | head -1)" \
-  '{incept: $incept, queue: 0,
+      --argjson findings "$findings" --argjson fixed "$fixed" --argjson queue "${queue:-0}" \
+      --arg incept "$(git log --reverse --format=%cs 2>/dev/null | head -1)" --arg day "$today" \
+  '{incept: $incept, day: $day, queue: $queue,
     retired_today: $retired, review: {findings: $findings, fixed: $fixed},
     runs: $runs, ticker: ["THE MACHINE WAITS."]}' > "$out"
 

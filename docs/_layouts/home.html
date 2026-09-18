@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+<head>
+{% include head.html %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "claudrunner",
+  "description": {{ site.description | jsonify }},
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Linux, macOS",
+  "url": "{{ '/' | absolute_url }}",
+  "downloadUrl": "https://github.com/{{ site.repository }}",
+  "softwareHelp": "{{ '/getting-started/' | absolute_url }}",
+  "screenshot": "{{ '/assets/preview.webp' | absolute_url }}",
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Person", "name": "samiraklf", "url": "https://github.com/samiraklf" },
+  "keywords": "autonomous AI coding agent, AI bug fixing, AI code review, Jira automation, Trello automation, GitHub Issues automation, Linear, pull request automation, security scan, Claude Code plugin"
+}
+</script>
+</head>
+<body class="home">
+{% include header.html %}
+<main id="main" tabindex="-1">
+{{ content }}
+</main>
+{% include footer.html %}
+</body>
+</html>

@@ -10,6 +10,7 @@ API with a key and token supplied as secrets.
 | Queue | Typical list |
 |---|---|
 | ready | the triage or ready list |
+| claimed | the in-progress list — optional; a claimed card moves there |
 | review | the review or pull-request list |
 | parked | the needs-input list |
 | filed by sweep | the intake list |

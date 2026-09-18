@@ -1,0 +1,14 @@
+---
+layout: null
+permalink: /search.json
+sitemap: false
+---
+[
+{%- assign first = true -%}
+{%- for p in site.pages -%}
+  {%- if p.title and p.url != '/404.html' and p.url != '/search.json' and p.url != '/' -%}
+    {%- unless first -%},{%- endunless -%}{%- assign first = false %}
+  {"t":{{ p.title | jsonify }},"u":{{ p.url | relative_url | jsonify }},"d":{{ p.description | default: '' | jsonify }},"c":{{ p.content | strip_html | replace: '|', ' ' | replace: '#', ' ' | replace: '*', '' | replace: '`', '' | normalize_whitespace | truncate: 6000 | jsonify }}}
+  {%- endif -%}
+{%- endfor %}
+]

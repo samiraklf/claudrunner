@@ -30,6 +30,9 @@ board_claim() {
   sleep 2
   holders=$(curl -sf "https://api.trello.com/1/cards/$id?$(_tr_auth)" | jq -r --arg l "$label" '[(.idLabels // [])[] | select(. == $l)] | length')
   [ "$holders" = "1" ] || { echo "claim contested on $id" >&2; return 1; }
+  # With an in-progress list configured, the card also moves there, so the board shows
+  # what the crew is working on. The label stays the claim either way.
+  if [ -n "$(_tr_list claimed)" ]; then board_move "$id" claimed || true; fi
 }
 
 board_comment() {

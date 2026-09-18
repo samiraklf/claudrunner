@@ -59,6 +59,77 @@ for f in plugins/claudrunner/runtime/lib/board-*.sh; do
   check "adapters/$name documented" test -f "plugins/claudrunner/adapters/$name/ADAPTER.md"
 done
 
+echo "jira fetch uses the search endpoint Atlassian still serves"
+# Atlassian retired POST /rest/api/3/search; it now answers 410 Gone. A stand-in curl
+# plays Jira: the old path fails the way the real one does, the new one returns an issue.
+jira_fetch() (
+  # shellcheck disable=SC2329  # called by the adapter sourced below, not from here
+  curl() {
+    local url=""; for a in "$@"; do case "$a" in http*) url="$a" ;; esac; done
+    case "$url" in
+      */rest/api/3/search/jql) echo '{"issues":[{"key":"API-7","fields":{"summary":"Fix the export","description":null,"labels":["bug"],"priority":{"name":"High"}}}],"isLast":true}' ;;
+      *) return 22 ;;
+    esac
+  }
+  export JIRA_BASE_URL=https://example.atlassian.net JIRA_EMAIL=a@b.c JIRA_API_TOKEN=t
+  export CR_CONFIG='{"board":{"settings":{"project":"API"},"queues":{"ready":"Ready"}}}'
+  # shellcheck source=/dev/null
+  . plugins/claudrunner/runtime/lib/config.sh
+  # shellcheck source=/dev/null
+  . plugins/claudrunner/runtime/lib/board-jira.sh
+  board_fetch 5
+)
+jira_out=$(jira_fetch 2>/dev/null)
+check "jira fetch returns the ready issue" jq -e \
+  '.[0].id == "API-7" and .[0].url == "https://example.atlassian.net/browse/API-7"' <<<"$jira_out"
+
+echo "CI templates hand every board credential to the run"
+# A board adapter that reads a credential the workflow never passes fails on its first
+# scheduled run. Every variable the adapters read must reach both CI templates.
+for var in $(grep -ohE '\$\{?[A-Z][A-Z0-9_]*(_TOKEN|_KEY|_PAT|_URL|_EMAIL|_HOST)\b' \
+               plugins/claudrunner/runtime/lib/board-*.sh | tr -d '$\{' | sort -u); do
+  for t in plugins/claudrunner/templates/github-actions/claudrunner-{triage,sweep}.yml; do
+    check "$(basename "$t") passes $var" grep -q "$var: \${{ secrets.$var }}" "$t"
+  done
+done
+
+echo "a routine-style run: install into a repo, record a run, publish it to the status branch"
+# The whole path a Claude Code routine takes, in a throwaway repository with a local remote.
+routine_test() (
+  set -e
+  plugin="$(pwd)/plugins/claudrunner"
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  git init -q --bare "$tmp/remote.git"
+  git init -q -b main "$tmp/repo" && cd "$tmp/repo"
+  git config user.name t && git config user.email t@t
+  git remote add origin "$tmp/remote.git"
+  git commit -q --allow-empty -m init && git push -q origin main
+  "$plugin/runtime/install-into-repo.sh" "$plugin" --with-commands >/dev/null
+  test -f .claude/commands/claudrunner/triage.md
+  test -f .claude/skills/work-a-card/SKILL.md
+  test -f .claude/agents/inspector.md
+  test -x .claudrunner/bin/claudrunner-mark.sh
+  # a routine only sees what is committed
+  [ -z "$(git check-ignore .claude/skills/ship/SKILL.md .claudrunner/bin/lib/config.sh || true)" ]
+  cat > .claudrunner/config.yml <<'YML'
+version: 1
+project: {name: t, base_branch: main, host: github}
+stack: {commands: {test: "true"}}
+policy: {autonomy: pr-only}
+board: {adapter: none}
+dashboard: {where: branch}
+YML
+  echo '[{"id":"c1","title":"Fix the export","url":"https://example.test/c1"}]' > "$tmp/items.json"
+  run=$(.claudrunner/bin/claudrunner-mark.sh start triage "$tmp/items.json" 4 | tail -1)
+  git fetch -q origin claudrunner-status
+  git show origin/claudrunner-status:status.json | jq -e '.runs[0].title == "Fix the export" and .queue == 4' >/dev/null
+  echo '{"done":["c1"],"skipped":[]}' > "$run/summary.json"
+  .claudrunner/bin/claudrunner-mark.sh finish "$run" "$run/summary.json" >/dev/null
+  git fetch -q origin claudrunner-status
+  git show origin/claudrunner-status:status.json | jq -e '(.runs | length) == 0 and .retired_today == 1' >/dev/null
+)
+if routine_test >/dev/null 2>&1; then ok "install, record, publish, finish"; else bad "install, record, publish, finish"; fi
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in plugins/claudrunner/templates/github-actions/*.yml; do

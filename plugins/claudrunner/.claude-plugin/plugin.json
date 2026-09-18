@@ -1,8 +1,25 @@
 {
   "name": "claudrunner",
-  "description": "An autonomous dev crew for your repository. Picks work off your board, fixes it, proves the fix, opens the pull request. Any language, any stack, any task board.",
-  "version": "0.1.0",
-  "author": { "name": "samiraklf" },
+  "description": "Autonomous AI coding agent: finds bugs and security holes, fixes your Jira, Trello, GitHub Issues or Linear tickets, reviews the diff and opens the pull request. Any language, 11 task boards, runs on a schedule.",
+  "version": "0.2.3",
+  "author": {
+    "name": "samiraklf"
+  },
   "homepage": "https://github.com/samiraklf/claudrunner",
-  "license": "MIT"
+  "repository": "https://github.com/samiraklf/claudrunner",
+  "license": "MIT",
+  "keywords": [
+    "autonomous-agent",
+    "ai-coding-agent",
+    "bug-fixing",
+    "code-review",
+    "security-scan",
+    "jira",
+    "trello",
+    "github-issues",
+    "linear",
+    "pull-request",
+    "automation",
+    "ci"
+  ]
 }
