@@ -14,6 +14,11 @@ Any language · any stack · 11 task boards · GitHub, GitLab, Bitbucket, Azure 
 
 <a href="https://samiraklf.github.io/claudrunner/demo/"><img src="docs/assets/preview.webp" width="880" alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard runs to rescue a dog from the sea, and a runner flees through a maze"></a>
 
+**You also get a cute, funny status dashboard.** Watch your agents' ongoing tasks, what is in
+review and what shipped today, while robots type at laptops, the reviewer cracks his rope to
+keep them going, and every scene has its own gag. Open it on your computer, on GitHub Pages or
+on your own server.
+
 **[🚀 Quick start](#quick-start)** · **[▶ Live demo](https://samiraklf.github.io/claudrunner/demo/)** · **[📚 Website and guides](https://samiraklf.github.io/claudrunner/)**
 
 <sub>In the demo, press <kbd>P</kbd> for the scene's gag, <kbd>R</kbd> for the reviewer's rope, <kbd>D</kbd> for a dance, <kbd>T</kbd> for the task list.</sub>
@@ -73,6 +78,7 @@ Full walkthrough: **[Getting started](docs/getting-started.md)** · per-board gu
 | 🔍 **AI code review on every change** | A fresh reviewer that did not write the code attacks the diff and grades findings P0 / P1 / P2 before anything ships. |
 | 🧪 **Tests and regression tests** | Every bug fix comes with a test that fails before the fix and passes after it. |
 | 🙋 **Hands-off, safely** | It never stops mid-run to ask. Anything too big or unclear gets a *needs human* label, and you decide. |
+| 📺 **A cute, funny status dashboard** | See the agents' ongoing tasks, reviews and today's shipped work at a glance, in four animated scenes with a gag in each. |
 
 ## The two loops
 

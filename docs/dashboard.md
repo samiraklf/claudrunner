@@ -1,7 +1,11 @@
 # The status page
 
-A full-screen scene showing what the crew is doing. One HTML file and one JSON file, so any
-host that can serve a folder can serve it.
+A cute, funny status dashboard for your AI crew. At a glance you see the agents' ongoing
+tasks, what is in review and what shipped today, while robots type at laptops, the reviewer
+cracks his rope to keep them going, and every scene has its own gag.
+[Try the live demo](https://samiraklf.github.io/claudrunner/demo/).
+
+It is one HTML file and one JSON file, so any host that can serve a folder can serve it.
 
 ## Where it lives
 
