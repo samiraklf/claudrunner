@@ -23,28 +23,31 @@ Read `.claudrunner/config.yml` first. If it is missing, stop and say to run
 Only when no orchestrator started this run. Every step is plain and repeatable; do them in
 order and do not skip the records — they are how the status page shows your work.
 
-1. **Prepare the project.** If `stack.commands.setup` is set, run it once, as one step. It
-   installs what the tests need (dependencies, a database). **If it fails, do not repair the
-   environment yourself** — no starting daemons, no registry mirrors, no proxy settings, no
-   hunting for packages. That is the setup script's job, and improvising it makes a run slow,
-   noisy and alarming to read. Instead: claim nothing, say which command failed and its last
-   lines of output, and stop. A person fixes the script once; every later run benefits.
-2. **Fetch the ready items**, at most `loops.fast.max_items`.
+1. **Fetch the ready items first**, at most `loops.fast.max_items` — before any setup, so a
+   run with nothing to do ends in seconds instead of installing a machine for nothing.
    - `board.via: api` (the default) — the shell adapter:
      `source .claudrunner/bin/lib/config.sh && cr_load && source .claudrunner/bin/lib/board-<adapter>.sh && board_fetch <n>`
    - `board.via: connector` — the board's claude.ai connector, on the board at
      `board.connector.board`. Find the lists by the names in `board.queues`; read the cards in
      the ready list, top first.
-3. **Claim each one before working on it.** API: `board_claim <id>`. Connector: move the card
+2. **Claim each one before working on it.** API: `board_claim <id>`. Connector: move the card
    to the claimed list, then read it again — if it is not there, another run took it; drop it.
-4. **Record the start.** Write the claimed items to a file as a JSON array of
+3. **Record the start** — right after claiming, so the status page shows the work during setup. Write the claimed items to a file as a JSON array of
    `{"id", "title", "url"}` and run
    `.claudrunner/bin/claudrunner-mark.sh start triage <file> <ready items left>`.
    It prints the run directory; keep it.
+4. **Prepare the project.** If `stack.commands.setup` is set, run it once, as one step. It
+   installs what the tests need (dependencies, a database). A setup may take a part name to
+   install only what the claimed work touches (for example `setup.sh backend`); pass it when
+   the configuration says the setup supports parts. **If it fails, do not repair the
+   environment yourself** — no starting daemons, no registry mirrors, no proxy settings, no
+   hunting for packages. That is the setup script's job, and improvising it makes a run slow,
+   noisy and alarming to read. Instead: comment the failing command and its last lines on each
+   claimed item, move them to the parked queue, record the end (step 8), and stop. A person fixes the script once.
 5. **Branch from the base**: `git fetch origin` and
    `git switch -c claudrunner/triage-<date> origin/<project.base_branch>`.
-6. Do steps 2–4 above: implement, review, ship.
-7. **Close the loop — only for the items you claimed in step 3.** Write the summary JSON from
+6. Do steps 2–4 at the top of this file: implement, review, ship.
+7. **Close the loop — only for the items you claimed in step 2.** Write the summary JSON from
    the `ship` skill to `<run dir>/summary.json`. Move each done item to the review queue with
    the pull request link as a comment. Move each skipped item where its reason sends it, with
    its note. Never move or comment on any item that is not in `<run dir>/input.json`.

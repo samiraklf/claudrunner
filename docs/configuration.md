@@ -20,6 +20,7 @@ stack:
     format: "npm run format"
     build: "npm run build"
     setup: ""                # optional: prepares a bare checkout (dependencies, a database)
+    setup_parts: []          # optional: parts the setup can install alone, e.g. [backend, frontend]
 
 schedule:
   runs_on: routine           # routine | github-actions | cron | systemd | manual
@@ -116,6 +117,9 @@ itself can reach the board. It is still told to touch only the cards it claimed.
 
 **`stack.commands.setup`** — a routine starts from a bare checkout every time. Put what the
 tests need (installing dependencies, starting a database) in one script and point this at it.
+A run fetches and claims its work before setup, so an empty queue costs seconds. When the
+script accepts a part name — `setup.sh backend` — list the parts in `stack.commands.setup_parts`
+and a run installs only what its work touches.
 
 **`executor.mode`** — `direct` is correct on a CI runner, which is already disposable.
 Choose `container` when runs happen on a machine you care about.

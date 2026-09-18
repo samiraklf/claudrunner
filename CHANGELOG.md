@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.2 — 2026-09-18
+
+### Fixed
+- A run driven by the agent (a routine) set the project up before looking at the board, so an
+  empty queue still cost a full setup — minutes of installing, every hour. It now fetches and
+  claims first, records the start, and only then sets up.
+
+### Added
+- `stack.commands.setup_parts`: a setup that accepts a part name (`setup.sh backend`) lets a run
+  install only what its task touches.
+
 ## 0.2.1 — 2026-09-18
 
 ### Fixed
