@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 — 2026-09-18
 
 ### Fixed
 - An installed plugin shipped only its agents, commands, hooks and skills. The dashboard, the
