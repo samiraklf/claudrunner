@@ -33,7 +33,7 @@ subdomain and for a path ship in the plugin's `templates/hosting/`.
 
 ## What you are looking at
 
-**Every active run is a robot at a bench**, hammering, with its task and progress on a card
+**Every active run is a robot typing at a laptop**, with its task and progress on a card
 above its head. The colour follows the phase — orange while it works, cyan once it reaches
 review. When the queue empties the robots sit down with a coffee and start snoring, so you
 can tell from across the room whether anything is happening without reading a number.
@@ -59,9 +59,6 @@ The robots are deliberately the same in both. A dark scene where you cannot find
 characters is a wallpaper, not a status page.
 
 ## Scenes
-
-Three, on the **SCENE** button. The crew, their benches and the progress cards are the same
-in all of them; only the world changes.
 
 Four, on the **SCENE** button. The crew changes with the world — different uniform,
 different animal, different jokes.
@@ -107,6 +104,16 @@ screams *"NOPE."* and is gone.
 
 `P` plays whichever scene's gag is on screen. `?gag=1` plays it as soon as the page loads — a
 link you can send someone.
+
+## The pep talk, in every scene
+
+About once a minute, Professor Well-Actually takes the rope off his belt. He bonks every robot
+on the head, one at a time, nearest first — *"WE ARE FRIENDS. TYPE FASTER, FRIEND."* The robot
+sees stars and types twice as fast for a few seconds (*"is this team building?"*). He aims
+at where each robot is right now, so one robot gets one bonk and three get three. An empty
+crew gets none.
+
+`R` starts it. `?rope=1` starts it as soon as the page loads.
 
 ## Rollback, on the beach
 

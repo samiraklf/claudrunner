@@ -9,7 +9,7 @@ proves the fix, and opens the pull request — then tells you what it refused to
 
 Any language. Any stack. Any task board. No server required.
 
-**[▶ See the status page live](https://samiraklf.github.io/claudrunner/)** — a demo crew at work. Press `P` for a gag.
+**[▶ See the status page live](https://samiraklf.github.io/claudrunner/)** — a demo crew at work. Press `P` for a gag, `R` for a pep talk.
 
 </div>
 

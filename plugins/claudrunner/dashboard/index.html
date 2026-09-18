@@ -119,11 +119,27 @@
   .orb{filter:drop-shadow(0 0 26px var(--orb-glow))}
   .bob{animation:bob 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-  .hammer{animation:hammer .62s ease-in-out infinite;transform-box:fill-box;transform-origin:70% 20%}
-  @keyframes hammer{0%,100%{transform:rotate(-8deg)}45%{transform:rotate(46deg)}}
-  .spark{animation:spark .62s ease-in-out infinite}
-  @keyframes spark{0%,48%{opacity:0;transform:translate(0,0) scale(.6)}
-    52%{opacity:1}100%{opacity:0;transform:translate(14px,-18px) scale(1.2)}}
+  /* typing: bursts of taps with a short think in between, the two hands out of step */
+  .type-l,.type-r{animation:tap .9s linear infinite}
+  .type-r{animation-delay:-.4s}
+  .turbo .type-l,.turbo .type-r{animation-duration:.28s}
+  @keyframes tap{0%,62%,100%{transform:translateY(0)}8%{transform:translateY(-3px)}16%{transform:translateY(0)}
+    24%{transform:translateY(-3px)}32%{transform:translateY(0)}40%{transform:translateY(-2px)}48%{transform:translateY(0)}}
+  .screen-glow{animation:glow 2.8s ease-in-out infinite}
+  @keyframes glow{0%,100%{opacity:.16}40%{opacity:.26}55%{opacity:.12}}
+  /* what they type floats up out of the laptop now and then */
+  /* the reviewer's pep talk: arm up, rope out, a bonk on the head, back to work faster */
+  .rope-arm{transform-box:fill-box;transform-origin:50% 8%;transition:transform .18s ease-out}
+  .throwing .rope-arm{transform:rotate(78deg)}
+  .throwing .coil{opacity:0}
+  .bonked{animation:bonk .75s ease-out 1 !important;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes bonk{0%{transform:none}14%{transform:scale(1.14,.8)}34%{transform:scale(.94,1.08) rotate(-5deg)}
+    56%{transform:rotate(4deg)}78%{transform:rotate(-2deg)}100%{transform:none}}
+  .dizzy{animation:dizzy 1s linear infinite}
+  @keyframes dizzy{to{transform:rotate(360deg)}}
+  .spark{animation:spark 2.6s ease-out infinite}
+  @keyframes spark{0%,40%{opacity:0;transform:translate(0,0) scale(.7)}
+    50%{opacity:1}100%{opacity:0;transform:translate(10px,-34px) scale(1.1)}}
   .cape{animation:cape 3.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
   @keyframes cape{0%,100%{transform:skewX(0)}50%{transform:skewX(-11deg)}}
   .beam{animation:beam 5s ease-in-out infinite}
@@ -1033,7 +1049,12 @@
       <rect class="visor" x="-12" y="-94" width="24" height="9" rx="4.5" fill="var(--neon)"/>
       <rect x="-13" y="-22" width="11" height="22" rx="5" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
       <rect x="2" y="-22" width="11" height="22" rx="5" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
-      <rect x="-30" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
+      <g class="coil" fill="none" stroke-linecap="round">
+        <ellipse cx="22" cy="-30" rx="10" ry="7" stroke="#3b2410" stroke-width="6"/>
+        <ellipse cx="22" cy="-30" rx="10" ry="7" stroke="#c58a4a" stroke-width="3.5"/>
+        <ellipse cx="22" cy="-30" rx="6" ry="4" stroke="#c58a4a" stroke-width="2.5"/>
+      </g>
+      <rect class="rope-arm" x="-30" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       <rect x="19" y="-68" width="11" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       <g id="hero-costume"></g>
     </g></g>
@@ -1280,21 +1301,29 @@ function robot(x, phase, title, progress, index) {
       <circle class="acc" cx="0" cy="-114" r="5"/>
       <rect x="-16" y="-18" width="13" height="18" rx="6" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
       <rect x="3" y="-18" width="13" height="18" rx="6" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5"/>
-      <g class="hammer">
-        <rect x="22" y="-58" width="12" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
-        <rect x="24" y="-34" width="8" height="22" rx="3" fill="var(--trim)"/>
-        <rect x="16" y="-16" width="26" height="12" rx="3" fill="var(--ink)"/>
-      </g>
-      <rect x="-34" y="-58" width="12" height="30" rx="5" fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/>
       ${(COSTUME[document.documentElement.dataset.scene] || COSTUME.city)()}
+      <!-- both arms reach down to the keyboard, behind the lid -->
+      <g class="type-l"><rect x="-34" y="-58" width="12" height="24" rx="5" transform="rotate(-38 -28 -58)"
+            fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/></g>
+      <g class="type-r"><rect x="22" y="-58" width="12" height="24" rx="5" transform="rotate(38 28 -58)"
+            fill="var(--body)" stroke="var(--ink)" stroke-width="2.5"/></g>
+      <!-- the screen lights up the face from below -->
+      <rect class="screen-glow" x="-21" y="-82" width="42" height="22" rx="9" fill="var(--neon)"/>
     </g>
-    <g>
-      <rect x="28" y="-22" width="74" height="9" rx="3" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5"/>
-      <rect x="33" y="-13" width="7" height="13" fill="var(--near)"/>
-      <rect x="90" y="-13" width="7" height="13" fill="var(--near)"/>
-      <rect x="52" y="-32" width="20" height="10" rx="3" fill="var(--trim)" stroke="var(--ink)" stroke-width="2"/>
+    <g class="desk">
+      <rect x="-44" y="-30" width="6" height="30" fill="var(--near)" stroke="var(--ink)" stroke-width="2"/>
+      <rect x="38" y="-30" width="6" height="30" fill="var(--near)" stroke="var(--ink)" stroke-width="2"/>
+      <rect x="-52" y="-36" width="104" height="8" rx="3" fill="var(--mid)" stroke="var(--ink)" stroke-width="2.5"/>
+      <!-- the laptop, seen from behind: base, then the lid leaning back towards the robot -->
+      <rect x="-28" y="-41" width="56" height="5" rx="2" fill="var(--body-2)" stroke="var(--ink)" stroke-width="2"/>
+      <path d="M-22,-40 L-20,-64 Q-20,-66 -18,-66 L18,-66 Q20,-66 20,-64 L22,-40 Z"
+            fill="var(--body-2)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path class="acc" d="M0,-59 l6,7 -6,7 -6,-7 z" opacity=".9"/>
+      <path d="M-16,-62 L-15,-45" stroke="#ffffff" stroke-width="2" opacity=".25" stroke-linecap="round"/>
     </g>
-    <g class="spark acc"><circle cx="46" cy="-18" r="3"/><circle cx="54" cy="-22" r="2"/></g>
+    <g class="spark acc" style="animation-delay:-${(index * .9) % 2.6}s">
+      <text x="10" y="-84" font-family="var(--mono)" font-size="12" font-weight="700"
+            stroke="var(--ink)" stroke-width=".6">${['{ }', '</>', '=>', '();', '[ ]', '!=='][index % 6]}</text></g>
     <g class="card"></g></g>`;
   return g;
 }
@@ -2202,13 +2231,13 @@ async function beachGag() {
   const layer = el('gag'); layer.textContent = '';
   const inner = pet.firstElementChild;
   const SAND = 782, WATER = 652;
-  // Robots stand at x and their workbench runs to x+100. Drown where none of them is, or the
+  // Robots stand at x behind a desk from x-52 to x+52. Drown where none of them is, or the
   // dog vanishes behind a head — which is exactly what happened with three tasks running.
   const taken = [...document.querySelectorAll('#crew .unit')].map(u =>
     Number(u.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]));
   let SPOT = 700, best = -1;
   for (let x = 240; x <= 1120; x += 10) {
-    const clear = taken.length ? Math.min(...taken.map(r => x < r - 50 ? r - 50 - x : x > r + 110 ? x - r - 110 : -1)) : 999;
+    const clear = taken.length ? Math.min(...taken.map(r => x < r - 60 ? r - 60 - x : x > r + 60 ? x - r - 60 : -1)) : 999;
     if (clear > best) { best = clear; SPOT = x; }
   }
   const DS = .95;                                   // dog scale in the water: big enough to see
@@ -2509,6 +2538,97 @@ async function spaceGag() {
   }
 }
 
+// ---------------------------------------------------------------- the pep talk
+// Now and then the reviewer takes the rope off his belt and bonks every robot on the head,
+// one after the other, nearest first. It reads each robot's position live, so it hits
+// whoever is actually there: one robot, three, or none at all (then it does not happen).
+const PEP_LINES = ['WE ARE FRIENDS. TYPE FASTER, FRIEND.', 'THIS IS A SAFE SPACE. NOW SHIP.',
+  'I BELIEVE IN YOU. ALSO IN THE DEADLINE.', 'TEAMWORK! YOU WORK. I WATCH.',
+  'FRIENDLY REMINDER. WITH A ROPE.', 'I SAID FRIENDLY. I DID NOT SAY SLOW.',
+  'HUGS AFTER THE PR. HUGS ARE FASTER.', 'MORE COMMITS. FEWER FEELINGS.',
+  'MOTIVATION HAS ARRIVED. IT IS A ROPE.', 'WORK HARDER. BUT, LIKE, WITH LOVE.'];
+const OUCH_LINES = ['ow. ok. typing.', 'is this team building?', 'filing that under feedback.',
+  'typing at 110%.', 'that was a merge conflict with my head.', 'love you too, boss.',
+  'my skull is now asynchronous.', 'reporting this to HR. HR is also you.'];
+
+async function ropeGag() {
+  const root = document.documentElement;
+  if (gagRunning || document.hidden) return false;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  const HX = 1350, HY = 762;
+  const xOf = u => Number(u.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]);
+  const units = [...document.querySelectorAll('#crew .unit')].sort((a, b) => xOf(b) - xOf(a));
+  if (!units.length) return false;
+
+  gagRunning = true;
+  root.dataset.gag = '1';
+  const layer = el('gag'); layer.textContent = '';
+  const heroBody = document.querySelector('#hero .hero-body');
+  const hand = { x: HX - 50, y: HY - 92 - 60 };        // where the raised arm ends
+  const back = node('path', { fill: 'none', stroke: '#3b2410', 'stroke-width': 6, 'stroke-linecap': 'round' });
+  const rope = node('path', { fill: 'none', stroke: '#c58a4a', 'stroke-width': 3.5, 'stroke-linecap': 'round' });
+  const loop = node('circle', { r: 7, fill: 'none', stroke: '#c58a4a', 'stroke-width': 3.5 });
+  const draw = (tx, ty) => {
+    const sag = 40 + Math.abs(hand.x - tx) * .12;
+    const d = `M${hand.x},${hand.y} Q${(hand.x + tx) / 2},${Math.min(hand.y, ty) - sag} ${tx},${ty}`;
+    back.setAttribute('d', d); rope.setAttribute('d', d);
+    loop.setAttribute('cx', tx); loop.setAttribute('cy', ty);
+  };
+
+  try {
+    let first = true;
+    for (const unit of units) {
+      if (!unit.isConnected) continue;                 // its run finished while we were busy
+      const body = unit.querySelector('.bob');
+      const head = () => ({ x: xOf(unit) + 4, y: HY - 100 });
+
+      heroBody?.classList.add('throwing');
+      if (first || Math.random() < .5) worldSay(layer, 1180, 520, pick(PEP_LINES), 2400);
+      first = false;
+      await wait(500);
+      draw(hand.x, hand.y); layer.append(back, rope, loop);
+      await tween(Math.min(900, 300 + (hand.x - head().x) * .45), t => {
+        const h = head(); draw(lerp(hand.x, h.x, t), lerp(hand.y, h.y, t));
+      }, E.out);
+
+      // bonk
+      const h = head();
+      body?.classList.remove(...DANCES, ...ACTS);
+      body?.classList.add('bonked');
+      unit.classList.add('turbo');
+      // beside the head, not above it: the task card lives above it
+      const boom = node('g', { transform: `translate(${h.x + 34},${h.y + 12}) rotate(-12)` });
+      boom.innerHTML = `<text x="0" y="0" text-anchor="start" font-size="18" font-weight="900" font-family="var(--mono)"
+        fill="#ffd54f" stroke="var(--ink)" stroke-width="1.2">BONK!</text>`;
+      const stars = node('g', { transform: `translate(${h.x},${h.y + 4})` });
+      stars.innerHTML = `<g class="dizzy">${[0, 120, 240].map(a =>
+        `<path transform="rotate(${a}) translate(22,0)" d="M0,-6 l2,4 4,1 -3,3 1,4 -4,-2 -4,2 1,-4 -3,-3 4,-1 z"
+               fill="#ffd54f" stroke="var(--ink)" stroke-width="1"/>`).join('')}</g>`;
+      layer.append(boom, stars);
+      if (Math.random() < .75) miniSay(unit, pick(OUCH_LINES));
+      await wait(380);
+
+      // the rope comes home
+      await tween(420, t => { const p = head(); draw(lerp(p.x, hand.x, t), lerp(p.y, hand.y, t)); }, E.io);
+      back.remove(); rope.remove(); loop.remove();
+      heroBody?.classList.remove('throwing');
+      await wait(500);
+      boom.remove(); stars.remove();
+      body?.classList.remove('bonked');
+      setTimeout(() => unit.classList.remove('turbo'), 5000 * SLOW);
+      await wait(500);
+    }
+  } finally {
+    layer.textContent = '';
+    heroBody?.classList.remove('throwing');
+    document.querySelectorAll('#crew .bonked').forEach(b => b.classList.remove('bonked'));
+    delete root.dataset.gag;
+    gagRunning = false;
+    gagStopped = false;
+  }
+  return true;
+}
+
 // P plays whichever scene's gag is on screen; the timer does the same.
 async function sceneGag() {
   const scene = document.documentElement.dataset.scene;
@@ -2519,7 +2639,10 @@ async function sceneGag() {
     if (!(e instanceof GagStopped)) throw e;   // a scene change cut it short: not an error
   }
 }
-addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P') sceneGag(); });
+addEventListener('keydown', e => {
+  if (e.key === 'p' || e.key === 'P') sceneGag();
+  if (e.key === 'r' || e.key === 'R') ropeGag().catch(err => { if (!(err instanceof GagStopped)) throw err; });
+});
 
 // Each time Crawler starts a new swing across the city, he may announce himself.
 document.querySelector('.swinger')?.addEventListener('animationiteration', e => {
@@ -2569,6 +2692,15 @@ const GAG_GAP = { beach: 10000, city: 40000, maze: 40000, space: 30000 };
     try { await sceneGag(); } catch (e) { console.error(e); }   // one bad gag must not end the show
     const scene = document.documentElement.dataset.scene;
     await new Promise(r => setTimeout(r, GAG_GAP[scene] || 40000));
+  }
+})();
+// The pep talk has its own rhythm, in every scene. When a scene gag is on, it waits its turn.
+(async function ropeLoop() {
+  await new Promise(r => setTimeout(r, params.get('rope') ? 800 : 25000));
+  for (;;) {
+    let ran = false;
+    try { ran = await ropeGag(); } catch (e) { if (!(e instanceof GagStopped)) console.error(e); }
+    await new Promise(r => setTimeout(r, ran ? 50000 : 5000));
   }
 })();
 </script>

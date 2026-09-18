@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.3 — 2026-09-18
+
+### Changed
+- The robots type on laptops instead of hammering at a bench, with the screen lighting their
+  faces and what they type floating up now and then.
+
+### Added
+- The pep talk: the reviewer bonks each robot on the head with a rope, nearest first, and
+  asks it, as a friend, to type faster. It aims at wherever each robot actually is. `R` starts it.
+
 ## 0.1.2 — 2026-09-18
 
 ### Fixed
