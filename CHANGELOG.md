@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 — 2026-09-18
+
+### Fixed
+- A setup that failed in a routine sent the agent improvising — starting daemons, trying
+  registry mirrors and proxies — which is slow, noisy and alarming to read. Setup is now one
+  step: if it fails, the run reports the failing command and stops. `init` also steers routine
+  setups away from Docker images, which Docker Hub rate-limits on shared cloud addresses.
+
 ## 0.2.0 — 2026-09-18
 
 ### Added

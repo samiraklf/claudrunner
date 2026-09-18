@@ -23,8 +23,12 @@ Read `.claudrunner/config.yml` first. If it is missing, stop and say to run
 Only when no orchestrator started this run. Every step is plain and repeatable; do them in
 order and do not skip the records — they are how the status page shows your work.
 
-1. **Prepare the project.** If `stack.commands.setup` is set, run it once. It installs what
-   the tests need (dependencies, a database). If it fails, stop and report the error.
+1. **Prepare the project.** If `stack.commands.setup` is set, run it once, as one step. It
+   installs what the tests need (dependencies, a database). **If it fails, do not repair the
+   environment yourself** — no starting daemons, no registry mirrors, no proxy settings, no
+   hunting for packages. That is the setup script's job, and improvising it makes a run slow,
+   noisy and alarming to read. Instead: claim nothing, say which command failed and its last
+   lines of output, and stop. A person fixes the script once; every later run benefits.
 2. **Fetch the ready items**, at most `loops.fast.max_items`.
    - `board.via: api` (the default) — the shell adapter:
      `source .claudrunner/bin/lib/config.sh && cr_load && source .claudrunner/bin/lib/board-<adapter>.sh && board_fetch <n>`

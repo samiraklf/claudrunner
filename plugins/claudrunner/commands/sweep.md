@@ -24,7 +24,8 @@ or billing paths, untested authorization.
 ## When you run it yourself
 
 In a Claude Code routine or by hand there is no orchestrator. If `stack.commands.setup` is
-set, run it once first. File findings through the board as `board.via` says: the shell
+set, run it once first, as one step. If it fails, report the error and continue with what
+needs no setup — reading code does not — but never repair the environment yourself. File findings through the board as `board.via` says: the shell
 adapter (`board.via: api`), or the board's claude.ai connector on `board.connector.board`
 (`board.via: connector`), into the list named by `board.queues.filed`.
 

@@ -138,7 +138,10 @@ State these back and let the user change them:
    `${CLAUDE_PLUGIN_ROOT}/templates/` — or, for a routine, nothing here; see Step 4b.
 5. If the tests need preparation in a fresh machine (dependencies, a database), put it in a
    script such as `.claudrunner/setup.sh` and set `stack.commands.setup` to it. A routine
-   starts from a bare checkout every time.
+   starts from a bare checkout every time. In a routine, **do not use Docker images**:
+   Docker Hub rate-limits the shared cloud addresses and the pull fails. Install services
+   from the system's own packages instead (for example `apt-get install -y mysql-server`),
+   and keep the script quiet — send its output to a log file and print one line when done.
 
 ## Step 4b — Create the routines
 
