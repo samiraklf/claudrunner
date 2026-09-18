@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2 — 2026-09-18
+
+### Fixed
+- The city's big red aerial sat at a fixed spot while the buildings are generated, so it floated
+  in front of a facade. It now stands on the roof of the tallest front building.
+
 ## 0.1.1 — 2026-09-18
 
 ### Fixed

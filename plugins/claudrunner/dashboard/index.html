@@ -425,10 +425,6 @@
   </g>
   <!-- city props -->
   <g id="city-props">
-    <g transform="translate(300,470)">
-      <rect x="-3" y="-64" width="6" height="64" fill="var(--near)"/>
-      <circle class="blink" cx="0" cy="-70" r="6" fill="#ff5a5a"/>
-    </g>
     <g class="swinger" data-who="crawler">
       <g class="swing">
         <rect x="-34" y="-46" width="72" height="96" fill="none" pointer-events="all"/>
@@ -1166,10 +1162,13 @@ const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
 
 function buildLayer(id, { top, base, minW, maxW, fill, winW, winH, gapX, gapY, lit, roof }) {
   const g = el(id);
+  let tallest = null;
   for (let x = -40; x < 1640;) {
     const w = ri(minW, maxW);
     const h = ri(top[0], top[1]);
     const y = base - h;
+    // the tallest block that is fully on screen, for the big aerial below
+    if (x > 40 && x + w < 1100 && (!tallest || y < tallest.y)) tallest = { x, y, w };
     g.appendChild(node('rect', { x, y, width: w, height: h, fill }));
     // a lighter face on one side gives the block some volume
     g.appendChild(node('rect', { x, y, width: Math.min(9, w * .12), height: h,
@@ -1210,14 +1209,23 @@ function buildLayer(id, { top, base, minW, maxW, fill, winW, winH, gapX, gapY, l
     }
     x += w + ri(2, 12);
   }
+  return tallest;
 }
 
 buildLayer('sky-far',  { top: [170, 330], base: 604, minW: 46, maxW: 104, fill: 'var(--far)',
   winW: 4, winH: 5, gapX: 7, gapY: 9, lit: .22, roof: false });
 buildLayer('sky-mid',  { top: [150, 300], base: 690, minW: 62, maxW: 132, fill: 'var(--mid)',
   winW: 6, winH: 7, gapX: 9, gapY: 12, lit: .3, roof: true });
-buildLayer('sky-near', { top: [90, 190],  base: 772, minW: 96, maxW: 190, fill: 'var(--near)',
+const tallestNear = buildLayer('sky-near', { top: [90, 190],  base: 772, minW: 96, maxW: 190, fill: 'var(--near)',
   winW: 8, winH: 10, gapX: 13, gapY: 16, lit: .34, roof: true });
+// The city's big aerial stands on the roof of the tallest front block. It used to sit at a
+// fixed spot, and since the blocks are generated it ended up floating in front of a facade.
+if (tallestNear) {
+  const g = el('sky-near'), top = tallestNear, ax = top.x + top.w - 22;
+  g.appendChild(node('rect', { x: ax - 3, y: top.y - 64, width: 6, height: 64, fill: 'var(--near)' }));
+  g.appendChild(node('rect', { x: ax - 9, y: top.y - 4, width: 18, height: 4, fill: 'var(--near)' }));
+  g.appendChild(node('circle', { cx: ax, cy: top.y - 70, r: 6, fill: '#ff5a5a', class: 'blink' }));
+}
 
 // ---------------------------------------------------------------- starfield
 (() => {
