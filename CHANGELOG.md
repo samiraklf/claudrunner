@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5 — 2026-09-18
+
+### Changed
+- The pep talk comes round every 15 seconds instead of once a minute. Scene gags wait for it
+  to finish instead of losing their turn.
+
 ## 0.1.4 — 2026-09-18
 
 ### Changed

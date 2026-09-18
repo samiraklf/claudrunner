@@ -2777,6 +2777,8 @@ const GAG_GAP = { beach: 10000, city: 40000, maze: 40000, space: 30000 };
   // ?gag=1 plays the current scene's gag straight away — a link you can send someone
   await new Promise(r => setTimeout(r, params.get('gag') ? 600 : 5000));
   for (;;) {
+    // the rope comes round often; wait for it to finish rather than skip this scene's turn
+    while (gagRunning) await new Promise(r => setTimeout(r, 500));
     try { await sceneGag(); } catch (e) { console.error(e); }   // one bad gag must not end the show
     const scene = document.documentElement.dataset.scene;
     await new Promise(r => setTimeout(r, GAG_GAP[scene] || 40000));
@@ -2784,11 +2786,11 @@ const GAG_GAP = { beach: 10000, city: 40000, maze: 40000, space: 30000 };
 })();
 // The pep talk has its own rhythm, in every scene. When a scene gag is on, it waits its turn.
 (async function ropeLoop() {
-  await new Promise(r => setTimeout(r, params.get('rope') ? 800 : 25000));
+  await new Promise(r => setTimeout(r, params.get('rope') ? 800 : 6000));
   for (;;) {
     let ran = false;
     try { ran = await ropeGag(); } catch (e) { if (!(e instanceof GagStopped)) console.error(e); }
-    await new Promise(r => setTimeout(r, ran ? 50000 : 5000));
+    await new Promise(r => setTimeout(r, ran ? 15000 : 3000));
   }
 })();
 </script>
