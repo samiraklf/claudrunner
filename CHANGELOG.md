@@ -1,9 +1,14 @@
 # Changelog
 
-## Unreleased
+## 0.1.10 — 2026-09-18
+
+### Changed
+- The pep talk runs alongside the scene gags instead of waiting for them: the rope can fly
+  while Crawler catches the dog's feature request.
 
 ### Added
 - An animated preview of the status page at the top of the README, linked to the live demo.
+  It shows the rope and Crawler's catch in the same shot.
 
 ## 0.1.9 — 2026-09-18
 

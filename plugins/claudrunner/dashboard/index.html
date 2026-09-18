@@ -1107,6 +1107,7 @@
   <g id="crew"></g>
   <g id="scan"></g>
   <g id="gag"></g>
+  <g id="rope-layer"></g>
 </svg>
 
 <div class="hud">
@@ -1807,10 +1808,11 @@ let gagStopped = false;
 const gagWakers = new Set();
 class GagStopped extends Error {}
 function stopGag() {
-  if (!gagRunning) return;
+  if (!gagRunning && !ropeRunning) return;
   gagStopped = true;
   gagWakers.forEach(w => w()); gagWakers.clear();
   el('gag').textContent = '';          // off the screen now, not on the next frame
+  el('rope-layer').textContent = '';
   delete document.documentElement.dataset.gag;
 }
 const quiet = p => { p.catch(() => {}); return p; };
@@ -1881,6 +1883,8 @@ const SPIDEY = `<g class="body">
 </g>`;
 
 let gagRunning = false;
+// The rope runs alongside the scene gags, so it has its own flag and its own layer.
+let ropeRunning = false;
 async function poopGag() {
   const root = document.documentElement;
   if (gagRunning || root.dataset.scene !== 'city' || document.hidden) return;
@@ -1972,7 +1976,7 @@ async function poopGag() {
     if (inner) inner.style.animation = '';
     delete root.dataset.gag;
     gagRunning = false;
-    gagStopped = false;
+    if (!ropeRunning) gagStopped = false;
   }
 }
 
@@ -2220,7 +2224,7 @@ async function mazeGag() {
     stage.classList.remove('shake');
     delete root.dataset.gag;
     gagRunning = false;
-    gagStopped = false;
+    if (!ropeRunning) gagStopped = false;
   }
 }
 
@@ -2519,7 +2523,7 @@ async function beachGag() {
     if (inner) { inner.style.animation = ''; inner.classList.remove('dog-shake'); }
     delete root.dataset.gag;
     gagRunning = false;
-    gagStopped = false;
+    if (!ropeRunning) gagStopped = false;
   }
 }
 
@@ -2685,7 +2689,7 @@ async function spaceGag() {
     layer.textContent = '';
     delete root.dataset.gag;
     gagRunning = false;
-    gagStopped = false;
+    if (!ropeRunning) gagStopped = false;
   }
 }
 
@@ -2772,17 +2776,15 @@ function makeRope(layer, n = 26) {
 }
 
 async function ropeGag() {
-  const root = document.documentElement;
-  if (gagRunning || document.hidden) return false;
+  if (ropeRunning || document.hidden) return false;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
   const HX = 1350, HY = 762;
   const xOf = u => Number(u.getAttribute('transform').match(/translate\(([-\d.]+)/)[1]);
   const units = [...document.querySelectorAll('#crew .unit')].sort((a, b) => xOf(b) - xOf(a));
   if (!units.length) return false;
 
-  gagRunning = true;
-  root.dataset.gag = '1';
-  const layer = el('gag'); layer.textContent = '';
+  ropeRunning = true;
+  const layer = el('rope-layer'); layer.textContent = '';
   const heroBody = document.querySelector('#hero .hero-body');
   const rope = makeRope(layer);
   // His lines sit right over his head: centred on him, the tail just clearing his helmet.
@@ -2875,9 +2877,8 @@ async function ropeGag() {
     heroBody?.classList.remove('throwing');
     document.querySelector('#hero .rope-arm')?.removeAttribute('transform');
     document.querySelectorAll('#crew .bonked').forEach(b => b.classList.remove('bonked'));
-    delete root.dataset.gag;
-    gagRunning = false;
-    gagStopped = false;
+    ropeRunning = false;
+    if (!gagRunning) gagStopped = false;
   }
   return true;
 }
@@ -2942,8 +2943,6 @@ const GAG_GAP = { beach: 10000, city: 40000, maze: 40000, space: 30000 };
   // ?gag=1 plays the current scene's gag straight away — a link you can send someone
   await new Promise(r => setTimeout(r, params.get('gag') ? 600 : 5000));
   for (;;) {
-    // the rope comes round often; wait for it to finish rather than skip this scene's turn
-    while (gagRunning) await new Promise(r => setTimeout(r, 500));
     try { await sceneGag(); } catch (e) { console.error(e); }   // one bad gag must not end the show
     const scene = document.documentElement.dataset.scene;
     await new Promise(r => setTimeout(r, GAG_GAP[scene] || 40000));

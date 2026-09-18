@@ -120,7 +120,8 @@ over his head, and throws. He bonks every robot on the head, one at a time, near
 at where each robot is right now, so one robot gets one bonk and three get three. An empty
 crew gets none.
 
-`R` starts it. `?rope=1` starts it as soon as the page loads.
+It runs alongside the scene's own gag, so the rope can fly while Crawler chases the dog's
+feature request. `R` starts it. `?rope=1` starts it as soon as the page loads.
 
 ## Rollback, on the beach
 
