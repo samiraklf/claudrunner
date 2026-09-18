@@ -22,7 +22,9 @@ board_fetch() {
   jql=$(cr_get '.board.settings.jql' '')
   [ -n "$jql" ] || jql="project = $(cr_get '.board.settings.project' '') AND status = \"$(cr_get '.board.queues.ready' '')\" AND assignee IS EMPTY ORDER BY priority DESC, created ASC"
   body=$(jq -nc --arg jql "$jql" --argjson n "$limit" '{jql:$jql,maxResults:$n,fields:["summary","description","labels","priority"]}')
-  _jr POST /rest/api/3/search "$body" | jq --arg base "${JIRA_BASE_URL%/}" '[ .issues[] | {
+  # /rest/api/3/search was retired (it answers 410 Gone); /search/jql takes the same body
+  # and returns the same .issues. It pages by token, and five items never needs a second page.
+  _jr POST /rest/api/3/search/jql "$body" | jq --arg base "${JIRA_BASE_URL%/}" '[ .issues[] | {
       id: .key,
       title: .fields.summary,
       body: (.fields.description | tostring),

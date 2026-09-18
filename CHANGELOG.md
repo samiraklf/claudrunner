@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.14 — 2026-09-18
+
+### Fixed
+- Jira fetched tickets through `/rest/api/3/search`, which Atlassian retired; it now answers
+  410 Gone, so a Jira board never handed the crew any work. Fetching uses
+  `/rest/api/3/search/jql`. The self-test runs the real fetch against a stand-in Jira that
+  refuses the old address.
+
 ## 0.1.13 — 2026-09-18
 
 ### Added

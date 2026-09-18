@@ -59,6 +59,30 @@ for f in plugins/claudrunner/runtime/lib/board-*.sh; do
   check "adapters/$name documented" test -f "plugins/claudrunner/adapters/$name/ADAPTER.md"
 done
 
+echo "jira fetch uses the search endpoint Atlassian still serves"
+# Atlassian retired POST /rest/api/3/search; it now answers 410 Gone. A stand-in curl
+# plays Jira: the old path fails the way the real one does, the new one returns an issue.
+jira_fetch() (
+  # shellcheck disable=SC2329  # called by the adapter sourced below, not from here
+  curl() {
+    local url=""; for a in "$@"; do case "$a" in http*) url="$a" ;; esac; done
+    case "$url" in
+      */rest/api/3/search/jql) echo '{"issues":[{"key":"API-7","fields":{"summary":"Fix the export","description":null,"labels":["bug"],"priority":{"name":"High"}}}],"isLast":true}' ;;
+      *) return 22 ;;
+    esac
+  }
+  export JIRA_BASE_URL=https://example.atlassian.net JIRA_EMAIL=a@b.c JIRA_API_TOKEN=t
+  export CR_CONFIG='{"board":{"settings":{"project":"API"},"queues":{"ready":"Ready"}}}'
+  # shellcheck source=/dev/null
+  . plugins/claudrunner/runtime/lib/config.sh
+  # shellcheck source=/dev/null
+  . plugins/claudrunner/runtime/lib/board-jira.sh
+  board_fetch 5
+)
+jira_out=$(jira_fetch 2>/dev/null)
+check "jira fetch returns the ready issue" jq -e \
+  '.[0].id == "API-7" and .[0].url == "https://example.atlassian.net/browse/API-7"' <<<"$jira_out"
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in plugins/claudrunner/templates/github-actions/*.yml; do
