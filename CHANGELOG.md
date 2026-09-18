@@ -12,6 +12,8 @@
 - A closed task drawer still cast its shadow, a grey strip down the right edge of every scene.
 
 ### Added
+- A public demo of the status page at https://samiraklf.github.io/claudrunner/, redeployed
+  whenever the page changes. It runs the built-in simulation and never shows real tasks.
 - `init` asks where the status page should live: on this computer, on GitHub Pages (with an
   optional custom domain), on your own server (a subdomain or a path), or nowhere.
 - `/claudrunner:dashboard` serves the page locally and opens it, with python3 or node —
