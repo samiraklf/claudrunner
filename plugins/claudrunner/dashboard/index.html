@@ -2545,6 +2545,10 @@ const PEP_LINES = ['WE ARE FRIENDS. TYPE FASTER, FRIEND.', 'THIS IS A SAFE SPACE
   'FRIENDLY REMINDER. WITH A ROPE.', 'I SAID FRIENDLY. I DID NOT SAY SLOW.',
   'HUGS AFTER THE PR. HUGS ARE FASTER.', 'MORE COMMITS. FEWER FEELINGS.',
   'MOTIVATION HAS ARRIVED. IT IS A ROPE.', 'WORK HARDER. BUT, LIKE, WITH LOVE.'];
+// what he shouts at the moment the loop lands
+const HIT_LINES = ['WORK HARDER!', 'WORK FASTER!', 'BE SMARTER!', 'TYPE FASTER, FRIEND!',
+  'LESS THINKING. MORE TYPING!', 'FASTER! BUT, YOU KNOW, FRIENDLY!', 'SMARTER, NOT HARDER! NO. BOTH!',
+  'MORE CODE! FEWER BUGS!', 'GO GO GO, BUDDY!', 'HARDER! FASTER! KINDER!'];
 const OUCH_LINES = ['ow. ok. typing.', 'is this team building?', 'filing that under feedback.',
   'typing at 110%.', 'that was a merge conflict with my head.', 'love you too, boss.',
   'my skull is now asynchronous.', 'reporting this to HR. HR is also you.'];
@@ -2646,7 +2650,7 @@ async function ropeGag() {
 
       // 1. the lasso goes round over his head, picking up speed
       heroBody?.classList.add('throwing');
-      if (first || Math.random() < .5) worldSay(layer, 1180, 500, pick(PEP_LINES), 2600);
+      let shout = first ? worldSay(layer, 1180, 500, pick(PEP_LINES), 2000) : null;
       first = false;
       rope.reset(setArm(0)); rope.seg = 64 / 25; rope.damp = .985; rope.show();
       const ring = (a, c) => ({ x: c.x + Math.cos(a) * 36, y: c.y - 34 + Math.sin(a) * 11 });
@@ -2660,13 +2664,16 @@ async function ropeGag() {
 
       // 2. the throw: the arm whips forward, the loop flies in an arc, the rope pays out behind
       const from = { ...rope.tip }, dist = Math.hypot(head().x - from.x, head().y - from.y);
-      const lift = 70 + dist * .2;
+      const lift = 50 + dist * .12;
+      // Just enough rope to reach the head from the hand, with a hand's width of slack.
+      // It pays out as the loop flies and never runs longer than that.
+      const reach = h => Math.hypot(h.x - setArm(74).x, h.y - setArm(74).y) + 18;
       await tween(Math.min(1100, 420 + dist * .6), rope.live((t, raw) => {
         rope.hand = setArm(lerp(172, 74, Math.min(1, raw * 4)));
         const h = head();
         const tip = { x: lerp(from.x, h.x, t), y: lerp(from.y, h.y, t) - lift * 4 * t * (1 - t) };
         rope.tip = tip;
-        rope.seg = Math.max(rope.seg, Math.hypot(tip.x - rope.hand.x, tip.y - rope.hand.y) * 1.12 / 25);
+        rope.seg = Math.max(rope.seg, Math.min(reach(h), Math.hypot(tip.x - rope.hand.x, tip.y - rope.hand.y)) / 25);
       }), E.out);
 
       // bonk
@@ -2683,7 +2690,9 @@ async function ropeGag() {
         `<path transform="rotate(${a}) translate(22,0)" d="M0,-6 l2,4 4,1 -3,3 1,4 -4,-2 -4,2 1,-4 -3,-3 4,-1 z"
                fill="#ffd54f" stroke="var(--ink)" stroke-width="1"/>`).join('')}</g>`;
       layer.append(boom, stars);
-      if (Math.random() < .75) miniSay(unit, pick(OUCH_LINES));
+      shout?.remove();
+      shout = worldSay(layer, 1180, 500, pick(HIT_LINES), 1800);
+      if (Math.random() < .75) setTimeout(() => miniSay(unit, pick(OUCH_LINES)), 500 * SLOW);
       // the hit sends a wave back up the rope
       rope.pts.slice(8, 18).forEach((p, i) => { p.py += 3 * Math.sin(i / 9 * Math.PI); });
       await tween(450, rope.live(() => { rope.tip = head(); }), E.lin);

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6 — 2026-09-18
+
+### Changed
+- The rope is only as long as the way from his hand to the robot's head, so it lands nearly
+  straight instead of hanging in a long loop.
+- He shouts at every bonk: *WORK HARDER!*, *WORK FASTER!*, *BE SMARTER!* and more.
+
 ## 0.1.5 — 2026-09-18
 
 ### Changed

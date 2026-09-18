@@ -109,7 +109,8 @@ link you can send someone.
 
 Every 15 seconds or so, Professor Well-Actually takes the rope off his belt, twirls the lasso
 over his head, and throws. He bonks every robot on the head, one at a time, nearest first —
-*"WE ARE FRIENDS. TYPE FASTER, FRIEND."* The robot sees stars and types twice as fast for a few seconds (*"is this team building?"*). He aims
+*"WE ARE FRIENDS. TYPE FASTER, FRIEND."* — and shouts at every bonk: *"WORK HARDER!"*,
+*"BE SMARTER!"*. The rope is just long enough to reach. The robot sees stars and types twice as fast for a few seconds (*"is this team building?"*). He aims
 at where each robot is right now, so one robot gets one bonk and three get three. An empty
 crew gets none.
 
