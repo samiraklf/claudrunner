@@ -83,6 +83,16 @@ jira_out=$(jira_fetch 2>/dev/null)
 check "jira fetch returns the ready issue" jq -e \
   '.[0].id == "API-7" and .[0].url == "https://example.atlassian.net/browse/API-7"' <<<"$jira_out"
 
+echo "CI templates hand every board credential to the run"
+# A board adapter that reads a credential the workflow never passes fails on its first
+# scheduled run. Every variable the adapters read must reach both CI templates.
+for var in $(grep -ohE '\$\{?[A-Z][A-Z0-9_]*(_TOKEN|_KEY|_PAT|_URL|_EMAIL|_HOST)\b' \
+               plugins/claudrunner/runtime/lib/board-*.sh | tr -d '$\{' | sort -u); do
+  for t in plugins/claudrunner/templates/github-actions/claudrunner-{triage,sweep}.yml; do
+    check "$(basename "$t") passes $var" grep -q "$var: \${{ secrets.$var }}" "$t"
+  done
+done
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in plugins/claudrunner/templates/github-actions/*.yml; do

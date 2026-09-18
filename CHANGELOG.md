@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.15 — 2026-09-18
+
+### Fixed
+- On GitHub Actions only GitHub Issues could work: the CI templates passed the run no board
+  credentials, so Trello, Jira, Linear and the rest failed on their first scheduled run. Both
+  templates now pass every board's secrets, and the self-test checks that each credential an
+  adapter reads reaches both templates. Found by the first real install.
+
 ## Unreleased
 
 ### Changed
