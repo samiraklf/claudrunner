@@ -1,7 +1,7 @@
 {
   "name": "claudrunner",
   "description": "An autonomous dev crew for your repository. Picks work off your board, fixes it, proves the fix, opens the pull request. Any language, any stack, any task board.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": { "name": "samiraklf" },
   "homepage": "https://github.com/samiraklf/claudrunner",
   "license": "MIT"

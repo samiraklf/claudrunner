@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7 — 2026-09-18
+
+### Fixed
+- The reviewer's lines floated off to his left. They now sit centred over his head, and the
+  opening line rides above the lasso he twirls.
+
 ## 0.1.6 — 2026-09-18
 
 ### Changed
