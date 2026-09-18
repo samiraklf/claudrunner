@@ -129,8 +129,6 @@
   @keyframes glow{0%,100%{opacity:.16}40%{opacity:.26}55%{opacity:.12}}
   /* what they type floats up out of the laptop now and then */
   /* the reviewer's pep talk: arm up, rope out, a bonk on the head, back to work faster */
-  .rope-arm{transform-box:fill-box;transform-origin:50% 8%;transition:transform .18s ease-out}
-  .throwing .rope-arm{transform:rotate(78deg)}
   .throwing .coil{opacity:0}
   .bonked{animation:bonk .75s ease-out 1 !important;transform-box:fill-box;transform-origin:50% 100%}
   @keyframes bonk{0%{transform:none}14%{transform:scale(1.14,.8)}34%{transform:scale(.94,1.08) rotate(-5deg)}
@@ -2551,6 +2549,71 @@ const OUCH_LINES = ['ow. ok. typing.', 'is this team building?', 'filing that un
   'typing at 110%.', 'that was a merge conflict with my head.', 'love you too, boss.',
   'my skull is now asynchronous.', 'reporting this to HR. HR is also you.'];
 
+// A real rope: a chain of points under gravity (Verlet), held at the hand. The tip is steered
+// — twirled, thrown, held on a head — or let go, and every point between follows by itself,
+// so it sags, swings and whips like rope instead of bending like a wire.
+function makeRope(layer, n = 26) {
+  const pts = Array.from({ length: n }, () => ({ x: 0, y: 0, px: 0, py: 0 }));
+  const line = (stroke, w, extra = {}) => node('path', { fill: 'none', stroke, 'stroke-width': w,
+    'stroke-linecap': 'round', 'stroke-linejoin': 'round', ...extra });
+  const paths = [line('#3b2410', 6.5), line('#c58a4a', 4),
+    line('#8a5a2b', 4, { 'stroke-dasharray': '3 4' }),                       // the twist of the strands
+    line('#f3cf94', 1.2, { 'stroke-dasharray': '3 4', 'stroke-dashoffset': 3.5, opacity: .8 })];
+  const noose = node('g');
+  noose.innerHTML = `<ellipse rx="12" ry="7" fill="none" stroke="#3b2410" stroke-width="6.5"/>
+    <ellipse rx="12" ry="7" fill="none" stroke="#c58a4a" stroke-width="4"/>
+    <ellipse rx="12" ry="7" fill="none" stroke="#8a5a2b" stroke-width="4" stroke-dasharray="3 4"/>
+    <rect x="-15" y="-3.5" width="6" height="7" rx="2" fill="#8a5a2b" stroke="#3b2410" stroke-width="1.5"/>`;
+  const G = .0016;                                     // px per ms², a touch lighter than the moon
+  const r = {
+    pts, seg: 2, tip: null, hand: { x: 0, y: 0 }, damp: .985,
+    show() { layer.append(...paths, noose); },
+    hide() { paths.forEach(p => p.remove()); noose.remove(); },
+    reset(h) { this.hand = h; pts.forEach(p => { p.x = p.px = h.x; p.y = p.py = h.y; }); },
+    step(ms) {
+      const k = Math.max(1, Math.ceil(ms / 8)), dt = ms / k, last = n - 1;
+      for (let s = 0; s < k; s++) {
+        for (let i = 1; i < n; i++) {
+          const p = pts[i], vx = (p.x - p.px) * this.damp, vy = (p.y - p.py) * this.damp;
+          p.px = p.x; p.py = p.y; p.x += vx; p.y += vy + G * dt * dt;
+        }
+        pts[0].x = this.hand.x; pts[0].y = this.hand.y;
+        if (this.tip) { pts[last].x = this.tip.x; pts[last].y = this.tip.y; }
+        for (let it = 0; it < 14; it++) {
+          for (let i = 0; i < last; i++) {
+            const a = pts[i], b = pts[i + 1];
+            const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+            if (d <= this.seg || !d) continue;            // rope goes slack; it never pushes
+            const wa = i === 0 ? 0 : 1, wb = (i + 1 === last && this.tip) ? 0 : 1;
+            if (!wa && !wb) continue;
+            const f = (d - this.seg) / d / (wa + wb);
+            a.x += dx * f * wa; a.y += dy * f * wa; b.x -= dx * f * wb; b.y -= dy * f * wb;
+          }
+        }
+      }
+    },
+    draw() {
+      let d = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+      for (let i = 1; i < n - 1; i++) {
+        const a = pts[i], b = pts[i + 1];
+        d += ` Q${a.x.toFixed(1)},${a.y.toFixed(1)} ${((a.x + b.x) / 2).toFixed(1)},${((a.y + b.y) / 2).toFixed(1)}`;
+      }
+      const e = pts[n - 1], f = pts[n - 3];
+      d += ` L${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+      paths.forEach(p => p.setAttribute('d', d));
+      const ang = Math.atan2(e.y - f.y, e.x - f.x) * 180 / Math.PI;
+      noose.setAttribute('transform', `translate(${(e.x + Math.cos(ang * Math.PI / 180) * 9).toFixed(1)},` +
+        `${(e.y + Math.sin(ang * Math.PI / 180) * 9).toFixed(1)}) rotate(${ang.toFixed(1)})`);
+    },
+    // wrap a tween callback: steer first, then let physics run for the time that passed
+    live(fn) {
+      let t0 = performance.now();
+      return (t, raw) => { const now = performance.now(); fn(t, raw); this.step(Math.min(40, now - t0)); t0 = now; this.draw(); };
+    }
+  };
+  return r;
+}
+
 async function ropeGag() {
   const root = document.documentElement;
   if (gagRunning || document.hidden) return false;
@@ -2564,15 +2627,14 @@ async function ropeGag() {
   root.dataset.gag = '1';
   const layer = el('gag'); layer.textContent = '';
   const heroBody = document.querySelector('#hero .hero-body');
-  const hand = { x: HX - 50, y: HY - 92 - 60 };        // where the raised arm ends
-  const back = node('path', { fill: 'none', stroke: '#3b2410', 'stroke-width': 6, 'stroke-linecap': 'round' });
-  const rope = node('path', { fill: 'none', stroke: '#c58a4a', 'stroke-width': 3.5, 'stroke-linecap': 'round' });
-  const loop = node('circle', { r: 7, fill: 'none', stroke: '#c58a4a', 'stroke-width': 3.5 });
-  const draw = (tx, ty) => {
-    const sag = 40 + Math.abs(hand.x - tx) * .12;
-    const d = `M${hand.x},${hand.y} Q${(hand.x + tx) / 2},${Math.min(hand.y, ty) - sag} ${tx},${ty}`;
-    back.setAttribute('d', d); rope.setAttribute('d', d);
-    loop.setAttribute('cx', tx); loop.setAttribute('cy', ty);
+  const rope = makeRope(layer);
+  // The throwing arm turns about its shoulder; the rope is held wherever the hand ends up.
+  const arm = document.querySelector('#hero .rope-arm');
+  const SH = { x: -24.5, y: -65.6 }, ARM = 28;
+  const setArm = deg => {
+    arm?.setAttribute('transform', `rotate(${deg.toFixed(1)} ${SH.x} ${SH.y})`);
+    const r = deg * Math.PI / 180;
+    return { x: HX + SH.x - ARM * Math.sin(r), y: HY - 92 + SH.y + ARM * Math.cos(r) };
   };
 
   try {
@@ -2582,14 +2644,30 @@ async function ropeGag() {
       const body = unit.querySelector('.bob');
       const head = () => ({ x: xOf(unit) + 4, y: HY - 100 });
 
+      // 1. the lasso goes round over his head, picking up speed
       heroBody?.classList.add('throwing');
-      if (first || Math.random() < .5) worldSay(layer, 1180, 520, pick(PEP_LINES), 2400);
+      if (first || Math.random() < .5) worldSay(layer, 1180, 500, pick(PEP_LINES), 2600);
       first = false;
-      await wait(500);
-      draw(hand.x, hand.y); layer.append(back, rope, loop);
-      await tween(Math.min(900, 300 + (hand.x - head().x) * .45), t => {
-        const h = head(); draw(lerp(hand.x, h.x, t), lerp(hand.y, h.y, t));
-      }, E.out);
+      rope.reset(setArm(0)); rope.seg = 64 / 25; rope.damp = .985; rope.show();
+      const ring = (a, c) => ({ x: c.x + Math.cos(a) * 36, y: c.y - 34 + Math.sin(a) * 11 });
+      // the arm comes up, then circles with the loop
+      await tween(260, rope.live(t => { rope.hand = setArm(lerp(0, 172, t)); rope.tip = null; }), E.out);
+      await tween(1000, rope.live((t, raw) => {
+        const a = -(raw * raw) * Math.PI * 5;
+        rope.hand = setArm(172 + Math.sin(a) * 9);
+        rope.tip = ring(a, rope.hand);
+      }), E.lin);
+
+      // 2. the throw: the arm whips forward, the loop flies in an arc, the rope pays out behind
+      const from = { ...rope.tip }, dist = Math.hypot(head().x - from.x, head().y - from.y);
+      const lift = 70 + dist * .2;
+      await tween(Math.min(1100, 420 + dist * .6), rope.live((t, raw) => {
+        rope.hand = setArm(lerp(172, 74, Math.min(1, raw * 4)));
+        const h = head();
+        const tip = { x: lerp(from.x, h.x, t), y: lerp(from.y, h.y, t) - lift * 4 * t * (1 - t) };
+        rope.tip = tip;
+        rope.seg = Math.max(rope.seg, Math.hypot(tip.x - rope.hand.x, tip.y - rope.hand.y) * 1.12 / 25);
+      }), E.out);
 
       // bonk
       const h = head();
@@ -2606,11 +2684,20 @@ async function ropeGag() {
                fill="#ffd54f" stroke="var(--ink)" stroke-width="1"/>`).join('')}</g>`;
       layer.append(boom, stars);
       if (Math.random() < .75) miniSay(unit, pick(OUCH_LINES));
-      await wait(380);
+      // the hit sends a wave back up the rope
+      rope.pts.slice(8, 18).forEach((p, i) => { p.py += 3 * Math.sin(i / 9 * Math.PI); });
+      await tween(450, rope.live(() => { rope.tip = head(); }), E.lin);
 
-      // the rope comes home
-      await tween(420, t => { const p = head(); draw(lerp(p.x, hand.x, t), lerp(p.y, hand.y, t)); }, E.io);
-      back.remove(); rope.remove(); loop.remove();
+      // 3. he lets go of the head and reels it in; the loose end swings home
+      rope.tip = null; rope.damp = .95;                // a reeled rope loses its swing fast
+      const full = rope.seg;
+      await tween(900, rope.live(t => {
+        rope.seg = lerp(full, .6, t);
+        rope.hand = setArm(74 + Math.sin(t * Math.PI * 6) * 10 * (1 - t));   // hand over hand
+      }), E.io);
+      rope.hide();
+      await tween(220, t => setArm(lerp(74, 0, t)), E.io);
+      arm?.removeAttribute('transform');
       heroBody?.classList.remove('throwing');
       await wait(500);
       boom.remove(); stars.remove();
@@ -2621,6 +2708,7 @@ async function ropeGag() {
   } finally {
     layer.textContent = '';
     heroBody?.classList.remove('throwing');
+    document.querySelector('#hero .rope-arm')?.removeAttribute('transform');
     document.querySelectorAll('#crew .bonked').forEach(b => b.classList.remove('bonked'));
     delete root.dataset.gag;
     gagRunning = false;

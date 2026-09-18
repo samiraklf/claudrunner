@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.4 — 2026-09-18
+
+### Changed
+- The reviewer's rope is a real rope now: twisted strands, a lasso loop he twirls over his
+  head, and a chain of points under gravity, so it sags, swings and whips on the throw and
+  dangles as he reels it back in.
+
 ## 0.1.3 — 2026-09-18
 
 ### Changed
