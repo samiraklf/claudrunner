@@ -176,7 +176,8 @@ dialog.search[open]{animation:pop .18s var(--ease)}
   box-shadow:0 40px 90px -30px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.1);transition:transform .25s var(--ease)}
 .hero-shot:hover{transform:translateY(-3px)}
 .shot-bar{background:#16233f}
-.hero-shot img{display:block;width:100%;aspect-ratio:800/356}
+.hero-shot picture,.hero-shot img{display:block;width:100%}
+.hero-shot img{aspect-ratio:1100/488}
 .shot-cta{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;
   background:rgba(8,16,31,.82);color:#fff;font-weight:600;font-size:14px;backdrop-filter:blur(6px);transition:background .15s}
 .hero-shot:hover .shot-cta{background:var(--accent-bg);color:var(--on-accent)}

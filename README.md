@@ -12,8 +12,11 @@ as a ticket with evidence.
 
 Any language · any stack · 11 task boards · GitHub, GitLab, Bitbucket, Azure Repos · no server required
 
-<a href="https://samiraklf.github.io/claudrunner/demo/"><img src="docs/assets/preview.gif" width="800"
-alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard runs to rescue a dog from the sea, and a runner flees through a maze"></a>
+<a href="https://samiraklf.github.io/claudrunner/demo/"><picture>
+  <source type="image/webp" srcset="docs/assets/preview.webp">
+  <img src="docs/assets/preview.gif" width="880"
+       alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard runs to rescue a dog from the sea, and a runner flees through a maze">
+</picture></a>
 
 **[🚀 Quick start](#quick-start)** · **[▶ Live demo](https://samiraklf.github.io/claudrunner/demo/)** · **[📚 Website and guides](https://samiraklf.github.io/claudrunner/)**
 

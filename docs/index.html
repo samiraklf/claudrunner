@@ -23,8 +23,11 @@ description: "Free, open-source AI coding agent. Fixes tickets from Jira, Trello
   </div>
   <a class="hero-shot" href="{{ '/demo/' | relative_url }}" aria-label="Open the live demo of the status page">
     <span class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>claudrunner · status</span></span>
-    <img src="{{ '/assets/preview.gif' | relative_url }}" width="800" height="356" loading="eager" fetchpriority="high"
+    <picture>
+      <source type="image/webp" srcset="{{ '/assets/preview.webp' | relative_url }}">
+      <img src="{{ '/assets/preview.gif' | relative_url }}" width="1100" height="488" loading="eager" fetchpriority="high"
          alt="The claudrunner status page: robots type at laptops while the reviewer bonks them with a rope, a lifeguard rescues a dog from the sea, and a runner flees through a maze">
+    </picture>
     <span class="shot-cta">{% include icon.html name="play" px=15 %} Open the live demo</span>
   </a>
 </section>

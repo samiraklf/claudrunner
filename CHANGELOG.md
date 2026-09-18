@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Changed
+- The preview is an animated WebP in full colour, recorded at quarter speed and played back at
+  full speed for smooth motion, at 1100px. The GIF stays as a fallback and is re-recorded too.
 - The README's install steps moved from the bottom to a Quick start right under the preview,
   with the commands after it and a jump link at the top.
 - The website got a design pass: search across every page (`/` or Ctrl+K), a light/dark switch
