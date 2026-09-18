@@ -12,7 +12,7 @@ jobs:
       - name: Self test
         run: ./scripts/selftest.sh
       - name: Validate the dogfood config
-        run: ./scripts/validate-config.sh
+        run: ./plugins/claudrunner/runtime/validate-config.sh
       - name: Private details
         env:
           PRIVATE_PATTERN: ${{ vars.PRIVATE_PATTERN }}
@@ -29,4 +29,4 @@ jobs:
           sudo mv shellcheck-v0.11.0/shellcheck /usr/local/bin/shellcheck
           shellcheck --version
       - name: Lint shell scripts
-        run: shellcheck -x scripts/*.sh scripts/lib/*.sh templates/cron/*.sh plugins/claudrunner/hooks/*.sh
+        run: shellcheck -x scripts/*.sh plugins/claudrunner/runtime/*.sh plugins/claudrunner/runtime/lib/*.sh plugins/claudrunner/templates/cron/*.sh plugins/claudrunner/hooks/*.sh

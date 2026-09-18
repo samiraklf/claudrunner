@@ -37,7 +37,7 @@ jobs:
           claude plugin install claudrunner
 
       - name: Validate the configuration
-        run: ./scripts/validate-config.sh
+        run: ./.claudrunner/bin/validate-config.sh
 
       - name: Run one triage cycle
         env:
@@ -45,7 +45,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_AUTHOR_NAME: claudrunner
           GIT_COMMITTER_NAME: claudrunner
-        run: ./scripts/claudrunner-run.sh triage
+        run: |
+          # dashboard.where: server over SSH — the key comes from a secret, never from a file in the repo
+          if [ -n "${{ secrets.CLAUDRUNNER_DASHBOARD_SSH_KEY }}" ]; then
+            install -m 600 /dev/null "$RUNNER_TEMP/dash_key"
+            printf '%s\n' "${{ secrets.CLAUDRUNNER_DASHBOARD_SSH_KEY }}" > "$RUNNER_TEMP/dash_key"
+            export CLAUDRUNNER_DASHBOARD_SSH_KEY="$RUNNER_TEMP/dash_key"
+          fi
+          ./.claudrunner/bin/claudrunner-run.sh triage
 
       - name: Keep the run record
         if: always()

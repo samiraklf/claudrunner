@@ -33,35 +33,35 @@ for f in plugins/*/skills/*/SKILL.md; do
 done
 
 echo "shell syntax"
-for f in scripts/*.sh scripts/lib/*.sh templates/cron/*.sh; do
+for f in scripts/*.sh plugins/claudrunner/runtime/*.sh plugins/claudrunner/runtime/lib/*.sh plugins/claudrunner/templates/cron/*.sh; do
   check "$f" bash -n "$f"
 done
 
 echo "every pack and adapter is documented"
-for d in packs/*/; do
+for d in plugins/claudrunner/packs/*/; do
   check "$d" test -f "$d/pack.md"
 done
-for d in adapters/*/; do
+for d in plugins/claudrunner/adapters/*/; do
   check "$d" test -f "$d/ADAPTER.md"
 done
-for d in hosts/*/; do
+for d in plugins/claudrunner/hosts/*/; do
   check "$d" test -f "$d/HOST.md"
 done
 
 echo "board bindings define all four verbs"
-for f in scripts/lib/board-*.sh; do
+for f in plugins/claudrunner/runtime/lib/board-*.sh; do
   name=$(basename "$f" .sh); name=${name#board-}
   missing=""
   for verb in board_fetch board_claim board_comment board_move; do
     grep -q "^$verb()" "$f" || missing="$missing $verb"
   done
   if [ -n "$missing" ]; then bad "$f is missing:$missing"; else ok "$f"; fi
-  check "adapters/$name documented" test -f "adapters/$name/ADAPTER.md"
+  check "adapters/$name documented" test -f "plugins/claudrunner/adapters/$name/ADAPTER.md"
 done
 
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
-  for f in templates/github-actions/*.yml; do
+  for f in plugins/claudrunner/templates/github-actions/*.yml; do
     check "$f" python3 -c 'import sys,yaml; yaml.safe_load(open(sys.argv[1]))' "$f"
   done
 else

@@ -74,6 +74,15 @@ review:
   second_vendor:
     enabled: false
     command: null            # a read-only CLI from another model vendor
+
+dashboard:
+  where: local               # local | github-pages | server | none
+  domain: ""                 # github-pages: your own domain, e.g. crew.example.com
+  show_titles: true          # github-pages defaults to false: public pages show task numbers only
+  branch: claudrunner-status # github-pages: the branch Pages serves
+  server:
+    webroot: ""              # server, same machine: the folder your web server serves
+    ssh_target: ""           # server, from CI: user@host:/path/ — key in CLAUDRUNNER_DASHBOARD_SSH_KEY
 ```
 
 ## Fields worth thinking about
@@ -93,6 +102,14 @@ get reviewed properly by anyone, including you.
 
 **`review.second_vendor`** — a reviewer from a different model vendor, read-only, on the
 same diff. Two vendors disagreeing is a much stronger signal than one model checking itself.
+
+**`dashboard.where`** — where the status page lives. `local` is opened with
+`/claudrunner:dashboard`. `github-pages` publishes to a branch after every run. `server` copies
+the page into a folder, or uploads it over SSH from CI. See the hosting guide in the plugin's
+`templates/hosting/`.
+
+**`dashboard.show_titles`** — on a public page, titles often name customers, bugs and
+security issues. GitHub Pages therefore shows task numbers unless you turn titles on.
 
 ## Credentials, by adapter
 

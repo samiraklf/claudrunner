@@ -11,7 +11,7 @@ are the only part of the flow that is not plain git.
 
 ## Steps
 
-1. Copy `hosts/github/HOST.md` to `hosts/<name>/HOST.md`.
+1. Copy `plugins/claudrunner/hosts/github/HOST.md` to `plugins/claudrunner/hosts/<name>/HOST.md`.
 2. Give the command or API call for each verb, with the fields it needs.
 3. Say what **the change is called** there. Merge request and pull request are not
    interchangeable words to the people reading what the crew writes.

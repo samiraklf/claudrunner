@@ -1,14 +1,35 @@
 # The status page
 
-A full-screen scene showing what the crew is doing. One HTML file, no build, no
-dependencies, and no network calls except to its own data file.
+A full-screen scene showing what the crew is doing. One HTML file and one JSON file, so any
+host that can serve a folder can serve it.
 
-```
-python3 -m http.server -d dashboard 8787
-```
+## Where it lives
 
-Open `http://localhost:8787`. Anything that serves a directory works: your editor's preview,
-a static host, a path on a server you already run.
+`/claudrunner:init` asks. You can change it later in `.claudrunner/config.yml`.
+
+| Choice | How you open it | Who can see it |
+|---|---|---|
+| **On this computer** | `/claudrunner:dashboard` — starts a small local server and opens the page | only you |
+| **GitHub Pages** | `https://<owner>.github.io/<repo>/`, or your own domain | anyone with the link |
+| **Your own server** | a subdomain like `crew.example.com`, or a path like `example.com/claudrunner/` | whoever your server lets in |
+| **No page** | — | — |
+
+**Every installation has its own page.** claudrunner has no central server and never sees your
+data: each repository publishes its own runs to its own address. Nobody sees another team's
+crew unless they have that team's link.
+
+**A GitHub Pages site is public**, even the link nobody has shared. So on Pages the page shows
+task numbers instead of titles by default. Set `dashboard.show_titles: true` if your titles are
+safe to show.
+
+**On GitHub Pages**, runs publish to a branch called `claudrunner-status`, and Pages serves that
+branch. Switch it on once: **Settings → Pages → Deploy from a branch → `claudrunner-status` /
+root**. The branch appears after the first run. For your own domain, set `dashboard.domain` and
+add a CNAME record pointing at `<owner>.github.io`.
+
+**On your own server**, runs copy the page into `dashboard.server.webroot` when the crew runs on
+that server, or upload it to `dashboard.server.ssh_target` from CI. nginx snippets for a
+subdomain and for a path ship in the plugin's `templates/hosting/`.
 
 ## What you are looking at
 
@@ -155,32 +176,12 @@ clicking the button.
 
 ## Live data
 
-The page polls `status.json` beside it every ten seconds. Generate it from the repository's
-own run records:
+Every run refreshes the page when work starts and again when it ends. On this computer,
+`/claudrunner:dashboard` also refreshes it every twenty seconds.
 
-```
-./scripts/claudrunner-status.sh dashboard/status.json
-```
-
-Put that on a timer — a minute is plenty — or write it at the end of each run.
-
-```json
-{
-  "queue": 2,
-  "retired_today": 3,
-  "runs": [
-    { "id": "#412", "title": "Stream the CSV export", "phase": "implementing",
-      "progress": 0.4, "board": "github" }
-  ]
-}
-```
-
-Every field is optional. A missing one renders as empty, never as an error. Up to four runs
-appear in the scene at once; the drawer lists them all.
-
-**With no `status.json` the page simulates and says so** — the chip reads `SIMULATION`
-instead of `LIVE`. It is never blank, and it never shows invented numbers while implying
-they are real.
+**With no run records yet, the page runs a simulation and says so** — the chip reads
+`SIMULATION` instead of `LIVE`. It is never blank, and it never shows invented numbers while
+implying they are real.
 
 ## Options
 

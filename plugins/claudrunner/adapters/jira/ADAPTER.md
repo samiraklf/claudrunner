@@ -33,7 +33,7 @@ not status names.
 
 ## Running it from the orchestrator
 
-Shipped as `scripts/lib/board-jira.sh`, so the shell fetches, claims and moves. The agent
+Shipped as `lib/board-jira.sh`, installed into your repo at `.claudrunner/bin/`, so the shell fetches, claims and moves. The agent
 never holds the board credential.
 
 | | |
@@ -42,6 +42,6 @@ never holds the board credential.
 | Config | `board.settings.project` or `board.settings.jql`, and `board.settings.transitions.<role>` — transition ids, not status names |
 
 Set `board.adapter: jira` and map every queue role under `board.queues`.
-`scripts/validate-config.sh` fails when a required setting is missing, so a half-configured
+`.claudrunner/bin/validate-config.sh` fails when a required setting is missing, so a half-configured
 board is caught before the first scheduled run rather than at two in the morning.
 

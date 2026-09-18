@@ -45,7 +45,7 @@ elif [ -f "$binding" ]; then
     declare -F "$verb" >/dev/null || { echo "$binding does not define $verb" >&2; exit 2; }
   done
 else
-  echo "adapter '$adapter' has no shell binding — see adapters/$adapter/ADAPTER.md and run it" >&2
+  echo "adapter '$adapter' has no shell binding — see the plugin's adapters/$adapter/ADAPTER.md and run it" >&2
   echo "from the agent with /claudrunner:$mode instead." >&2
   exit 2
 fi
@@ -68,6 +68,8 @@ if [ "$mode" = "triage" ]; then
   count=$(jq 'length' "$run_dir/input.json")
   [ "$count" -eq 0 ] && { echo "every candidate was claimed by another run — exiting"; exit 0; }
   echo "claimed $count item(s)"
+  # The page shows the unit in the field from now on. Best effort: a page never blocks work.
+  "$here/publish-dashboard.sh" >/dev/null 2>&1 || echo "dashboard: publish failed (work continues)" >&2
 fi
 
 # ---------------------------------------------------------------- prepare the tree
@@ -147,3 +149,6 @@ jq -c '.skipped[]?' <<<"$summary" | while read -r row; do
   board_comment "$id" "claudrunner ($reason): $note"
   board_move "$id" "$dest" && echo "#$id -> $dest ($reason)"
 done
+
+# The run is over: show what shipped. Best effort, as above.
+"$here/publish-dashboard.sh" >/dev/null 2>&1 || echo "dashboard: publish failed" >&2

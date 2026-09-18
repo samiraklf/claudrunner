@@ -5,7 +5,7 @@ detection rule, and the failure modes characteristic of that stack.
 
 ## Steps
 
-1. Copy `packs/generic/pack.md` to `packs/<name>/pack.md`.
+1. Copy `plugins/claudrunner/packs/generic/pack.md` to `plugins/claudrunner/packs/<name>/pack.md`.
 2. **Detection** — the file that proves this stack is present. Be specific enough that two
    packs cannot both claim a repository. Name the alternatives a project may use.
 3. **Commands** — five: test all, test filtered, lint, format, build. The filtered form must

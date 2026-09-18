@@ -2,7 +2,21 @@
 
 ## Unreleased
 
+### Fixed
+- An installed plugin shipped only its agents, commands, hooks and skills. The dashboard, the
+  orchestrator, the CI templates, the stack packs and the board adapters stayed behind in the
+  repository, so nobody but us could set it up. Everything that must ship now lives inside
+  `plugins/claudrunner/`, and `init` copies the runtime into the user's repository.
+
 ### Added
+- `init` asks where the status page should live: on this computer, on GitHub Pages (with an
+  optional custom domain), on your own server (a subdomain or a path), or nowhere.
+- `/claudrunner:dashboard` serves the page locally and opens it, with python3 or node —
+  whichever the machine has.
+- Runs publish the page when work starts and when it ends. On GitHub Pages it goes to its own
+  `claudrunner-status` branch and commits only real changes; public pages show task numbers
+  instead of titles unless told otherwise.
+- nginx snippets for a subdomain and for a path.
 - Three scenes on the status page — a rain-lit street, a rooftop under a signal, and a break
   room the crew occupies when the queue is empty — with deadpan one-liners and a figure that
   points when something is retired. The idle scene is the point: a crew with nothing to do

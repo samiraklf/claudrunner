@@ -40,9 +40,6 @@ case "$host" in
   github|gitlab|bitbucket|azure-repos) ;;
   *) err "project.host must be github, gitlab, bitbucket or azure-repos (got '$host')" ;;
 esac
-if [ "$autonomy" = "pr-only" ] && [ ! -f "hosts/$host/HOST.md" ] && [ ! -d "$HOME/.claude/plugins" ]; then
-  warn "no host definition found for '$host'"
-fi
 
 filtered=$(cr_get '.stack.commands.test_filter' '')
 if [ -n "$filtered" ]; then
@@ -107,6 +104,21 @@ lines=$(cr_get '.policy.max_changed_lines' '600')
 if [ "$(cr_get '.review.second_vendor.enabled' 'false')" = "true" ]; then
   [ -n "$(cr_get '.review.second_vendor.command' '')" ] || err "second_vendor is enabled but no command is set"
 fi
+
+where=$(cr_get '.dashboard.where' 'local')
+case "$where" in
+  local|none) ;;
+  github-pages)
+    [ "$(cr_get '.dashboard.show_titles' 'false')" = "true" ] && \
+      warn "dashboard.show_titles is true on a GitHub Pages site: anyone with the link can read your task titles"
+    ;;
+  server)
+    if [ -z "$(cr_get '.dashboard.server.webroot' '')" ] && [ -z "$(cr_get '.dashboard.server.ssh_target' '')" ]; then
+      err "dashboard.where is server: set dashboard.server.webroot or dashboard.server.ssh_target"
+    fi
+    ;;
+  *) err "dashboard.where must be local, github-pages, server or none (got '$where')" ;;
+esac
 
 [ "$fail" -eq 0 ] && echo "config ok"
 exit "$fail"

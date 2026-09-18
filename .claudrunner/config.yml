@@ -12,7 +12,7 @@ stack:
   commands:
     test: "./scripts/selftest.sh"
     test_filter: "./scripts/selftest.sh {filter}"
-    lint: "shellcheck -x scripts/*.sh scripts/lib/*.sh templates/cron/*.sh"
+    lint: "./scripts/lint.sh"
     format: ""
     build: ""
 
@@ -54,3 +54,7 @@ review:
   second_vendor:
     enabled: false
     command: null
+
+dashboard:
+  where: local
+  show_titles: true

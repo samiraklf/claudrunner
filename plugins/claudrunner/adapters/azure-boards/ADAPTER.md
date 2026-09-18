@@ -42,7 +42,7 @@ The `az boards` CLI covers all four, and is usually easier than raw REST inside 
 
 ## Running it from the orchestrator
 
-Shipped as `scripts/lib/board-azure-boards.sh`, so the shell fetches, claims and moves. The agent
+Shipped as `lib/board-azure-boards.sh`, installed into your repo at `.claudrunner/bin/`, so the shell fetches, claims and moves. The agent
 never holds the board credential.
 
 | | |
@@ -51,6 +51,6 @@ never holds the board credential.
 | Config | `board.settings.organization`, `board.settings.project`, and `board.settings.area_path` when one project feeds several repositories |
 
 Set `board.adapter: azure-boards` and map every queue role under `board.queues`.
-`scripts/validate-config.sh` fails when a required setting is missing, so a half-configured
+`.claudrunner/bin/validate-config.sh` fails when a required setting is missing, so a half-configured
 board is caught before the first scheduled run rather than at two in the morning.
 

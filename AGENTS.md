@@ -13,11 +13,14 @@ sentence here becomes a wrong decision in somebody's repository at three in the 
 
 | Path | Holds |
 |---|---|
-| `plugins/claudrunner/` | commands, skills and agents — the behavior |
-| `packs/` | one file per stack: five commands and its characteristic failures |
-| `adapters/` | one file per board: four verbs |
-| `scripts/` | the orchestrator, the guards, the self test |
-| `templates/` | schedule targets |
+| `plugins/claudrunner/` | **everything that ships to a user.** Only this folder is installed |
+| `…/commands`, `skills`, `agents`, `hooks` | the behavior |
+| `…/runtime/` | orchestrator, config check, status, board bindings — copied into the user's repo by `init` |
+| `…/dashboard/` | the status page |
+| `…/packs/` | one file per stack: five commands and its characteristic failures |
+| `…/adapters/`, `…/hosts/` | one file per board, one per code host |
+| `scripts/` | this repo's own checks: self test, leak check, lint. Never shipped |
+| `…/templates/` | schedule targets and dashboard hosting |
 | `docs/` | the reference the commands point at |
 
 ## Rules
@@ -67,7 +70,7 @@ claude plugin eval plugins/claudrunner --no-publish
 
 ## Extending
 
-New stack: copy `packs/generic/pack.md`, follow `docs/writing-a-pack.md`.
+New stack: copy `plugins/claudrunner/packs/generic/pack.md`, follow `docs/writing-a-pack.md`.
 New board: follow `docs/writing-an-adapter.md`, and be honest about whether claiming is
 atomic. It usually is not, and the doc must say what happens then.
 

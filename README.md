@@ -159,6 +159,7 @@ It writes a config and a schedule. Nothing runs until you say so.
 | `/claudrunner:triage` | Run one fast-loop cycle now. |
 | `/claudrunner:sweep` | Run one slow-loop sweep now. Takes a scope. |
 | `/claudrunner:status` | Config, schedule, queue and recent runs. Changes nothing. |
+| `/claudrunner:dashboard` | Open the status page on this computer. |
 
 ## What it costs to run
 

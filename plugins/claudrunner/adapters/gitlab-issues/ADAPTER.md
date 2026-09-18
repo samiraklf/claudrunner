@@ -20,7 +20,7 @@ covers the board and the code.
 
 ## Running it from the orchestrator
 
-Shipped as `scripts/lib/board-gitlab-issues.sh`, so the shell fetches, claims and moves. The agent
+Shipped as `lib/board-gitlab-issues.sh`, installed into your repo at `.claudrunner/bin/`, so the shell fetches, claims and moves. The agent
 never holds the board credential.
 
 | | |
@@ -29,6 +29,6 @@ never holds the board credential.
 | Config | `board.settings.project` — the path or id, when the runner is not inside the repository |
 
 Set `board.adapter: gitlab-issues` and map every queue role under `board.queues`.
-`scripts/validate-config.sh` fails when a required setting is missing, so a half-configured
+`.claudrunner/bin/validate-config.sh` fails when a required setting is missing, so a half-configured
 board is caught before the first scheduled run rather than at two in the morning.
 

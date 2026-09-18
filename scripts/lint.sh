@@ -15,7 +15,7 @@ step "self test"
 [ "${PIPESTATUS[0]}" -eq 0 ] || fail=1
 
 step "config"
-./scripts/validate-config.sh || fail=1
+./plugins/claudrunner/runtime/validate-config.sh || fail=1
 
 step "private details"
 ./scripts/check-leaks.sh || fail=1
@@ -29,7 +29,7 @@ else
     echo "shellcheck ${have} is installed; CI uses ${SHELLCHECK_VERSION}. Results would not match."
     fail=1
   fi
-  shellcheck -x scripts/*.sh scripts/lib/*.sh templates/cron/*.sh plugins/claudrunner/hooks/*.sh || fail=1
+  shellcheck -x scripts/*.sh plugins/claudrunner/runtime/*.sh plugins/claudrunner/runtime/lib/*.sh plugins/claudrunner/templates/cron/*.sh plugins/claudrunner/hooks/*.sh || fail=1
 fi
 
 echo
