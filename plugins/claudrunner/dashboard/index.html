@@ -1615,6 +1615,7 @@ function miniSay(g, text) {
      <text x="0" y="-2" text-anchor="middle" font-size="12" font-family="var(--mono)"
            fill="var(--text)">${text.replace(/[<&]/g, '')}</text>`;
   g.appendChild(b);
+  fitBubble(inner, 18);
   setTimeout(() => b.remove(), 5600);
 }
 
@@ -2095,6 +2096,7 @@ function worldSay(layer, x, y, text, ms = 2200) {
     <text x="0" y="-4" text-anchor="middle" font-size="13" font-weight="700"
           font-family="var(--mono)" fill="var(--text)">${text}</text>`;
   layer.appendChild(b);
+  fitBubble(b, 30);
   setTimeout(() => b.remove(), ms * SLOW);
   return b;
 }
@@ -2593,6 +2595,20 @@ WHO.latency = { name: 'Captain Latency', role: 'space superhero · always arrive
   'if you can read this, i sent it a while ago.' ] };
 
 // Speech that was sent a while ago, and says so.
+// Size a bubble to its real text. The width used to be guessed from the character count,
+// which undercounts emoji and ignores a second line — "📡 sent 4 seconds ago" spilled out
+// of "GOT YOU!". Measure every line once it is on the page and fit the box to the longest.
+function fitBubble(g, pad = 32) {
+  const rect = g.querySelector('rect.prog-bg');
+  if (!rect) return;
+  let widest = 0;
+  g.querySelectorAll('text').forEach(t => { try { widest = Math.max(widest, t.getComputedTextLength()); } catch {} });
+  if (!widest) return;                                 // not rendered (hidden tab): keep the guess
+  const w = Math.max(Number(rect.getAttribute('width')), widest + pad);
+  rect.setAttribute('x', (-w / 2).toFixed(1));
+  rect.setAttribute('width', w.toFixed(1));
+}
+
 function lateSay(layer, x, y, text, ago, ms = 1600) {
   const w = Math.min(420, 36 + text.length * 8.2);
   const b = node('g', { transform: `translate(${x},${y})` });
@@ -2603,6 +2619,7 @@ function lateSay(layer, x, y, text, ago, ms = 1600) {
     <text x="0" y="6" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--muted)"
           letter-spacing=".5">📡 sent ${ago} ago</text>`;
   layer.appendChild(b);
+  fitBubble(b);
   setTimeout(() => b.remove(), ms * SLOW);
 }
 

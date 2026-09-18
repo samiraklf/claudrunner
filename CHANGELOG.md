@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.12 — 2026-09-18
+
+### Fixed
+- Speech bubbles guessed their width from the character count, so text spilled out: the
+  *sent 4 seconds ago* line under Captain Latency's short lines, a long line from the Intern,
+  and some robot chatter. Every bubble now measures its text and fits the longest line.
+
 ## 0.1.11 — 2026-09-18
 
 ### Changed
