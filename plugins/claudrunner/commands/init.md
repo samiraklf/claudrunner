@@ -75,8 +75,19 @@ option first.
    Jira, Linear, Asana, Notion and others), recommend `board.via: connector`: no keys to
    store. Check the connector can see the board before relying on it. Otherwise
    `board.via: api`, with the credentials in the environment.
-6. **Autonomy** — `suggest`, `pr-only` (default), or `push`.
-7. **Where the status page lives** — see the next step. Ask it last; it is optional.
+6. **How the crew tests its changes** (`verify.mode`) — offer, recommended first:
+
+   | Choice | Say |
+   |---|---|
+   | **Auto** (`auto`) — recommended | "The crew decides per change: no setup for text or docs, and only the part of the project it changed for code. Fewest minutes and tokens." |
+   | **Always here** (`here`) | "Every change is tested before the pull request opens. Slower, most certain." |
+   | **Leave it to CI** (`ci`) | "The crew writes the tests and never installs anything; your CI runs them on the pull request." Recommend only when CI runs the tests on pull requests. |
+
+   Then look at what the project needs to run its tests. If it has separable parts (a backend
+   and a frontend, several services), write the setup so it takes a part name and list the
+   parts in `stack.commands.setup_parts`.
+7. **Autonomy** — `suggest`, `pr-only` (default), or `push`.
+8. **Where the status page lives** — see the next step. Ask it last; it is optional.
 
 ## Step 2b — The status page
 

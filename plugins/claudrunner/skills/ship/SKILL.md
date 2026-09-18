@@ -36,7 +36,9 @@ Five sections. No more.
 **Why** — the problem each change solves, from the item's perspective. Not a restatement
 of the diff; the reviewer can read the diff.
 **Tests** — which tests ran and what they returned. Real outcomes. Never ask the reviewer
-to run them for you.
+to run them for you. When the tests were written but left to CI (`verify.mode`, or a setup
+that failed), say exactly that: which tests exist, that CI runs them, and why they did not
+run here. Never present an unrun test as passing.
 **Reviews** — one line per reviewer: findings count, and what was fixed.
 **Known minor findings** — the P2 list, if any.
 

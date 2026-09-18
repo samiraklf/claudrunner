@@ -71,6 +71,13 @@ case "$via" in
   *) err "board.via must be api or connector (got '$via')" ;;
 esac
 
+# How the crew tests its changes.
+verify=$(cr_get '.verify.mode' 'auto')
+case "$verify" in
+  auto|here|ci) ;;
+  *) err "verify.mode must be auto, here or ci (got '$verify')" ;;
+esac
+
 # Where the scheduled runs happen.
 runs_on=$(cr_get '.schedule.runs_on' 'github-actions')
 case "$runs_on" in

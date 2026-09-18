@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.3 — 2026-09-18
+
+### Added
+- `verify.mode` — how the crew tests its changes, chosen in `init`: `auto` (recommended) lets
+  the crew decide per change, `here` always tests before the pull request, `ci` never installs
+  anything and leaves the tests to CI.
+
+### Changed
+- Setup happens at the last moment, when the crew knows what it changed: no setup for text and
+  docs, only the changed part for code. Reading code and planning never set anything up. A
+  sweep, which only reads, needs no setup at all.
+- A pull request always says honestly whether its tests ran here or are left to CI.
+
 ## 0.2.2 — 2026-09-18
 
 ### Fixed

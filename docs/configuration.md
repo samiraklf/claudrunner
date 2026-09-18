@@ -22,6 +22,9 @@ stack:
     setup: ""                # optional: prepares a bare checkout (dependencies, a database)
     setup_parts: []          # optional: parts the setup can install alone, e.g. [backend, frontend]
 
+verify:
+  mode: auto                 # auto | here | ci — how the crew tests its changes
+
 schedule:
   runs_on: routine           # routine | github-actions | cron | systemd | manual
   routines:                  # written by init: the routines it created, so it updates them later
@@ -114,6 +117,11 @@ install plugins. `github-actions` needs an `ANTHROPIC_API_KEY` secret and is bil
 choice in a routine, with no keys to store. The trade-off is stated plainly: with `api` the
 shell holds the board credential and the agent never sees it; with `connector` the agent
 itself can reach the board. It is still told to touch only the cards it claimed.
+
+**`verify.mode`** — `auto` lets the crew decide per change: no setup for text and docs, and
+only the changed part of the project for code. `here` always tests before the pull request.
+`ci` never installs anything and leaves the tests to your CI. Setup happens at the last
+moment, when the crew knows what it changed — never at the start of a run.
 
 **`stack.commands.setup`** — a routine starts from a bare checkout every time. Put what the
 tests need (installing dependencies, starting a database) in one script and point this at it.
