@@ -192,7 +192,8 @@ local_test() (
   printf 'schedule: {runs_on: manual, commit_files: false}\nboard: {adapter: none}\n' > .claudrunner/config.yml
   "$plugin/runtime/install-into-repo.sh" "$plugin" --local >/dev/null
   test -x .claudrunner/bin/claudrunner-mark.sh          # a manual run still records its work
-  test ! -e .claude                                    # the plugin supplies the rest
+  test ! -e .claude/commands && test ! -e .claude/skills   # the plugin supplies the rest
+  jq -e '.attribution.commit == "" and .attribution.sessionUrl == false' .claude/settings.local.json >/dev/null
   # the only change git sees is the .gitignore line
   [ "$(git status --porcelain --untracked-files=all)" = "?? .gitignore" ]
 )
@@ -264,6 +265,16 @@ SH
 )
 yq_test >/dev/null 2>&1; rc=$?
 if [ "$rc" -eq 0 ]; then ok "python-style yq"; else bad "python-style yq"; fi
+
+echo "config: authorship accepts only user or claudrunner"
+# shellcheck disable=SC2329  # invoked through check below
+bad_author() (
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  printf 'version: 1\nproject: {name: t, base_branch: main, host: github}\nstack: {commands: {test: "true"}}\npolicy: {autonomy: pr-only}\nboard: {adapter: none}\nauthorship: {author: claude}\n' > "$tmp/c.yml"
+  out=$(CR_CONFIG_FILE="$tmp/c.yml" plugins/claudrunner/runtime/validate-config.sh 2>&1)   # exits 1 on purpose
+  grep -q "authorship.author must be user or claudrunner" <<<"$out"
+)
+check "an unknown author is rejected" bad_author
 
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then

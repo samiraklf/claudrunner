@@ -85,6 +85,11 @@ limits:
   run_timeout_minutes: 55
   max_turns: 150
 
+authorship:
+  author: user               # user: commits and pull requests are yours | claudrunner: signed by claudrunner
+  name: ""                   # user, on a machine with no git identity (CI): your git name
+  email: ""                  #   and email
+
 review:
   second_vendor:
     enabled: false
@@ -119,6 +124,12 @@ installed plugin gives the crew everything, so `init` can keep all of `.claudrun
 `.gitignore` and your repository does not change. A routine, GitHub Actions or a server starts
 from a fresh copy of the repository and only sees what is pushed, so there the crew's files are
 committed. A routine or GitHub Actions with `commit_files: false` fails validation.
+
+**`authorship.author`** — whose name is on the crew's work. `user`: every commit and pull
+request is yours, under your own git identity. `claudrunner`: commits are authored by
+`claudrunner`, so your history shows which work the crew did. In both cases Claude, Anthropic and
+other AI models are never named as author or co-author, and `init` turns off the tool's own
+attribution lines.
 
 **`board.via`** — `connector` lets the agent use the board's claude.ai connector: the natural
 choice in a routine, with no keys to store. The trade-off is stated plainly: with `api` the

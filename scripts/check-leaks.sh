@@ -27,7 +27,9 @@ hits=$(scan '(/home/[a-z][a-z0-9_-]+/|/Users/[a-z][a-z0-9_-]+/|/var/lib/[a-z]+bo
 [ -n "$hits" ] && report "absolute machine path" "$hits"
 
 # 3 — Email addresses. The licence holder's name is fine; addresses are not.
-hits=$(scan '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
+# .invalid is reserved and can never reach anyone (RFC 2606): the crew's own author address.
+hits=$(scan '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' \
+  | sed -E 's/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.invalid//g' | grep -E '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
 [ -n "$hits" ] && report "email address" "$hits"
 
 # 4 — Private hosts. Public examples must use example.com or acme.test.

@@ -85,6 +85,9 @@ case "$runs_on" in
   *) err "schedule.runs_on must be routine, github-actions, cron, systemd or manual (got '$runs_on')" ;;
 esac
 
+author=$(cr_get '.authorship.author' 'user')
+case "$author" in user|claudrunner) ;; *) err "authorship.author must be user or claudrunner (got '$author')" ;; esac
+
 # Local-only installs keep every claudrunner file out of git, so nothing remote can see them.
 commit_files=$(printf '%s' "$CR_CONFIG" | jq -r '.schedule.commit_files | if . == null then "" else tostring end')
 case "$commit_files" in ''|true|false) ;; *) err "schedule.commit_files must be true or false (got '$commit_files')" ;; esac

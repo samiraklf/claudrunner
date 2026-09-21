@@ -133,6 +133,18 @@ option first.
    parts in `stack.commands.setup_parts`.
 7. **Autonomy** — `suggest`, `pr-only` (default), or `push`. Do not say where a merge goes
    until the next question is answered.
+7b. **Whose name is on the work** (`authorship.author`) — ask plainly: "Should the commits and
+   pull requests be yours, or signed by claudrunner?"
+
+   | Choice | Say |
+   |---|---|
+   | **Me** (`user`) | "Everything is committed under your own name, as if you wrote it. claudrunner, Claude and any AI model are never named as author or co-author, anywhere." |
+   | **claudrunner** (`claudrunner`) | "Commits are authored by `claudrunner`, so your history shows which work the crew did. Claude and other AI models are still never named." |
+
+   For `user` on a machine with no git identity of its own (GitHub Actions), fill
+   `authorship.name` and `authorship.email` from `git config user.name` and `user.email` here,
+   and confirm them. Either way, `install-into-repo.sh` turns off the tool's own attribution
+   lines in the settings.
 8. **Which branch pull requests target** (`project.base_branch`) — many teams release to a
    development branch first and never want the crew's work going straight to production. Look
    before asking:

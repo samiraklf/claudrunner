@@ -59,8 +59,6 @@ jobs:
           CLICKUP_TOKEN: ${{ secrets.CLICKUP_TOKEN }}
           MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          GIT_AUTHOR_NAME: claudrunner
-          GIT_COMMITTER_NAME: claudrunner
         run: |
           # dashboard.where: server over SSH — the key comes from a secret, never from a file in the repo
           if [ -n "${{ secrets.CLAUDRUNNER_DASHBOARD_SSH_KEY }}" ]; then

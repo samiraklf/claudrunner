@@ -28,7 +28,8 @@ those constraints as findings, not as opinions — they cost time to learn.
 - Stay inside the item's scope. A large change is not licence to reorganise the codebase.
 - No new dependencies unless the item explicitly asks for one.
 - Never push, never open a pull request, never touch the default branch. The caller ships.
-- No attribution trailer in any commit message.
+- No attribution trailer in any commit message, and never Claude or any AI model as author or
+  co-author. Commit as `authorship.author` in `.claudrunner/config.yml` says.
 
 ## Handing back
 

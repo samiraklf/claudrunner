@@ -148,17 +148,18 @@ printf '%s\n' "${installed[@]}" > .claudrunner/installed.txt
 # The project profile used to be called notes.md.
 [ -f .claudrunner/notes.md ] && [ ! -f .claudrunner/profile.md ] && mv .claudrunner/notes.md .claudrunner/profile.md
 
-# ---------------------------------------------------------------- settings for cloud sessions
-# A cloud session adds a session link to every commit and an attribution line to every pull
-# request. The crew's commits carry neither.
-if $with_commands; then
-  settings=.claude/settings.json
-  [ -s "$settings" ] || echo '{}' > "$settings"
-  if merged=$(jq '. * {attribution: {commit: "", pr: "", sessionUrl: false}}' "$settings"); then
-    printf '%s\n' "$merged" > "$settings"
-  else
-    echo "WARNING: $settings is not valid JSON; left unchanged" >&2
-  fi
+# ---------------------------------------------------------------- attribution settings
+# Claude Code adds its own attribution line to commits and pull requests, and a session link
+# in cloud sessions. The crew's work carries neither: it is the user's, or claudrunner's
+# (authorship.author). A local-only setup keeps this out of git, in settings.local.json.
+settings=.claude/settings.json
+$local_only && settings=.claude/settings.local.json
+mkdir -p .claude
+[ -s "$settings" ] || echo '{}' > "$settings"
+if merged=$(jq '. * {attribution: {commit: "", pr: "", sessionUrl: false}}' "$settings"); then
+  printf '%s\n' "$merged" > "$settings"
+else
+  echo "WARNING: $settings is not valid JSON; left unchanged" >&2
 fi
 
 echo "installed ${#installed[@]} files the configuration needs (list: .claudrunner/installed.txt); removed $removed no longer needed"
@@ -167,6 +168,7 @@ echo "installed ${#installed[@]} files the configuration needs (list: .claudrunn
 touch .gitignore
 if $local_only; then
   grep -qxF ".claudrunner/" .gitignore || printf '%s\n' "# claudrunner runs on this computer only" ".claudrunner/" >> .gitignore
+  grep -qxF ".claude/settings.local.json" .gitignore || printf '%s\n' ".claude/settings.local.json" >> .gitignore
   echo "done: .claudrunner/ is in .gitignore — nothing to commit"
   exit 0
 fi

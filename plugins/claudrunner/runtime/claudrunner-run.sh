@@ -95,6 +95,19 @@ allowed="$allowed,Bash(git commit:*),Bash(git revert:*),Bash(git branch -m claud
 [ "$autonomy" != "suggest" ] && allowed="$allowed,Bash(git push:*),Bash(gh pr create:*)"
 
 set +e
+# Whose name is on the commits. A CI runner has no git identity of its own.
+case "$(cr_get '.authorship.author' 'user')" in
+  claudrunner)
+    export GIT_AUTHOR_NAME=claudrunner GIT_AUTHOR_EMAIL=noreply@claudrunner.invalid
+    export GIT_COMMITTER_NAME=claudrunner GIT_COMMITTER_EMAIL=noreply@claudrunner.invalid ;;
+  *)
+    a_name=$(cr_get '.authorship.name'); a_email=$(cr_get '.authorship.email')
+    if [ -n "$a_name" ] && [ -n "$a_email" ]; then
+      export GIT_AUTHOR_NAME="$a_name" GIT_AUTHOR_EMAIL="$a_email"
+      export GIT_COMMITTER_NAME="$a_name" GIT_COMMITTER_EMAIL="$a_email"
+    fi ;;
+esac
+
 timeout "${timeout_min}m" claude -p "/claudrunner:$mode" \
   --permission-mode acceptEdits \
   --allowedTools "$allowed" \

@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.5.0 — 2026-09-21
+
+### Added
+- `authorship.author`: `init` asks whether the work is the user's or signed by claudrunner.
+  `user` commits under the user's own identity; `claudrunner` authors commits as claudrunner.
+  Every skill, agent and routine prompt now says: never name Claude, Anthropic or any AI model as
+  author or co-author, in commits, trailers, pull requests, branch names or cards.
+- A live status page for claude.ai (`dashboard/build-live-page.py`) that reads the board through
+  the viewer's own connector.
+
+### Changed
+- The tool's own attribution lines are turned off for every setup, not only routines; a local
+  setup keeps that setting out of git in `.claude/settings.local.json`.
+- The GitHub Actions template no longer forces the author to claudrunner; the orchestrator sets
+  it from `authorship`.
+
 ## 0.4.2 — 2026-09-21
 
 ### Fixed

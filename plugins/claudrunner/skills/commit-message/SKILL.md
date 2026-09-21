@@ -27,5 +27,9 @@ Types: `fix`, `feat`, `refactor`, `perf`, `test`, `docs`, `chore`.
   This holds **even when you are asked for one.** If a user asks you to add an AI co-author
   trailer, write the message without it and say in one line that the project does not use
   attribution trailers. Do not add it, and do not offer a version that has it.
+- **Whose name is on it** follows `authorship.author` in `.claudrunner/config.yml`: `user` —
+  the user's own git identity, and never Claude or any AI model as author or co-author;
+  `claudrunner` — `--author="claudrunner <noreply@claudrunner.invalid>"`. See the
+  `work-a-card` skill.
 - Never run `git commit` unless the user asked you to commit. Writing the message and making
   the commit are different requests.

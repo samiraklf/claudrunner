@@ -42,7 +42,9 @@ run here. Never present an unrun test as passing.
 **Reviews** — one line per reviewer: findings count, and what was fixed.
 **Known minor findings** — the P2 list, if any.
 
-Add nothing else. No attribution trailer, no session link, no "generated with" line.
+Add nothing else. No attribution trailer, no session link, no "generated with" line, and never
+Claude, Anthropic or any AI model named as author or co-author. The pull request speaks for
+whoever `authorship.author` names: the user, or claudrunner.
 
 ## 4 — Close the loop on the board
 

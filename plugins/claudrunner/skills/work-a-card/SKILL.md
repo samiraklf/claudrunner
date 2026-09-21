@@ -71,10 +71,19 @@ For each selected item, in order:
 
 **Never claim tests pass without a run to show for it.**
 
-## Attribution
+## Authorship
 
-Commit messages end at the item reference. Never add a co-author trailer, a session link,
-or a "generated with" line — not to your commits, and not to a delegated agent's commits.
+`authorship.author` in the config decides whose name is on the work:
+
+- `user` (the default) — the work is the user's. Commit with the identity git already has
+  (`git commit`, no `--author`). **Never name Claude, Anthropic or any AI model as author or
+  co-author** — not in a commit, a commit trailer, a pull request title or body, a branch
+  name, or a card comment. No "Co-Authored-By", no session link, no "generated with" line.
+- `claudrunner` — the crew is the author: commit with
+  `git commit --author="claudrunner <noreply@claudrunner.invalid>"`. Still never name Claude,
+  Anthropic or any AI model anywhere.
+
+Both hold for a delegated agent's commits too, and override any default of the tool you run in.
 
 ## Time
 
