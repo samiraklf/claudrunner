@@ -278,7 +278,9 @@ State these back and let the user change them:
 4. `.claudrunner/gotchas.md` — an empty catalog with its header. It grows from real
    incidents in this repository and is read by every review.
 5. `.claudrunner/setup.sh` and, for a routine, `.claudrunner/cloud-setup.sh` — from Step 2c.
-   Set `stack.commands.setup` to the first. When it takes a part name, list the parts in
+   Fill in every placeholder in `cloud-setup.sh`, including the repository name, and delete the
+   sections the project does not need: the user pastes it as it is. Set `stack.commands.setup`
+   to the first. When it takes a part name, list the parts in
    `stack.commands.setup_parts`. Keep both quiet: send output to a log file and print one line
    when done. In a run, a failed setup is reported, never repaired.
 6. The schedule for the chosen target: a workflow, crontab line or unit from
@@ -313,16 +315,31 @@ short as possible. The helper is `${CLAUDE_PLUGIN_ROOT}/runtime/cloud-env.sh`.
    >    only way in.*
    > 2. A small menu opens with **Local**, **Cloud** and **Remote Control**. Point at **Cloud**,
    >    then click **Add cloud environment…** at the bottom of the list that appears.
-   > 3. The **Add cloud environment** form opens. **Name:** `claudrunner-<project.name>`
-   > 4. **Network access:** leave it on **Trusted**.
-   > 5. **Environment variables:** leave empty. Never put a password or key here: everyone who
-   >    uses the environment can read them.
-   > 6. **Setup script:** click in the box and paste (Ctrl+V, or Cmd+V on a Mac). The script is
-   >    already on your clipboard.
-   > 7. Click **Add environment**. Nothing runs yet.
+   > 3. The **Add cloud environment** form opens. Fill it in with the values below — copy each
+   >    one and paste it into the field of the same name.
+   > 4. Click **Add environment**. Nothing runs yet.
    >
    > **Then, here in this terminal**, type `/remote-env`, pick `claudrunner-<project.name>`, and
    > tell me when you are done. That is how I learn its id, so you never copy one by hand.
+
+   Right after the steps, print the **values to paste**, one labelled block per field, with the
+   real values filled in — never a placeholder the user must edit:
+
+   > **Name** — copy and paste:
+   > ```
+   > claudrunner-<project.name>
+   > ```
+   > **Network access** — choose **Trusted** from the list (it is already selected).
+   >
+   > **Environment variables** — leave empty. Never put a password or key here: everyone who
+   > uses the environment can read them.
+   >
+   > **Setup script** — copy and paste all of it (it is also on your clipboard already):
+   > ```bash
+   > <the whole of .claudrunner/cloud-setup.sh, exactly as written>
+   > ```
+
+   Print the setup script in full, never shortened, so a copy of the block works as it is.
 
    If `copy` could not reach a clipboard, it printed the script: tell the user to copy it from
    there. If the user does not see the cloud button, they have not finished the first-time setup

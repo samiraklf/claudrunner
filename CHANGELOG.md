@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.5 — 2026-09-21
+
+### Changed
+- The cloud-environment step prints the exact value for every field of the form — the name, the
+  network setting, and the whole setup script, filled in — so the user only copies and pastes.
+
 ## 0.3.4 — 2026-09-21
 
 ### Added
