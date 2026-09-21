@@ -244,6 +244,27 @@ dashboard_test() (
 dashboard_test >/dev/null 2>&1; rc=$?
 if [ "$rc" -eq 0 ]; then ok "waiting state and fresh fetched_at"; else bad "waiting state and fresh fetched_at"; fi
 
+echo "the config loads with either kind of yq"
+yq_test() (
+  set -e
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  printf 'dashboard: {where: branch}\n' > "$tmp/c.yml"
+  # A stand-in for the Python yq: rejects -o, prints JSON by default.
+  mkdir "$tmp/bin"
+  cat > "$tmp/bin/yq" <<'SH'
+#!/usr/bin/env bash
+for a in "$@"; do case "$a" in -o*) echo "yq: error: unrecognized arguments: $a" >&2; exit 2 ;; esac; done
+python3 -c 'import sys,yaml,json; json.dump(yaml.safe_load(open(sys.argv[-1])),sys.stdout)' "${@: -1}"
+SH
+  chmod +x "$tmp/bin/yq"
+  export PATH="$tmp/bin:$PATH" CR_CONFIG_FILE="$tmp/c.yml"
+  # shellcheck source=/dev/null
+  . plugins/claudrunner/runtime/lib/config.sh
+  cr_config_json | jq -e '.dashboard.where == "branch"' >/dev/null
+)
+yq_test >/dev/null 2>&1; rc=$?
+if [ "$rc" -eq 0 ]; then ok "python-style yq"; else bad "python-style yq"; fi
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in plugins/claudrunner/templates/github-actions/*.yml; do

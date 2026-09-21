@@ -16,7 +16,14 @@
 set -uo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-publish() { "$here/publish-dashboard.sh" >/dev/null 2>&1 || echo "dashboard: publish failed (work continues)" >&2; }
+# A failed publish never stops the work, but it always says why: the reason is the only way
+# to fix a status page that stays empty.
+publish() {
+  local log=".claudrunner/runs/publish.log"
+  mkdir -p .claudrunner/runs
+  "$here/publish-dashboard.sh" >"$log" 2>&1 && return 0
+  echo "dashboard: publish failed (work continues): $(grep -v '^[[:space:]]*$' "$log" | tail -3 | tr '\n' ' ')" >&2
+}
 
 case "${1:-}" in
   start)

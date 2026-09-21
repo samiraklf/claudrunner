@@ -2,8 +2,8 @@
 # Config loading. The canonical file is .claudrunner/config.yml; everything downstream
 # reads JSON, because jq is already required to parse the agent's run summary.
 #
-# Loader order: yq, then python with a YAML module. Both are common on CI images. When
-# neither exists the message names the fix instead of failing obscurely.
+# Loader order: yq (either kind), then python with a YAML module, then ruby. When none
+# works the message names the fix instead of failing obscurely.
 set -uo pipefail
 
 CR_CONFIG_FILE="${CR_CONFIG_FILE:-.claudrunner/config.yml}"
@@ -13,15 +13,24 @@ cr_config_json() {
     echo "claudrunner: no config at $CR_CONFIG_FILE — run /claudrunner:init first" >&2
     return 1
   }
+  # Two different tools are called yq: the Go one takes -o=json, the Python one prints JSON by
+  # default and rejects -o. A cloud image may have either, so every reader is tried in turn and
+  # its output checked, instead of trusting the first one found.
+  local out
   if command -v yq >/dev/null 2>&1; then
-    yq -o=json '.' "$CR_CONFIG_FILE"
-  elif python3 -c 'import yaml' 2>/dev/null; then
-    python3 -c 'import sys,yaml,json; json.dump(yaml.safe_load(open(sys.argv[1])),sys.stdout)' "$CR_CONFIG_FILE"
-  else
-    echo "claudrunner: need yq or python3 with PyYAML to read $CR_CONFIG_FILE" >&2
-    echo "  install one:  pip install pyyaml   |   brew install yq   |   snap install yq" >&2
-    return 1
+    out=$(yq -o=json '.' "$CR_CONFIG_FILE" 2>/dev/null) && jq -e . >/dev/null 2>&1 <<<"$out" && { printf '%s' "$out"; return 0; }
+    out=$(yq '.' "$CR_CONFIG_FILE" 2>/dev/null) && jq -e . >/dev/null 2>&1 <<<"$out" && { printf '%s' "$out"; return 0; }
   fi
+  if python3 -c 'import yaml' 2>/dev/null; then
+    python3 -c 'import sys,yaml,json; json.dump(yaml.safe_load(open(sys.argv[1])),sys.stdout)' "$CR_CONFIG_FILE"
+    return
+  fi
+  if command -v ruby >/dev/null 2>&1; then
+    ruby -ryaml -rjson -e 'puts JSON.dump(YAML.safe_load(File.read(ARGV[0])))' "$CR_CONFIG_FILE" 2>/dev/null && return 0
+  fi
+  echo "claudrunner: need yq, python3 with PyYAML, or ruby to read $CR_CONFIG_FILE" >&2
+  echo "  install one:  pip install pyyaml   |   brew install yq   |   snap install yq" >&2
+  return 1
 }
 
 # cr_get <jq path> [default] — read one value, with an optional default.

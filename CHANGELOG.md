@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.2 — 2026-09-21
+
+### Fixed
+- In a Claude Code routine every status publish failed, so the status page stayed empty while
+  the crew worked. The failure was hidden: `claudrunner-mark.sh` now prints the reason, and keeps
+  the full output in `.claudrunner/runs/publish.log`.
+- Reading `config.yml` assumed the Go `yq`. With the Python `yq`, which rejects `-o=json`, every
+  script that reads the config failed. Both kinds now work, with Python YAML and Ruby as fallbacks.
+
 ## 0.4.1 — 2026-09-21
 
 ### Fixed
