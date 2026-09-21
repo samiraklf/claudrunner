@@ -174,6 +174,33 @@ YML
 selective_test >/dev/null 2>&1; rc=$?
 if [ "$rc" -eq 0 ]; then ok "selective install and cleanup"; else bad "selective install and cleanup"; fi
 
+echo "a local-only install keeps every claudrunner file out of git"
+local_test() (
+  set -e
+  plugin="$(pwd)/plugins/claudrunner"
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  git init -q "$tmp/repo" && cd "$tmp/repo"
+  mkdir -p .claudrunner
+  printf 'schedule: {runs_on: manual, commit_files: false}\nboard: {adapter: none}\n' > .claudrunner/config.yml
+  "$plugin/runtime/install-into-repo.sh" "$plugin" --local >/dev/null
+  test -x .claudrunner/bin/claudrunner-mark.sh          # a manual run still records its work
+  test ! -e .claude                                    # the plugin supplies the rest
+  # the only change git sees is the .gitignore line
+  [ "$(git status --porcelain --untracked-files=all)" = "?? .gitignore" ]
+)
+local_test >/dev/null 2>&1; rc=$?
+if [ "$rc" -eq 0 ]; then ok "local install, nothing to commit"; else bad "local install, nothing to commit"; fi
+
+echo "config: a routine cannot run from files kept out of git"
+# shellcheck disable=SC2329  # invoked through check below
+routine_local() (
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  printf 'version: 1\nproject: {name: t, base_branch: main, host: github}\nstack: {commands: {test: "true"}}\npolicy: {autonomy: pr-only}\nboard: {adapter: none}\nschedule: {runs_on: routine, commit_files: false}\n' > "$tmp/c.yml"
+  out=$(CR_CONFIG_FILE="$tmp/c.yml" plugins/claudrunner/runtime/validate-config.sh 2>&1)   # exits 1 on purpose
+  grep -q "only sees committed files" <<<"$out"
+)
+check "routine with commit_files false is rejected" routine_local
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in plugins/claudrunner/templates/github-actions/*.yml; do

@@ -85,15 +85,29 @@ option first.
 2. **Board mapping** — which queue holds work ready to be picked up, where a finished item
    goes, and where a blocked item goes. For GitHub Issues these are labels; for the others,
    lists or statuses. Never hardcode names: read the board and match by meaning.
-3. **Where it runs** — offer these, in this order, and recommend the first:
+3. **Where it runs** — ask this early: it decides what goes into git. First explain, in plain
+   words, that there are three kinds of place, then offer the choices. Recommend the routine.
 
-   | Choice | Say |
-   |---|---|
-   | **Claude Code routine** (`routine`) — recommended | "Runs in Anthropic's cloud on your Claude subscription. No API key, no server, no CI minutes. You can see and edit it on claude.ai." |
-   | **GitHub Actions** (`github-actions`) | "Runs in your CI. Needs an `ANTHROPIC_API_KEY` secret, billed per use by the API." |
-   | **Cron on this machine** (`cron`) | "Runs on a machine you leave on, on your subscription." |
-   | **systemd lanes** (`systemd`) | "For a server that runs many repositories." |
-   | **By hand only** (`manual`) | "Nothing scheduled; you run `/claudrunner:triage` yourself." |
+   | Kind | Choice | Say | Files in git |
+   |---|---|---|---|
+   | **Cloud** | **Claude Code routine** (`routine`) — recommended | "Runs in Anthropic's cloud on your Claude subscription. No API key, no server, no CI minutes. You can see and edit it on claude.ai." | Committed |
+   | **Cloud** | **GitHub Actions** (`github-actions`) | "Runs in your CI. Needs an `ANTHROPIC_API_KEY` secret, billed per use by the API." | Committed |
+   | **Server** | **Cron or systemd on a server** (`cron`, `systemd`) | "Runs on a machine you keep on, on your subscription. systemd suits a server with many repositories." | Committed |
+   | **Local** | **Cron on this computer** (`cron`) | "Runs on this computer while it is on, on your subscription." | Kept out of git |
+   | **Local** | **By hand only** (`manual`) | "Nothing scheduled; you run `/claudrunner:triage` yourself." | Kept out of git |
+
+   Then say why the last column differs, in these words or close to them:
+
+   > "On your own computer, the plugin you just installed gives the crew everything it needs.
+   > Nothing has to go into git, so I will add claudrunner's files to `.gitignore` and your
+   > repository stays exactly as it is. A routine, GitHub Actions or a server starts from a
+   > fresh copy of your repository and cannot install plugins the way you did. It only sees
+   > what is pushed. So for those, the crew's files — its configuration, its skills, its
+   > reviewer and its scripts — are committed and pushed with your code."
+
+   If the user picks a local choice but wants the files shared with teammates anyway, commit
+   them; the choice is theirs. Record it as `schedule.commit_files: false` for local-only,
+   `true` otherwise.
 
    Routines need the repository on GitHub and a claude.ai login in this session. If either is
    missing, say so and recommend the next choice.
@@ -224,14 +238,16 @@ State these back and let the user change them:
    the configuration reference in the claudrunner repository exactly.
 2. **Install the crew into the repository**, now that the config says what it needs: run
    `${CLAUDE_PLUGIN_ROOT}/runtime/install-into-repo.sh ${CLAUDE_PLUGIN_ROOT}`, adding
-   `--with-commands` for a routine — a cloud routine cannot install plugins, so the crew's
+   `--local` when `schedule.commit_files` is `false` — it then adds `.claudrunner/` to
+   `.gitignore`, so nothing claudrunner writes is ever committed, and the plugin supplies the
+   commands, skills and agents. Otherwise add `--with-commands` for a routine — a cloud routine cannot install plugins, so the crew's
    commands, skills and agents go into the repository's own `.claude/`. It copies only what
    this configuration uses: the one board binding (none with a connector), the sweep only when
    the slow loop is on, a sweep skill only for a scope it runs. A later run removes what is no
    longer needed, from its list in `.claudrunner/installed.txt`. With `--with-commands` it also
    sets `attribution` in `.claude/settings.json`, so cloud commits and pull requests carry no
-   session link or attribution line. Everything it installs is committed; only
-   `.claudrunner/runs/` and `.claudrunner/dashboard/` are ignored.
+   session link or attribution line. When files are committed, only `.claudrunner/runs/` and
+   `.claudrunner/dashboard/` are ignored.
 3. `.claudrunner/profile.md` — from Step 1b.
 4. `.claudrunner/gotchas.md` — an empty catalog with its header. It grows from real
    incidents in this repository and is read by every review.
@@ -275,6 +291,10 @@ same routines instead of creating new ones.
 ## Step 5 — Hand over
 
 Print, in this order:
+
+0. What happens with git. Local-only: "Nothing to commit: claudrunner's files are in
+   `.gitignore`." Otherwise: the files to commit and push, and that the schedule only works
+   once they are on the base branch.
 
 1. The secrets the user must add, by name, and where to add them. Never print a value.
    For a routine, the cloud environment from Step 2c too, if it does not exist yet.

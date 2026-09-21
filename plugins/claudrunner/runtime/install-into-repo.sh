@@ -4,12 +4,15 @@
 # opens this repository — a Claude Code routine in the cloud, CI, a teammate's laptop —
 # has the crew without installing the plugin.
 #
-#   install-into-repo.sh <plugin root> [--with-commands]
+#   install-into-repo.sh <plugin root> [--with-commands | --local]
 #
 # Always:          the runtime the configured schedule needs, into .claudrunner/bin/.
 # --with-commands: also the commands, skills and agents into .claude/, where Claude Code
 #                  loads them in every session of this repository. A cloud routine cannot
 #                  install plugins, so this is how the routine gets the crew.
+# --local:         the crew only runs on this computer, where the plugin supplies the
+#                  commands, skills and agents. All of .claudrunner/ goes into .gitignore,
+#                  so nothing claudrunner writes is ever committed.
 #
 # Only what .claudrunner/config.yml needs is installed: the one board binding it uses, the
 # sweep only when the slow loop is on, a sweep skill only for a scope it runs. Without a
@@ -20,9 +23,14 @@
 # page are ignored. Files with other names are never touched.
 set -uo pipefail
 
-root="${1:?usage: install-into-repo.sh <plugin root> [--with-commands]}"
-with_commands=false
-[ "${2:-}" = "--with-commands" ] && with_commands=true
+root="${1:?usage: install-into-repo.sh <plugin root> [--with-commands | --local]}"
+with_commands=false; local_only=false
+case "${2:-}" in
+  --with-commands) with_commands=true ;;
+  --local)         local_only=true ;;
+  "") ;;
+  *) echo "install-into-repo: unknown option ${2}" >&2; exit 2 ;;
+esac
 [ -d "$root/runtime" ] || { echo "install-into-repo: $root is not a claudrunner plugin root" >&2; exit 1; }
 git rev-parse --show-toplevel >/dev/null 2>&1 || { echo "install-into-repo: run this inside a git repository" >&2; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "install-into-repo: jq is required" >&2; exit 1; }
@@ -157,6 +165,11 @@ echo "installed ${#installed[@]} files the configuration needs (list: .claudrunn
 
 # ---------------------------------------------------------------- what git should and should not keep
 touch .gitignore
+if $local_only; then
+  grep -qxF ".claudrunner/" .gitignore || printf '%s\n' "# claudrunner runs on this computer only" ".claudrunner/" >> .gitignore
+  echo "done: .claudrunner/ is in .gitignore — nothing to commit"
+  exit 0
+fi
 for line in ".claudrunner/runs/" ".claudrunner/dashboard/"; do
   grep -qxF "$line" .gitignore || printf '%s\n' "$line" >> .gitignore
 done

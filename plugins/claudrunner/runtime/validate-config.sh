@@ -85,6 +85,15 @@ case "$runs_on" in
   *) err "schedule.runs_on must be routine, github-actions, cron, systemd or manual (got '$runs_on')" ;;
 esac
 
+# Local-only installs keep every claudrunner file out of git, so nothing remote can see them.
+commit_files=$(printf '%s' "$CR_CONFIG" | jq -r '.schedule.commit_files | if . == null then "" else tostring end')
+case "$commit_files" in ''|true|false) ;; *) err "schedule.commit_files must be true or false (got '$commit_files')" ;; esac
+if [ "$commit_files" = false ]; then
+  case "$runs_on" in
+    routine|github-actions) err "schedule.commit_files is false, but a $runs_on run only sees committed files" ;;
+  esac
+fi
+
 # Adapter-specific settings, checked by name so a half-configured board fails here rather
 # than at 02:00 with the queue silently empty. A connector finds its lists at run time.
 [ "$via" = "connector" ] && adapter="connector:$adapter"

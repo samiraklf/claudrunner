@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.1 — 2026-09-21
+
+### Added
+- `init` asks early whether the crew runs locally, on a server or in the cloud, and explains
+  what that means for git: locally the plugin is enough and nothing is committed; a routine,
+  GitHub Actions or a server only sees what is pushed, so the crew's files are committed.
+- `schedule.commit_files` and `install-into-repo.sh --local`: a local-only install puts all of
+  `.claudrunner/` in `.gitignore`. Validation rejects a routine or GitHub Actions without
+  committed files.
+
+### Fixed
+- The install commands pasted as one block into Claude Code's marketplace prompt and failed.
+  The quick start, the site and the guides now give one terminal command.
+
 ## 0.3.0 — 2026-09-21
 
 ### Added

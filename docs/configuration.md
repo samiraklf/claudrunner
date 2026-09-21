@@ -27,6 +27,7 @@ verify:
 
 schedule:
   runs_on: routine           # routine | github-actions | cron | systemd | manual
+  commit_files: true         # false: local only — every claudrunner file stays out of git
   routines:                  # written by init: the routines it created, so it updates them later
     triage: ""
     sweep: ""
@@ -112,6 +113,12 @@ your board: code on GitHub with work items in Jira is a normal combination.
 API key, no server, no CI minutes, and the shortest interval is one hour. `init` creates the
 routines and installs the crew into the repository's `.claude/`, because a routine cannot
 install plugins. `github-actions` needs an `ANTHROPIC_API_KEY` secret and is billed by the API.
+
+**`schedule.commit_files`** — on your own computer (`manual`, or `cron` on this machine) the
+installed plugin gives the crew everything, so `init` can keep all of `.claudrunner/` in
+`.gitignore` and your repository does not change. A routine, GitHub Actions or a server starts
+from a fresh copy of the repository and only sees what is pushed, so there the crew's files are
+committed. A routine or GitHub Actions with `commit_files: false` fails validation.
 
 **`board.via`** — `connector` lets the agent use the board's claude.ai connector: the natural
 choice in a routine, with no keys to store. The trade-off is stated plainly: with `api` the
