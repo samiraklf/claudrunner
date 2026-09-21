@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2 — 2026-09-21
+
+### Added
+- `init` asks which branch pull requests target. It lists the branches, finds active
+  integration branches such as `develop` or `staging`, reads the deploy workflows to say what a
+  merge to each one does, and recommends the integration branch over production. With `push`
+  autonomy it never offers a branch that deploys to production.
+
 ## 0.3.1 — 2026-09-21
 
 ### Added

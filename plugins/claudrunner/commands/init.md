@@ -131,8 +131,24 @@ option first.
    Then look at what the project needs to run its tests. If it has separable parts (a backend
    and a frontend, several services), write the setup so it takes a part name and list the
    parts in `stack.commands.setup_parts`.
-7. **Autonomy** — `suggest`, `pr-only` (default), or `push`.
-8. **Where the status page lives** — see the next step. Ask it last; it is optional.
+7. **Autonomy** — `suggest`, `pr-only` (default), or `push`. Do not say where a merge goes
+   until the next question is answered.
+8. **Which branch pull requests target** (`project.base_branch`) — many teams release to a
+   development branch first and never want the crew's work going straight to production. Look
+   before asking:
+   - List the remote branches (`git branch -r`) and the default branch
+     (`git symbolic-ref refs/remotes/origin/HEAD`).
+   - Find integration branches by name — `develop`, `development`, `dev`, `staging`, `next`,
+     `release/*` — and check they are active (commits in the last few weeks).
+   - Read the CI and deploy workflows: which branch deploys to production, and which to a test
+     environment. Say it plainly, for example "a merge to `main` deploys to production; a merge
+     to `develop` deploys to staging".
+
+   Offer the choices found, each with what a merge there does. Recommend the integration branch
+   when one is active, and the default branch otherwise. Always allow typing another name. With
+   `push` autonomy, ask the same for `policy.push_branch`, and never offer a branch that deploys
+   to production.
+9. **Where the status page lives** — see the next step. Ask it last; it is optional.
 
 ## Step 2c — Where the tests run
 
@@ -228,7 +244,8 @@ Never ask for the key itself, and never write a secret into any file.
 
 State these back and let the user change them:
 
-- The base branch it targets, and confirmation that the default branch is protected.
+- The branch pull requests target, what a merge there does, and confirmation that the
+  production branch is protected.
 - The diff ceiling per pull request (default 600 changed lines).
 - Whether new dependencies are allowed (default: no).
 
@@ -261,7 +278,10 @@ State these back and let the user change them:
 ## Step 4b — Create the routines
 
 Only for `routine`, and only after the files from Step 4 are committed and pushed to the
-base branch: a routine checks out the base branch and sees nothing that is not there. If
+base branch: a routine checks out the base branch and sees nothing that is not there. When
+the base branch is not the repository's default branch, a routine session still starts on the
+default branch and loads `.claude/` from there, so the crew's files must be on both: say so,
+and open a pull request to each. If
 they are not on the base branch yet, open the pull request, say the routines will be created
 once it is merged, and stop here.
 
