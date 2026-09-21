@@ -12,6 +12,17 @@ It is one HTML file and one JSON file, so any host that can serve a folder can s
 `/claudrunner:init` asks, and offers only the places that can see your runs. You can change
 it later in `.claudrunner/config.yml`.
 
+**It opens on the city, in daylight.** The 🌆 and ☀ buttons switch the scene and night mode, and
+the page remembers your choice. The badge at the top left says how fresh it is:
+
+| Badge | Means |
+|---|---|
+| **LIVE** | Up to date. It refreshes every 20 seconds. |
+| **LIVE · WAITING FOR THE FIRST RUN** | Correct until a run takes its first card. |
+| **STALE** | This computer stopped checking. Run `/claudrunner:dashboard` again. |
+
+A page that has shown real data never falls back to the demo's made-up robots.
+
 **It is live.** A run publishes every step of every task — selecting, implementing, testing,
 review, shipping, done — the moment it gets there, and the open page picks it up within about
 20 seconds.

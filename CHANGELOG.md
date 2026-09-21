@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.0 — 2026-09-21
+
+### Added
+- `init` ends by checking every piece for real (board, routines, status page), then hands over
+  one plain guide, also saved as `.claudrunner/GUIDE.md`: what is set up, how work moves on this
+  board in its own words, the settings in plain words, how to watch the crew, one first step to
+  try, and where to look when something is wrong.
+- The status page says how fresh it is: LIVE, LIVE · WAITING FOR THE FIRST RUN, or STALE.
+
+### Changed
+- The status page opens on the city in daylight.
+- A status page that has shown real data never falls back to the demo simulation; it keeps the
+  last real state, marked stale.
+- `/claudrunner:dashboard` restarts its refresh loop whenever it is not running, so a reused
+  page never freezes.
+
 ## 0.3.8 — 2026-09-21
 
 ### Added

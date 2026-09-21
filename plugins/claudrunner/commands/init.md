@@ -418,25 +418,77 @@ The response gives each routine's id. Store them as `schedule.routines.triage` a
 `schedule.routines.sweep` in `.claudrunner/config.yml` so later runs of `init` update the
 same routines instead of creating new ones.
 
-## Step 5 — Hand over
+## Step 5 — Check everything works
 
-Print, in this order:
+Before the hand-over, check each piece for real, and fix what fails:
 
-0. What happens with git. Local-only: "Nothing to commit: claudrunner's files are in
-   `.gitignore`." Otherwise: the files to commit and push, and that the schedule only works
-   once they are on the base branch.
+- **Board** — read it back: every queue name in `board.queues` exists, and the guide cards are there.
+- **Routines** — `RemoteTrigger get` for each: enabled, the right environment, the next run time.
+- **Status page** — run `${CLAUDE_PLUGIN_ROOT}/runtime/dashboard-serve.sh`, then read
+  `.claudrunner/dashboard/status.json`: it must have a `fetched_at` from the last minute. Before
+  the first run it says `waiting: true`; that is correct. Leave the page open for the user.
 
-1. The secrets the user must add, by name, and where to add them. Never print a value.
-   For a routine, the cloud environment from Step 2a too, if it does not exist yet.
-2. The one command that turns the schedule on — for a routine, the two claude.ai links
-   `https://claude.ai/code/routines/<id>`, where the user can see, edit, pause or run them.
-3. The command to try one cycle by hand first: `/claudrunner:triage`.
-4. Where to see the crew:
-   - `local` — "`/claudrunner:dashboard`"
-   - `github-pages` — the address, and the one setting to switch on: **Settings → Pages →
-     Source: Deploy from a branch → `claudrunner-status` / root**. If `gh` is signed in, offer
-     to switch it on for them. The branch appears after the first run.
-   - `server` — the address they chose, and the nginx snippet you wrote.
+## Step 6 — Hand over
 
-Recommend the manual run before enabling any schedule, so the user sees what a cycle does
-before it does it on a timer.
+End with one guide, written for someone who has never used claudrunner. Use headings and short
+numbered steps, the real names (lists, labels, statuses, links, times in the user's timezone),
+and no jargon. Save the same guide as `.claudrunner/GUIDE.md` (committed with the other files,
+or ignored in a local-only setup) and say it is there, so the user can read it again.
+
+### 1. ✅ What is set up
+
+A checklist, one line each, with a link where there is one: the crew's files in the repository;
+the board; each routine or schedule, with when it runs; the cloud environment; the status page.
+Then anything still waiting on the user — secrets to add, a pull request to merge — as a
+numbered list, most urgent first. Never print a secret's value. For `github-pages`, include the
+one setting to switch on — **Settings → Pages → Deploy from a branch → `claudrunner-status` /
+root** — and offer to switch it on with `gh` when it is signed in.
+
+### 2. 🔁 How work moves on your board
+
+The whole loop as numbered steps, in the words of **this** board type — "move the card to …" on
+Trello, "add the label …" on GitHub or GitLab, "set the status to …" on Jira or Linear — with the
+real names. On Trello with the default lists it reads like this:
+
+1. Write an idea in **📥 Inbox**. The crew never takes from here.
+2. When it is ready to build, move it to **🎯 Ready for the crew**. Copy the ✍️ Card template.
+3. Every <cadence>, the triage run takes the top card and moves it to **🤖 In progress**.
+4. It writes the code, tests it, reviews it, and opens a pull request against `<base branch>`.
+   The card moves to **🔍 In review**, with the link in a comment.
+5. You review the pull request and merge it, then move the card to **✅ Done**.
+6. If the crew needs a decision, the card goes to **🙋 Needs you** with one question. Answer
+   in a comment and move the card back to **🎯 Ready**.
+7. Every <sweep day and time>, the sweep reads the code and files problems in **🐞 Findings**,
+   with evidence and labels. It never fixes them itself: move the ones you want fixed to
+   **🎯 Ready**, and the next triage takes them.
+
+Say what a merge to the base branch does (for example "a merge to `main` deploys to
+production"), and that the crew never merges.
+
+### 3. ⚙️ Your settings, in plain words
+
+A table with three columns — setting, value, what it means — for: where it runs and how often;
+the branch pull requests target and what a merge there does; autonomy; how it tests its
+changes (`verify.mode`); the diff limit; new dependencies; the status page. End with: "Change
+any of these in `.claudrunner/config.yml`, or run `/claudrunner:init` again."
+
+### 4. 📊 Watch your crew
+
+How to open the status page (`/claudrunner:dashboard`, or the address), and what it shows: the
+city in daylight, one robot per task at its current step, the queue and what shipped today; the
+🌆 and ☀ buttons switch scene and night mode. Explain the badge at the top left:
+
+- **LIVE** — up to date; it refreshes every 20 seconds.
+- **LIVE · WAITING FOR THE FIRST RUN** — correct until a run takes its first card.
+- **STALE** — this computer stopped checking; run `/claudrunner:dashboard` again.
+
+### 5. ▶️ Try it now
+
+One small first step: put a small card in the ready queue and start one run — the routine's
+**Run now** link, or `/claudrunner:triage` — then watch it on the status page. Recommend this
+before trusting the schedule.
+
+### 6. 🆘 If something looks wrong
+
+`/claudrunner:status` shows the config, the schedule, the queue and recent runs. For a routine,
+each run's full log is on its claude.ai page. A card in **🙋 Needs you** always says why.

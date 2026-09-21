@@ -227,6 +227,23 @@ cloud_env_test() (
 cloud_env_test >/dev/null 2>&1; rc=$?
 if [ "$rc" -eq 0 ]; then ok "cloud environment id pickup and restore"; else bad "cloud environment id pickup and restore"; fi
 
+echo "the local status page says it is waiting before the first run, and is fresh"
+dashboard_test() (
+  set -e
+  plugin="$(pwd)/plugins/claudrunner"
+  tmp=$(mktemp -d)
+  git init -q --bare "$tmp/remote.git"
+  git init -q -b main "$tmp/repo" && cd "$tmp/repo"
+  git remote add origin "$tmp/remote.git"
+  mkdir -p .claudrunner
+  printf 'dashboard: {where: branch}\n' > .claudrunner/config.yml
+  trap '"$plugin/runtime/dashboard-serve.sh" --stop >/dev/null 2>&1; rm -rf "$tmp"' EXIT
+  CLAUDRUNNER_NO_OPEN=1 "$plugin/runtime/dashboard-serve.sh" >/dev/null
+  jq -e '.waiting == true and (.fetched_at | fromdateiso8601) > (now - 60)' .claudrunner/dashboard/status.json >/dev/null
+)
+dashboard_test >/dev/null 2>&1; rc=$?
+if [ "$rc" -eq 0 ]; then ok "waiting state and fresh fetched_at"; else bad "waiting state and fresh fetched_at"; fi
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in plugins/claudrunner/templates/github-actions/*.yml; do

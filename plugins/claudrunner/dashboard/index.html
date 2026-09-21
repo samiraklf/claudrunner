@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="night" data-idle="0">
+<html lang="en" data-theme="day" data-idle="0">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1118,7 +1118,7 @@
   <span class="chip">QUEUE <b id="q">0</b></span>
   <span class="chip">SHIPPED <b id="r">0</b></span>
   <button id="scene">🌆 CITY</button>
-  <button id="theme">☾ NIGHT</button>
+  <button id="theme">☀ DAY</button>
   <button id="tasks">TASKS ▸</button>
 </div>
 
@@ -1146,7 +1146,7 @@ function setTheme(t) {
 }
 let theme = params.get('theme');
 if (!theme) { try { theme = localStorage.getItem('cr-theme'); } catch {} }
-if (!theme) { const h = new Date().getHours(); theme = (h >= 7 && h < 19) ? 'day' : 'night'; }
+if (!theme) theme = 'day';   // daylight until the viewer picks night
 setTheme(theme);
 el('theme').onclick = () => setTheme(document.documentElement.dataset.theme === 'day' ? 'night' : 'day');
 
@@ -1663,7 +1663,14 @@ function render(d, live) {
   const doorSign = document.querySelector('.doorsign');
   if (doorSign) doorSign.textContent = idle ? 'CLOSED' : 'OPEN';
 
-  el('mode').textContent = live ? 'LIVE' : 'SIMULATION';
+  // LIVE only while this machine keeps looking: a status older than 90 seconds is stale.
+  const age = d.fetched_at ? (Date.now() - Date.parse(d.fetched_at)) / 1000 : 0;
+  el('mode').textContent = !live ? 'SIMULATION'
+    : live === 'offline' || age > 90 ? 'STALE'
+    : d.waiting ? 'LIVE · WAITING FOR THE FIRST RUN' : 'LIVE';
+  el('mode').title = (live === 'offline' || age > 90) ? 'Not updated for a while: run /claudrunner:dashboard again'
+    : d.waiting ? 'Waiting for ' + d.waiting_for
+    : d.fetched_at ? 'Checked at ' + new Date(d.fetched_at).toLocaleTimeString() : '';
   el('q').textContent = d.queue ?? 0;
   el('r').textContent = d.retired_today ?? 0;
 
@@ -1756,12 +1763,15 @@ function simulate() {
   return { queue: 2, retired_today: sim.shipped, runs: sim.runs };
 }
 
+// The simulation is for the demo, which has no data behind it. A page that has shown real
+// data once never falls back to made-up robots: it keeps the last real state, marked stale.
+let seenLive = false;
 async function poll() {
   try {
     const res = await fetch(DATA_URL, { cache: 'no-store' });
     if (!res.ok) throw new Error(res.status);
-    render(await res.json(), true);
-  } catch { render(simulate(), false); }
+    render(await res.json(), true); seenLive = true;
+  } catch { seenLive && lastData ? render(lastData, 'offline') : render(simulate(), false); }
 }
 poll(); setInterval(poll, POLL_MS);
 setInterval(() => {
