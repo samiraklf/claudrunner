@@ -87,6 +87,11 @@ esac
 
 author=$(cr_get '.authorship.author' 'user')
 case "$author" in user|claudrunner) ;; *) err "authorship.author must be user or claudrunner (got '$author')" ;; esac
+if [ "$author" = user ] && { [ -z "$(cr_get '.authorship.name')" ] || [ -z "$(cr_get '.authorship.email')" ]; }; then
+  case "$(cr_get '.schedule.runs_on' 'github-actions')" in
+    routine|github-actions|systemd) err "authorship.name and authorship.email are required: the machine that runs the crew would commit under its own identity" ;;
+  esac
+fi
 
 # Local-only installs keep every claudrunner file out of git, so nothing remote can see them.
 commit_files=$(printf '%s' "$CR_CONFIG" | jq -r '.schedule.commit_files | if . == null then "" else tostring end')

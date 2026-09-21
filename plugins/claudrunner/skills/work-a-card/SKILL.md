@@ -75,12 +75,16 @@ For each selected item, in order:
 
 `authorship.author` in the config decides whose name is on the work:
 
-- `user` (the default) — the work is the user's. Commit with the identity git already has
-  (`git commit`, no `--author`). **Never name Claude, Anthropic or any AI model as author or
-  co-author** — not in a commit, a commit trailer, a pull request title or body, a branch
-  name, or a card comment. No "Co-Authored-By", no session link, no "generated with" line.
+- `user` (the default) — the work is the user's. **Always commit with the identity in the
+  config, never the machine's own**: a cloud machine has an identity of its own, often
+  "Claude". Use
+  `git -c user.name="<authorship.name>" -c user.email="<authorship.email>" commit`, then check
+  `git log -1 --format='%an <%ae> | %cn <%ce>'` shows that identity twice, and amend if not.
+  **Never name Claude, Anthropic or any AI model as author or co-author** — not in a commit, a
+  commit trailer, a pull request title or body, a branch name, or a card comment. No
+  "Co-Authored-By", no session link, no "generated with" line.
 - `claudrunner` — the crew is the author: commit with
-  `git commit --author="claudrunner <noreply@claudrunner.invalid>"`. Still never name Claude,
+  `git -c user.name=claudrunner -c user.email=noreply@claudrunner.invalid commit`. Still never name Claude,
   Anthropic or any AI model anywhere.
 
 Both hold for a delegated agent's commits too, and override any default of the tool you run in.

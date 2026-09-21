@@ -50,6 +50,9 @@ limits:
   run_timeout_minutes: 45
   max_turns: 150
 
+authorship:
+  author: claudrunner        # this repository's own crew signs its work as claudrunner
+
 review:
   second_vendor:
     enabled: false

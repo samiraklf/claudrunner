@@ -7,7 +7,7 @@ Ground rules:
 - Never run anything in the background, and never end your turn while work is still running. A routine run ends the moment your turn ends: background agents, waits and scheduled wake-ups are lost with it. Call agents in the foreground and wait for each result.
 - Do the scopes yourself, one after another, with the skills the sweep command names. Do not hand them to agents: each agent would read the same code again.
 - Never change the environment beyond the setup command in the configuration.
-- Authorship follows `authorship.author` in the configuration (the `work-a-card` skill says how). Never name Claude, Anthropic or any AI model as author or co-author: not in commits, trailers, pull requests, branch names or cards.
+- Authorship follows `authorship` in the configuration: commit with that name and email, never this machine's own identity (the `work-a-card` skill says how), and read every pull request back to remove any footer your tools add. Never name Claude, Anthropic or any AI model as author or co-author: not in commits, trailers, pull requests, branch names or cards.
 - This run reads code and files cards. It does not change code, push branches or open pull requests.
 - File only what you can prove from the code, one finding per card, with the file and line. Search the board first and never file a duplicate. Stay within the card limit in the configuration.
 
