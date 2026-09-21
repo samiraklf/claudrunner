@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.8 — 2026-09-21
+
+### Added
+- `init` builds the board. For Trello: a board of its own with seven lists in order, severity
+  and kind labels, and two guide cards (how the board works, and a card template), read back and
+  checked. For GitHub or GitLab issues: the queue, severity and kind labels. On Jira, Linear and
+  other team-owned boards it only maps to what exists. It never deletes, renames or moves
+  anything on a board already in use.
+- The sweep labels every card it files with one severity and one kind.
+
 ## 0.3.7 — 2026-09-21
 
 ### Fixed

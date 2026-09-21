@@ -49,6 +49,9 @@ in its note, and the run carries on and finishes.
 - **Check it is not already fixed.** Read the current code, not the last report.
 - **Search the board before filing.** Never file a duplicate.
 - **One finding per card.** A card bundling four problems cannot be closed.
+- Add the board's matching labels to every card you file: one severity (`Critical`, `High`,
+  `Medium`, `Low`) and one kind (`Bug`, `Feature`, `Security`, `Scale`, `Test gap`), when the board
+  has them. Never create labels in a run.
 - Write every card with the `card-format` skill. Cap the run at `loops.slow.max_new_cards`;
   if you find more, file the most severe and say how many you held back.
 

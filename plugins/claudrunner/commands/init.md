@@ -72,7 +72,7 @@ take corrections before you continue.
 On no, write only the **Stack** section and the pointers under **Rules that live elsewhere**.
 
 Also note what the tests need to run: a database and which one, other services, whether the
-project already starts them with Docker. Step 2c uses it.
+project already starts them with Docker. Step 2a uses it.
 
 ## Step 2 — Ask what cannot be inferred
 
@@ -120,7 +120,7 @@ option first.
    `board.via: api`, with the credentials in the environment.
 6. **How the crew tests its changes** (`verify.mode`) — offer these. Recommend `auto` for a
    routine, where every setup starts from nothing, and `here` for a machine that keeps its
-   setup (Step 2c):
+   setup (Step 2a):
 
    | Choice | Say |
    |---|---|
@@ -150,7 +150,7 @@ option first.
    to production.
 9. **Where the status page lives** — see the next step. Ask it last; it is optional.
 
-## Step 2c — Where the tests run
+## Step 2a — Where the tests run
 
 The answer depends on where the crew runs. Recommend the setup below for the machine chosen
 in Step 2, explain it in two or three plain sentences, and let the user change it. Whatever
@@ -208,7 +208,45 @@ when it is about to test a change.
   by Docker Hub. Prefer the image's own PostgreSQL and Redis, or an `apt-get` package; use
   Docker only when a service exists only as an image or its exact version matters.
 
-## Step 2b — The status page
+## Step 2b — Build the board
+
+A crew needs a board it can read at a glance. Offer to build one, and recommend it. Say what you
+will add before you add it. On a board the user already uses, **never delete, rename or move
+anything**: only add what is missing, and only after the user agrees.
+
+**Trello** — recommend a new board of its own, named `claudrunner crew · <project.name>`, in the
+workspace the user picks. Then create, in this order:
+
+- **Lists**, left to right: `📥 Inbox (ideas, not ready)`, `🎯 Ready for the crew`,
+  `🤖 In progress`, `🔍 In review (PR open)`, `🙋 Needs you`, `🐞 Findings (from the sweep)`,
+  `✅ Done (merged)`. Put the exact names into `board.queues` (`ready`, `claimed`, `review`,
+  `parked`, `filed`), and note the inbox and done lists in a comment.
+- **Labels**: severity `Critical` (red), `High` (orange), `Medium` (yellow), `Low` (green); kind
+  `Bug` (purple), `Feature` (blue), `Security` (black), `Scale` (sky), `Test gap` (lime).
+- **Two guide cards** at the top of the inbox list: `📖 How this board works` from
+  `${CLAUDE_PLUGIN_ROOT}/templates/board/how-this-board-works.md`, with the real list names put in
+  place of `{inbox}`, `{ready}` and the others; and `✍️ Card template` from
+  `${CLAUDE_PLUGIN_ROOT}/templates/board/card-template.md`.
+
+Read the board back after creating it and check every list, label and card is there. Say what
+is missing, if anything, and create it.
+
+**GitHub Issues or GitLab Issues** — labels are the board. Create `claudrunner:ready`,
+`claudrunner:running`, `claudrunner:in-review`, `claudrunner:needs-input` and
+`claudrunner:finding`, plus the severity and kind labels above. Offer one pinned issue, "How the
+crew works", from the guide template.
+
+**Jira, Linear, Azure Boards, Shortcut** — the workflow belongs to the team. Map the queues to
+statuses that already exist, and add the severity and kind labels only where the team allows
+labels. Never create or change statuses or workflows.
+
+**Asana, ClickUp, monday.com, Notion** — map to the sections, statuses or columns that exist.
+Suggest what to add, and add it only when the user says yes.
+
+A project with little structure (one list, no statuses) gets the smallest board that works:
+ready, in review and needs-you. Do not force the full layout on it.
+
+## Step 2c — The status page
 
 The page shows every task the crew is working on, and the step it is at, while it happens. It
 can only show runs it can see, so **offer only the choices that work for where the crew runs**
@@ -277,7 +315,7 @@ State these back and let the user change them:
 3. `.claudrunner/profile.md` — from Step 1b.
 4. `.claudrunner/gotchas.md` — an empty catalog with its header. It grows from real
    incidents in this repository and is read by every review.
-5. `.claudrunner/setup.sh` and, for a routine, `.claudrunner/cloud-setup.sh` — from Step 2c.
+5. `.claudrunner/setup.sh` and, for a routine, `.claudrunner/cloud-setup.sh` — from Step 2a.
    Fill in every placeholder in `cloud-setup.sh`, including the repository name, and delete the
    sections the project does not need: the user pastes it as it is. Set `stack.commands.setup`
    to the first. When it takes a part name, list the parts in
@@ -382,7 +420,7 @@ Print, in this order:
    once they are on the base branch.
 
 1. The secrets the user must add, by name, and where to add them. Never print a value.
-   For a routine, the cloud environment from Step 2c too, if it does not exist yet.
+   For a routine, the cloud environment from Step 2a too, if it does not exist yet.
 2. The one command that turns the schedule on — for a routine, the two claude.ai links
    `https://claude.ai/code/routines/<id>`, where the user can see, edit, pause or run them.
 3. The command to try one cycle by hand first: `/claudrunner:triage`.
