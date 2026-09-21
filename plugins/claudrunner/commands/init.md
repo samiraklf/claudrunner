@@ -228,6 +228,13 @@ workspace the user picks. Then create, in this order:
   place of `{inbox}`, `{ready}` and the others; and `✍️ Card template` from
   `${CLAUDE_PLUGIN_ROOT}/templates/board/card-template.md`.
 
+The claude.ai Trello connector can create boards, lists and cards, but it cannot create or
+rename labels: it can only attach the six colour labels every new board has. With the connector,
+use those colours for severity and kind — red Critical, orange High, yellow Medium, green Low,
+purple Bug, blue Feature — write that key in the guide card, and ask the user to name the six
+labels once: open the board, **Menu → Labels**, click each colour and type its name. With
+`board.via: api`, create the named labels directly.
+
 Read the board back after creating it and check every list, label and card is there. Say what
 is missing, if anything, and create it.
 
