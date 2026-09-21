@@ -5,11 +5,14 @@
 # agent calls it, so the status page shows the work while it happens.
 #
 #   claudrunner-mark.sh start <triage|sweep> <items.json> [queue]   prints the run directory
+#   claudrunner-mark.sh step <run dir> <item id> <step>
 #   claudrunner-mark.sh finish <run dir> [summary.json]
 #
 # items.json is the claimed items, as the adapters return them:
 #   [{"id": "...", "title": "...", "url": "..."}]
 # queue is how many ready items are left behind after this run took its share.
+# step is where one item is now: selecting | implementing | testing | review | shipping | done.
+# Each one is published at once, so the status page follows every task while it happens.
 set -uo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -29,6 +32,17 @@ case "${1:-}" in
     publish
     echo "$run_dir"
     ;;
+  step)
+    run_dir="${2:?usage: claudrunner-mark.sh step <run dir> <item id> <step>}"
+    id="${3:?the item id is required}"; step="${4:?the step is required}"
+    [ -f "$run_dir/input.json" ] || { echo "$run_dir is not a run started with claudrunner-mark.sh" >&2; exit 2; }
+    case "$step" in selecting|implementing|testing|review|shipping|done) ;;
+      *) echo "unknown step: $step (selecting|implementing|testing|review|shipping|done)" >&2; exit 2 ;; esac
+    steps="$run_dir/steps.json"; [ -f "$steps" ] || echo '{}' > "$steps"
+    jq --arg id "$id" --arg s "$step" '.[$id] = $s' "$steps" > "$steps.new" && mv "$steps.new" "$steps"
+    publish
+    echo "$id: $step"
+    ;;
   finish)
     run_dir="${2:?usage: claudrunner-mark.sh finish <run dir> [summary.json]}"
     [ -f "$run_dir/input.json" ] || { echo "$run_dir is not a run started with claudrunner-mark.sh" >&2; exit 2; }
@@ -41,5 +55,5 @@ case "${1:-}" in
     publish
     echo "finished $run_dir"
     ;;
-  *) echo "usage: claudrunner-mark.sh start <triage|sweep> <items.json> [queue] | finish <run dir> [summary.json]" >&2; exit 2 ;;
+  *) echo "usage: claudrunner-mark.sh start <triage|sweep> <items.json> [queue] | step <run dir> <item id> <step> | finish <run dir> [summary.json]" >&2; exit 2 ;;
 esac

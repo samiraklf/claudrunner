@@ -210,20 +210,29 @@ when it is about to test a change.
 
 ## Step 2b — The status page
 
-Offer these four, recommended first. Explain each in one line, in these words:
+The page shows every task the crew is working on, and the step it is at, while it happens. It
+can only show runs it can see, so **offer only the choices that work for where the crew runs**
+(Step 2, question 3). Never offer a choice that would show an empty page.
+
+**When the crew runs in the cloud or on a server** (routine, GitHub Actions, cron or systemd
+on another machine), offer, recommended first:
 
 | Choice | Say |
 |---|---|
-| **On this computer** (`local`) | "Open it any time with `/claudrunner:dashboard`. Only you can see it. Nothing to set up." |
-| **From a branch** (`branch`) | "Each run publishes its status to a `claudrunner-status` branch; `/claudrunner:dashboard` shows it live on your computer. Private." |
-| **GitHub Pages** (`github-pages`) | "A link for your whole team, updated after every run. Free on a public repo. Anyone with the link can see it." |
+| **From a branch** (`branch`) — recommended for a private repository | "Every step of every task is published to a `claudrunner-status` branch in your repository. `/claudrunner:dashboard` shows it live on your computer, updated about every 20 seconds. Only people with access to the repository can see it." |
+| **GitHub Pages** (`github-pages`) — recommended for a public repository | "The same live page as a link for your whole team, with nothing to run. Anyone with the link can see it." |
 | **Your own server** (`server`) | "A subdomain such as `crew.example.com`, or a path such as `example.com/claudrunner/`, on a server you run." |
 | **No page** (`none`) | "Skip it. You can add it later by editing the config." |
 
-Recommend **GitHub Pages** when the repository is public and runs happen in CI or a routine —
-the team gets a link and nobody runs anything. When runs happen in a routine or CI on a
-private repository, recommend **From a branch**: this computer never sees those runs any
-other way. Otherwise recommend **On this computer**.
+**When the crew runs on this computer** (cron here, or by hand), offer:
+
+| Choice | Say |
+|---|---|
+| **On this computer** (`local`) — recommended | "Open it any time with `/claudrunner:dashboard`. It follows every task live. Only you can see it, and nothing is pushed anywhere." |
+| **No page** (`none`) | "Skip it. You can add it later by editing the config." |
+
+With `schedule.commit_files: false`, never offer `branch` or `github-pages`: both push to the
+repository.
 
 Follow-up questions, only for the choice made:
 

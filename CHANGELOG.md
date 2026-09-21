@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.3 — 2026-09-21
+
+### Added
+- The status page is live: `claudrunner-mark.sh step <run dir> <item> <step>` publishes each
+  task's step (selecting, implementing, testing, review, shipping, done) the moment the crew
+  reaches it, and every claimed task gets its own robot. Before, a run published only at its
+  start and end, and every task showed "implementing".
+
+### Changed
+- `init` offers only status pages that can see the runs: from a branch, GitHub Pages or a
+  server when the crew runs in the cloud or on a server; this computer when it runs here.
+- Today's count is kept per run, so publishing the same run many times never counts a task twice.
+
 ## 0.3.2 — 2026-09-21
 
 ### Added

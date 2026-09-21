@@ -122,14 +122,22 @@ YML
   jq -e '.attribution.sessionUrl == false' .claude/settings.json >/dev/null
   # a routine only sees what is committed
   [ -z "$(git check-ignore .claude/skills/ship/SKILL.md .claudrunner/bin/lib/config.sh || true)" ]
-  echo '[{"id":"c1","title":"Fix the export","url":"https://example.test/c1"}]' > "$tmp/items.json"
-  run=$(.claudrunner/bin/claudrunner-mark.sh start triage "$tmp/items.json" 4 | tail -1)
-  git fetch -q origin claudrunner-status
-  git show origin/claudrunner-status:status.json | jq -e '.runs[0].title == "Fix the export" and .queue == 4' >/dev/null
-  echo '{"done":["c1"],"skipped":[]}' > "$run/summary.json"
-  .claudrunner/bin/claudrunner-mark.sh finish "$run" "$run/summary.json" >/dev/null
-  git fetch -q origin claudrunner-status
-  git show origin/claudrunner-status:status.json | jq -e '(.runs | length) == 0 and .retired_today == 1' >/dev/null
+  echo '[{"id":"c1","title":"Fix the export","url":"https://example.test/c1"},{"id":"c2","title":"Add a filter","url":"https://example.test/c2"}]' > "$tmp/items.json"
+  page() { git fetch -q origin claudrunner-status && git show origin/claudrunner-status:status.json; }
+  mark=.claudrunner/bin/claudrunner-mark.sh
+  run=$($mark start triage "$tmp/items.json" 4 | tail -1)
+  page | jq -e '(.runs | length) == 2 and .runs[0].title == "Fix the export" and .runs[0].phase == "selecting" and .queue == 4' >/dev/null
+  # every step of every task reaches the page while the run is still going
+  $mark step "$run" c1 testing >/dev/null
+  page | jq -e '.runs[0].phase == "testing" and .runs[0].progress > .runs[1].progress' >/dev/null
+  $mark step "$run" c1 "done" >/dev/null
+  page | jq -e '(.runs | length) == 1 and .runs[0].id == "#c2" and .retired_today == 1' >/dev/null
+  # publishing the same run again never counts its finished task twice
+  $mark step "$run" c2 review >/dev/null
+  page | jq -e '.retired_today == 1 and .runs[0].phase == "review"' >/dev/null
+  echo '{"done":["c1","c2"],"skipped":[]}' > "$run/summary.json"
+  $mark finish "$run" "$run/summary.json" >/dev/null
+  page | jq -e '(.runs | length) == 0 and .retired_today == 2' >/dev/null
 )
 # Not inside `if`: bash ignores set -e there, and every check would pass.
 routine_test >/dev/null 2>&1; rc=$?

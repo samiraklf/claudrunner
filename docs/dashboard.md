@@ -9,14 +9,20 @@ It is one HTML file and one JSON file, so any host that can serve a folder can s
 
 ## Where it lives
 
-`/claudrunner:init` asks. You can change it later in `.claudrunner/config.yml`.
+`/claudrunner:init` asks, and offers only the places that can see your runs. You can change
+it later in `.claudrunner/config.yml`.
 
-| Choice | How you open it | Who can see it |
-|---|---|---|
-| **On this computer** | `/claudrunner:dashboard` — starts a small local server and opens the page | only you |
-| **GitHub Pages** | `https://<owner>.github.io/<repo>/`, or your own domain | anyone with the link |
-| **Your own server** | a subdomain like `crew.example.com`, or a path like `example.com/claudrunner/` | whoever your server lets in |
-| **No page** | — | — |
+**It is live.** A run publishes every step of every task — selecting, implementing, testing,
+review, shipping, done — the moment it gets there, and the open page picks it up within about
+20 seconds.
+
+| Choice | Works when the crew runs | How you open it | Who can see it |
+|---|---|---|---|
+| **On this computer** | on this computer | `/claudrunner:dashboard` — starts a small local server and opens the page | only you |
+| **From a branch** | anywhere, including a routine or CI | `/claudrunner:dashboard`, which follows the `claudrunner-status` branch | people with access to the repository |
+| **GitHub Pages** | anywhere | `https://<owner>.github.io/<repo>/`, or your own domain | anyone with the link |
+| **Your own server** | anywhere | a subdomain like `crew.example.com`, or a path like `example.com/claudrunner/` | whoever your server lets in |
+| **No page** | — | — | — |
 
 **Every installation has its own page.** claudrunner has no central server and never sees your
 data: each repository publishes its own runs to its own address. Nobody sees another team's

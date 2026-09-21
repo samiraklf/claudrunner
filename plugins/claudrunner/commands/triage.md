@@ -14,7 +14,9 @@ Read `.claudrunner/config.yml` first. If it is missing, stop and say to run
    items in `.claudrunner/runs/<run>/input.json` — go to step 2. Otherwise (a Claude Code
    routine, or a person running this by hand) you drive the cycle yourself: follow
    **Driving the cycle yourself** below, then come back to step 2.
-2. **Select and implement** — the `work-a-card` skill owns the rules.
+2. **Select and implement** — the `work-a-card` skill owns the rules. Record each item's step
+   on the status page as **Driving the cycle yourself** step 5 says; the run directory is the
+   one holding `input.json`.
 3. **Review** — the `vk-review` skill. Fix every P0 and P1 before shipping.
 4. **Ship** — the `ship` skill. It also emits the run summary the orchestrator parses.
 
@@ -38,14 +40,19 @@ order and do not skip the records — they are how the status page shows your wo
    It prints the run directory; keep it.
 4. **Branch from the base**: `git fetch origin` and
    `git switch -c claudrunner/triage-<date> origin/<project.base_branch>`.
-5. **Do steps 2–4 at the top of this file** — implement, review, ship — and set the project up
+5. **Show each step on the status page** as you reach it, one command each time:
+   `.claudrunner/bin/claudrunner-mark.sh step <run dir> <item id> <step>`, with the step
+   `implementing` when you start on an item, `testing` when you run its checks, `review` when
+   the reviewer takes it, `shipping` when you push, and `done` when its pull request is open.
+   It publishes at once, so whoever watches the page sees every task move.
+6. **Do steps 2–4 at the top of this file** — implement, review, ship — and set the project up
    only when you are about to run something, as **Setting up only what the change needs**
    below says. Reading code and planning never need a setup.
-6. **Close the loop — only for the items you claimed in step 2.** Write the summary JSON from
+7. **Close the loop — only for the items you claimed in step 2.** Write the summary JSON from
    the `ship` skill to `<run dir>/summary.json`. Move each done item to the review queue with
    the pull request link as a comment. Move each skipped item where its reason sends it, with
    its note. Never move or comment on any item that is not in `<run dir>/input.json`.
-7. **Record the end**: `.claudrunner/bin/claudrunner-mark.sh finish <run dir> <run dir>/summary.json`.
+8. **Record the end**: `.claudrunner/bin/claudrunner-mark.sh finish <run dir> <run dir>/summary.json`.
 
 ### Setting up only what the change needs
 
