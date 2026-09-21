@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.4 — 2026-09-21
+
+### Added
+- A guided cloud-environment step in `init`. Claude Code has no command or API that creates an
+  environment, so `init` copies the setup script to the clipboard, opens claude.ai/code, and
+  walks through the exact clicks: the cloud button above the message box, **Cloud**, **Add cloud
+  environment…**. It learns the new environment's id from `/remote-env`, so nobody copies an id,
+  then restores the user's previous default. The same steps are in the scheduling guide.
+
 ## 0.3.3 — 2026-09-21
 
 ### Added

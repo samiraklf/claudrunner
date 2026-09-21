@@ -86,6 +86,26 @@ fails often, because Docker Hub rate-limits the shared cloud addresses. There, p
 image's own PostgreSQL and Redis or an `apt-get` package, and use Docker only when a service
 exists only as an image or its exact version matters.
 
+## Create the cloud environment, step by step
+
+For a routine, `/claudrunner:init` writes the setup script, copies it to your clipboard and
+opens claude.ai/code. Creating the environment is the one step you do yourself: Claude Code has
+no command or API that creates one.
+
+1. At claude.ai/code, find the small button **just above the message box**, left of **Select
+   repository…**. It has a cloud icon and shows your current environment's name, often
+   **Default**. There is no "Environments" page in the sidebar; this button is the only way in.
+2. In the menu (**Local**, **Cloud**, **Remote Control**), point at **Cloud** and click **Add cloud
+   environment…**.
+3. Name it `claudrunner-<your project>`. Leave **Network access** on **Trusted** and
+   **Environment variables** empty.
+4. Paste the setup script into **Setup script**, then click **Add environment**.
+5. Back in the terminal, type `/remote-env` and pick the new environment. `init` reads its id
+   from there, then puts your previous default back.
+
+Not seeing the button? Finish the first-time setup of Claude Code on the web once, following the
+prompts on claude.ai/code, and look again.
+
 ## Installed only what it uses
 
 When the crew is installed into a repository, it copies only what the configuration uses:

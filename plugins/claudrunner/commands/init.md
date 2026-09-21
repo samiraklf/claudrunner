@@ -294,16 +294,55 @@ and open a pull request to each. If
 they are not on the base branch yet, open the pull request, say the routines will be created
 once it is merged, and stop here.
 
+### Create the cloud environment
+
+Claude Code has no command or API that creates a cloud environment: only claude.ai/code and the
+Desktop app can. Say so plainly, so the user knows why this one step is theirs, then make it as
+short as possible. The helper is `${CLAUDE_PLUGIN_ROOT}/runtime/cloud-env.sh`.
+
+1. Run `cloud-env.sh default` and remember what it prints (it may print nothing): the user's
+   current default cloud environment, to put back at the end.
+2. Run `cloud-env.sh copy .claudrunner/cloud-setup.sh`, then `cloud-env.sh open`.
+3. Show the user these steps, exactly, as a numbered list:
+
+   > **Create the environment** (about one minute) — claude.ai/code is open in your browser:
+   >
+   > 1. Find the small button **just above the message box**, left of **Select repository…**.
+   >    It has a **cloud icon** and shows your current environment's name, often **Default**.
+   >    Click it. *There is no "Environments" page or menu in the sidebar: this button is the
+   >    only way in.*
+   > 2. A small menu opens with **Local**, **Cloud** and **Remote Control**. Point at **Cloud**,
+   >    then click **Add cloud environment…** at the bottom of the list that appears.
+   > 3. The **Add cloud environment** form opens. **Name:** `claudrunner-<project.name>`
+   > 4. **Network access:** leave it on **Trusted**.
+   > 5. **Environment variables:** leave empty. Never put a password or key here: everyone who
+   >    uses the environment can read them.
+   > 6. **Setup script:** click in the box and paste (Ctrl+V, or Cmd+V on a Mac). The script is
+   >    already on your clipboard.
+   > 7. Click **Add environment**. Nothing runs yet.
+   >
+   > **Then, here in this terminal**, type `/remote-env`, pick `claudrunner-<project.name>`, and
+   > tell me when you are done. That is how I learn its id, so you never copy one by hand.
+
+   If `copy` could not reach a clipboard, it printed the script: tell the user to copy it from
+   there. If the user does not see the cloud button, they have not finished the first-time setup
+   of Claude Code on the web: tell them to follow the prompts on claude.ai/code once, then look
+   again.
+4. When the user says done, run `cloud-env.sh default`. A new value is the environment id. If it
+   is unchanged, the pick did not happen: ask once more.
+5. Put the user's own default back with `cloud-env.sh restore <value from step 1>` (an empty
+   value removes the key), and say you did.
+
+If the user would rather not create an environment, use their existing one, and say that every
+run then installs what it needs from nothing, which costs minutes on each run.
+
 Create two routines with the `RemoteTrigger` tool (`action: create`). For each:
 
 - `name`: `claudrunner triage — <project.name>` and `claudrunner sweep — <project.name>`.
 - `cron_expression`: the cadence from Step 2 in UTC, at least one hour apart. Start the
   triage at a minute other than :00 so it does not queue behind everyone else's.
 - `enabled`: `true`.
-- `job_config.ccr.environment_id`: the environment from Step 2c. Ask the user to create it
-  first (name, network, and `.claudrunner/cloud-setup.sh` pasted as the setup script) and to
-  say when it is there. If they would rather not, use their existing environment, and say
-  runs will install everything each time.
+- `job_config.ccr.environment_id`: the environment from **Create the cloud environment** below.
 - `job_config.ccr.session_context.sources`: this repository's GitHub URL, nothing else.
 - `job_config.ccr.session_context.allowed_tools`: `Bash, Read, Write, Edit, Glob, Grep, Skill, Agent`.
 - `job_config.ccr.events`: one user message whose content is

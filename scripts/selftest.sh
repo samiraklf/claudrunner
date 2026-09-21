@@ -209,6 +209,24 @@ routine_local() (
 )
 check "routine with commit_files false is rejected" routine_local
 
+echo "init learns the new cloud environment's id, then puts the user's default back"
+cloud_env_test() (
+  set -e
+  h=plugins/claudrunner/runtime/cloud-env.sh
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  export CLAUDE_CONFIG_DIR="$tmp"
+  echo '{"model":"x","remote":{"defaultEnvironmentId":"env_mine"}}' > "$tmp/settings.json"
+  [ "$($h default)" = env_mine ]
+  jq '.remote.defaultEnvironmentId = "env_new"' "$tmp/settings.json" > "$tmp/s" && mv "$tmp/s" "$tmp/settings.json"   # what /remote-env does
+  [ "$($h default)" = env_new ]
+  $h restore env_mine >/dev/null
+  jq -e '.remote.defaultEnvironmentId == "env_mine" and .model == "x"' "$tmp/settings.json" >/dev/null
+  $h restore "" >/dev/null                              # a user who had no default gets none back
+  jq -e 'has("remote") | not' "$tmp/settings.json" >/dev/null
+)
+cloud_env_test >/dev/null 2>&1; rc=$?
+if [ "$rc" -eq 0 ]; then ok "cloud environment id pickup and restore"; else bad "cloud environment id pickup and restore"; fi
+
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then
   for f in plugins/claudrunner/templates/github-actions/*.yml; do
