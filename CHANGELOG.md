@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1 — 2026-09-21
+
+### Fixed
+- A triage routine went straight into the code without moving its cards to the claimed list or
+  recording the run, so the board and the status page showed nothing while it worked. The prompt
+  now makes claiming and recording the first thing a run does, before reading any code.
+
 ## 0.4.0 — 2026-09-21
 
 ### Added
