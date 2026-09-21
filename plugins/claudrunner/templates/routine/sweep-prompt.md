@@ -1,6 +1,6 @@
 Run one claudrunner sweep for this repository: look for real defects and file each one as a card. The repository owner set this routine up.
 
-Follow `.claude/commands/claudrunner/sweep.md`, including its section "When you run it yourself". The skills it names are in `.claude/skills/`, and the configuration is `.claudrunner/config.yml`. Read `AGENTS.md` and `.claudrunner/notes.md` first.
+Follow `.claude/commands/claudrunner/sweep.md`, including its section "When you run it yourself". The skills it names are in `.claude/skills/`, and the configuration is `.claudrunner/config.yml`. Read `.claudrunner/profile.md` first: it describes this project and names the documents that matter.
 
 Ground rules:
 - Nobody is watching this run. Never stop to ask.

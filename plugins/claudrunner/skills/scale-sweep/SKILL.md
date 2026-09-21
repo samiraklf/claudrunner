@@ -11,7 +11,7 @@ bugs are invisible at development size and fatal at real size.
 ## Establish the scale profile first
 
 Before judging any query, find out how big the tables actually are. Read the project's own
-notes in `.claudrunner/notes.md`, then verify against the database where you have read
+notes in `.claudrunner/profile.md`, then verify against the database where you have read
 access. Record what you learn back into that file. A review without a scale profile is
 guessing.
 

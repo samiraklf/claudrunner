@@ -42,9 +42,11 @@ on your own server.
 /claudrunner:init
 ```
 
-It reads your project, proposes the test and lint commands it found, connects your task
-board and asks only what it cannot infer. It writes a config and a schedule. Nothing runs
-until you say so.
+It reads your project once and saves a short profile of it (stack, conventions, how to test,
+what must not break), so no run spends time and tokens working it out again. It proposes the
+test and lint commands it found, connects your task board, recommends a test setup for where
+the crew runs, and asks only what it cannot infer. It installs only the files your setup
+uses. Nothing runs until you say so.
 
 **3. Try one cycle by hand**, then turn the schedule on:
 

@@ -11,3 +11,10 @@ the single command that turns it on.
 
 The disposable runner in the CI target is why the default path needs no container runtime:
 the job runs on a fresh machine that is destroyed afterwards.
+
+| Other template | What `init` makes of it |
+|---|---|
+| `routine/` | The prompts of the two Claude Code routines, used verbatim |
+| `environment/cloud-setup.sh` | The setup script of the routine's cloud environment |
+| `profile.md` | `.claudrunner/profile.md`, the project profile every run starts from |
+| `hosting/` | The web server snippet for a self-hosted status page |

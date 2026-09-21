@@ -13,8 +13,8 @@ This is the **only** command that asks questions. The user is here, setting thin
 other command runs unattended and parks what it cannot decide.
 
 - Never guess a command you have not seen in the repository. Propose, then confirm.
-- Write nothing outside `.claudrunner/`, `.github/workflows/`, and the schedule files the
-  user approves.
+- Write nothing outside `.claudrunner/`, `.claude/`, `.github/workflows/`, and the schedule
+  files the user approves.
 - Nothing is scheduled or enabled by this command. It writes files and prints the final
   step for the user to run themselves.
 
@@ -44,6 +44,35 @@ Present what you found as a table, and ask for corrections:
 | build | | |
 
 An unknown stack uses `${CLAUDE_PLUGIN_ROOT}/packs/generic/pack.md` and asks the user for all five.
+
+## Step 1b — Shape the crew to this project
+
+Ask: **"Shape the crew to this project? I read the code once and save what I learn, so no
+run has to work it out again."** Recommend yes. Every run that does not rediscover the
+project saves minutes and tokens.
+
+On yes, study the repository once, and bound it — this is a survey, not a review:
+
+- `README`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md` and the `docs/` index.
+- The manifests and lock files, the CI workflows, `Dockerfile` and `docker-compose*.yml`,
+  `.env.example`: they give the versions, the services and the commands that are known to work.
+- The directory tree two levels deep.
+- Three or four representative source files and two test files, chosen from the most
+  recently changed ones, to learn how code is really written here.
+
+Write `.claudrunner/profile.md` from `${CLAUDE_PLUGIN_ROOT}/templates/profile.md`. Fill
+every section from what you read, never from general knowledge of the framework. Add the
+pack's characteristic failure modes that apply to this code under **What must not break**,
+so a run never needs the pack. Record the commit it describes. Keep it under 4 KB: point at
+files instead of copying them.
+
+Show the user a short summary — stack, services, three conventions, the riskiest area — and
+take corrections before you continue.
+
+On no, write only the **Stack** section and the pointers under **Rules that live elsewhere**.
+
+Also note what the tests need to run: a database and which one, other services, whether the
+project already starts them with Docker. Step 2c uses it.
 
 ## Step 2 — Ask what cannot be inferred
 
@@ -75,11 +104,13 @@ option first.
    Jira, Linear, Asana, Notion and others), recommend `board.via: connector`: no keys to
    store. Check the connector can see the board before relying on it. Otherwise
    `board.via: api`, with the credentials in the environment.
-6. **How the crew tests its changes** (`verify.mode`) — offer, recommended first:
+6. **How the crew tests its changes** (`verify.mode`) — offer these. Recommend `auto` for a
+   routine, where every setup starts from nothing, and `here` for a machine that keeps its
+   setup (Step 2c):
 
    | Choice | Say |
    |---|---|
-   | **Auto** (`auto`) — recommended | "The crew decides per change: no setup for text or docs, and only the part of the project it changed for code. Fewest minutes and tokens." |
+   | **Auto** (`auto`) | "The crew decides per change: no setup for text or docs, and only the part of the project it changed for code. Fewest minutes and tokens." |
    | **Always here** (`here`) | "Every change is tested before the pull request opens. Slower, most certain." |
    | **Leave it to CI** (`ci`) | "The crew writes the tests and never installs anything; your CI runs them on the pull request." Recommend only when CI runs the tests on pull requests. |
 
@@ -88,6 +119,64 @@ option first.
    parts in `stack.commands.setup_parts`.
 7. **Autonomy** — `suggest`, `pr-only` (default), or `push`.
 8. **Where the status page lives** — see the next step. Ask it last; it is optional.
+
+## Step 2c — Where the tests run
+
+The answer depends on where the crew runs. Recommend the setup below for the machine chosen
+in Step 2, explain it in two or three plain sentences, and let the user change it. Whatever
+the machine, `.claudrunner/setup.sh [part]` is the one entry point a run calls, and only
+when it is about to test a change.
+
+**Claude Code routine** — a fresh cloud machine per run, with a disk snapshot that is kept.
+
+- Recommend **a cloud environment of its own**, named `claudrunner-<project.name>`, with
+  the default **Trusted** network. It keeps this project's installs, network rules and
+  variables apart from the user's other cloud sessions.
+- Write `.claudrunner/cloud-setup.sh` from `${CLAUDE_PLUGIN_ROOT}/templates/environment/cloud-setup.sh`,
+  for the user to paste into the environment's **Setup script** field. It installs what the
+  image lacks and fills the package caches. It runs once; the environment keeps the result
+  for about seven days, so runs start with everything on disk. It must finish in under five
+  minutes and always exit 0.
+- The image already has PostgreSQL 16, Redis 7, Docker, `gh`, `jq` and `yq`, and PHP, Node,
+  Python, Ruby, Java, Go and Rust toolchains. Install only what is missing, with `apt-get`
+  where the package exists.
+- Running processes are not kept, so `setup.sh` starts the services (`service postgresql
+  start`, `mysqld`, or `dockerd` and `docker compose up -d`), installs from the warm caches
+  and prepares the test database. It must still work, only slower, in an environment
+  without the setup script.
+- Never put a secret in the environment's variables: everyone who uses the environment can
+  read them. Prefer the board's connector. On Pro and Max plans, an environment's
+  **API credentials** attach a key to requests without the session ever seeing it.
+
+**GitHub Actions** — a fresh runner per run, next to your CI.
+
+- Start the services in the workflow's `services:` block, with the same images CI uses, and
+  cache dependencies with the setup action's cache. Recommend `verify.mode: here`: setup is
+  cheap there and the pull request arrives already tested.
+
+**Cron or systemd on your own machine** — the machine and its disk persist between runs.
+
+- Prepare the machine **once, now**, with the user's permission: install the dependencies
+  and create a **separate test database**, never the development or production one. Name it
+  in the profile.
+- `setup.sh` then only refreshes: it reinstalls a part when its lock file changed since the
+  last run and otherwise returns at once.
+- Recommend `verify.mode: here`: testing costs almost nothing on a prepared machine.
+
+**By hand** — the user's own development environment.
+
+- Use what the user already runs. `setup` stays empty unless they ask for it.
+
+### When the project uses Docker
+
+- **Own machine, laptop or GitHub Actions:** Docker makes it easiest. Reuse the project's
+  `docker-compose.yml` for the services the tests need, so the crew tests against the same
+  versions as development. On a machine you care about, offer `executor.mode: container` to
+  run the tests inside it.
+- **Claude Code routine:** Docker works, but pull the images in `cloud-setup.sh`, where the
+  snapshot keeps them, and never during a run: the shared cloud addresses get rate-limited
+  by Docker Hub. Prefer the image's own PostgreSQL and Redis, or an `apt-get` package; use
+  Docker only when a service exists only as an image or its exact version matters.
 
 ## Step 2b — The status page
 
@@ -131,28 +220,27 @@ State these back and let the user change them:
 
 ## Step 4 — Write the files
 
-0. **Install claudrunner into the repository**, so scheduled runs work without the plugin:
-   run `${CLAUDE_PLUGIN_ROOT}/runtime/install-into-repo.sh ${CLAUDE_PLUGIN_ROOT}`, adding
-   `--with-commands` for a routine — a cloud routine cannot install plugins, so the crew's
-   commands, skills and agents go into the repository's own `.claude/`, which every Claude
-   Code session loads. Everything it installs is committed; only `.claudrunner/runs/` and
-   `.claudrunner/dashboard/` are ignored, and the script refuses a `.gitignore` that would
-   hide the rest.
 1. `.claudrunner/config.yml` — the answers above, including the `dashboard:` section. Follow
    the configuration reference in the claudrunner repository exactly.
-2. `.claudrunner/gotchas.md` — an empty catalog with its header. It grows from real
+2. **Install the crew into the repository**, now that the config says what it needs: run
+   `${CLAUDE_PLUGIN_ROOT}/runtime/install-into-repo.sh ${CLAUDE_PLUGIN_ROOT}`, adding
+   `--with-commands` for a routine — a cloud routine cannot install plugins, so the crew's
+   commands, skills and agents go into the repository's own `.claude/`. It copies only what
+   this configuration uses: the one board binding (none with a connector), the sweep only when
+   the slow loop is on, a sweep skill only for a scope it runs. A later run removes what is no
+   longer needed, from its list in `.claudrunner/installed.txt`. With `--with-commands` it also
+   sets `attribution` in `.claude/settings.json`, so cloud commits and pull requests carry no
+   session link or attribution line. Everything it installs is committed; only
+   `.claudrunner/runs/` and `.claudrunner/dashboard/` are ignored.
+3. `.claudrunner/profile.md` — from Step 1b.
+4. `.claudrunner/gotchas.md` — an empty catalog with its header. It grows from real
    incidents in this repository and is read by every review.
-3. `.claudrunner/notes.md` — anything you learned about the project that a future run
-   needs and cannot re-derive cheaply: scale-sensitive tables, slow test paths, areas that
-   are deliberately unconventional.
-4. The schedule for the chosen target: a workflow, crontab line or unit from
+5. `.claudrunner/setup.sh` and, for a routine, `.claudrunner/cloud-setup.sh` — from Step 2c.
+   Set `stack.commands.setup` to the first. When it takes a part name, list the parts in
+   `stack.commands.setup_parts`. Keep both quiet: send output to a log file and print one line
+   when done. In a run, a failed setup is reported, never repaired.
+6. The schedule for the chosen target: a workflow, crontab line or unit from
    `${CLAUDE_PLUGIN_ROOT}/templates/` — or, for a routine, nothing here; see Step 4b.
-5. If the tests need preparation in a fresh machine (dependencies, a database), put it in a
-   script such as `.claudrunner/setup.sh` and set `stack.commands.setup` to it. A routine
-   starts from a bare checkout every time. In a routine, **do not use Docker images**:
-   Docker Hub rate-limits the shared cloud addresses and the pull fails. Install services
-   from the system's own packages instead (for example `apt-get install -y mysql-server`),
-   and keep the script quiet — send its output to a log file and print one line when done.
 
 ## Step 4b — Create the routines
 
@@ -167,8 +255,10 @@ Create two routines with the `RemoteTrigger` tool (`action: create`). For each:
 - `cron_expression`: the cadence from Step 2 in UTC, at least one hour apart. Start the
   triage at a minute other than :00 so it does not queue behind everyone else's.
 - `enabled`: `true`.
-- `job_config.ccr.environment_id`: the user's cloud environment. If there is more than one,
-  ask which.
+- `job_config.ccr.environment_id`: the environment from Step 2c. Ask the user to create it
+  first (name, network, and `.claudrunner/cloud-setup.sh` pasted as the setup script) and to
+  say when it is there. If they would rather not, use their existing environment, and say
+  runs will install everything each time.
 - `job_config.ccr.session_context.sources`: this repository's GitHub URL, nothing else.
 - `job_config.ccr.session_context.allowed_tools`: `Bash, Read, Write, Edit, Glob, Grep, Skill, Agent`.
 - `job_config.ccr.events`: one user message whose content is
@@ -187,6 +277,7 @@ same routines instead of creating new ones.
 Print, in this order:
 
 1. The secrets the user must add, by name, and where to add them. Never print a value.
+   For a routine, the cloud environment from Step 2c too, if it does not exist yet.
 2. The one command that turns the schedule on — for a routine, the two claude.ai links
    `https://claude.ai/code/routines/<id>`, where the user can see, edit, pause or run them.
 3. The command to try one cycle by hand first: `/claudrunner:triage`.

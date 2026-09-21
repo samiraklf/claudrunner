@@ -53,6 +53,47 @@ machine running. It must clean the working tree before every run.
 repository, a lock per lane, a timeout per lane, and teardown that still runs when a lane
 is killed.
 
+## Where the tests run
+
+A run tests a change only when it is about to open a pull request, and only the parts the
+change touched (`verify.mode: auto`). What that costs depends on the machine, so
+`/claudrunner:init` recommends a setup for each one. `.claudrunner/setup.sh [part]` is always
+the single entry point.
+
+| Where the crew runs | What `init` sets up | Recommended `verify.mode` |
+|---|---|---|
+| Claude Code routine | A cloud environment of its own, with a setup script that installs what the image lacks and fills the package caches. The environment keeps the result for about seven days, so runs start with it on disk. `setup.sh` only starts the services. | `auto` |
+| GitHub Actions | Services in the workflow's `services:` block, dependencies from the setup action's cache. | `here` |
+| Cron or systemd on your machine | The machine is prepared once, with a separate test database. `setup.sh` reinstalls only when a lock file changed. | `here` |
+| By hand | Your own development environment, as it is. | `here` |
+
+**In a Claude Code environment:**
+
+- The image already has PostgreSQL 16, Redis 7, Docker, `gh`, `jq` and `yq`, and the common
+  language toolchains. The setup script installs only what is missing.
+- Running processes are not kept between runs. Services start in `setup.sh`, and only when a
+  change is tested.
+- Everyone who uses an environment can read its variables. Never put a secret there. Use the
+  board's connector, or, on Pro and Max plans, the environment's API credentials, which the
+  session never sees.
+- The setup script must finish in under five minutes and always exit 0.
+
+**Docker.** On your own machine, a laptop or GitHub Actions, Docker makes things easiest:
+`init` reuses your `docker-compose.yml` for the services the tests need, so the crew tests
+against the same versions as development. In a Claude Code environment, Docker works if the
+images are pulled in the setup script, where the snapshot keeps them. Pulling during a run
+fails often, because Docker Hub rate-limits the shared cloud addresses. There, prefer the
+image's own PostgreSQL and Redis or an `apt-get` package, and use Docker only when a service
+exists only as an image or its exact version matters.
+
+## Installed only what it uses
+
+When the crew is installed into a repository, it copies only what the configuration uses:
+the one board binding (none with a connector), the sweep only when the slow loop is on, and a
+sweep skill only for a scope it runs. `.claudrunner/installed.txt` lists the files, and a
+later `init` removes those the configuration no longer needs. Files you wrote yourself are
+never touched.
+
 ## The failure that will bite you
 
 A run killed by its timeout leaves uncommitted changes in the working tree. The next run's

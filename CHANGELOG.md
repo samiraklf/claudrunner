@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.3.0 — 2026-09-21
+
+### Added
+- `init` asks to shape the crew to the project. It reads the code once and writes
+  `.claudrunner/profile.md`: the stack, where things live, how code is written here, how to
+  test a change and what must not break. Runs start from it instead of surveying the
+  repository again. `notes.md` becomes `profile.md`; an existing one is renamed.
+- `init` recommends a test setup for where the crew runs: for a Claude Code routine, a cloud
+  environment of its own with a cached setup script (`.claudrunner/cloud-setup.sh`); for GitHub
+  Actions, workflow services and caches; for your own machine, a one-time preparation with a
+  separate test database. It covers when Docker helps and when it does not.
+
+### Changed
+- Installing into a repository copies only what the configuration uses: the one board binding
+  (none with a connector), the orchestrator only for CI, cron and systemd, the sweep only when
+  the slow loop is on, and a sweep skill only for a scope it runs. `.claudrunner/installed.txt`
+  lists the files; a later install removes those no longer needed and never touches others.
+- A routine install sets `attribution` in `.claude/settings.json`, so cloud commits and pull
+  requests carry no session link or attribution line.
+
+### Fixed
+- Two self-tests could never fail: bash ignores `set -e` inside an `if`.
+
 ## 0.2.3 — 2026-09-18
 
 ### Added

@@ -54,12 +54,12 @@ delegating yet. Three things to watch:
 1. **Items parked as `unclear`.** If many are parked, your items are underspecified. That
    is useful information about your board, not a failure of the crew.
 2. **Findings marked `not-needed`.** Read the evidence. A wrong refusal means the sweep
-   needs a note in `.claudrunner/notes.md` about how your project actually works.
+   needs a note in `.claudrunner/profile.md` about how your project actually works.
 3. **Review findings.** If the same class appears twice, put it in the gotchas file. It
    will never get through again.
 
 ## What to do when it gets something wrong
 
 Do not correct it in a chat message; that lasts one session. Write the correction into
-`.claudrunner/notes.md` or `.claudrunner/gotchas.md`. Those files are read on every run,
+`.claudrunner/profile.md` or `.claudrunner/gotchas.md`. Those files are read on every run,
 so a correction written once holds forever.

@@ -169,8 +169,10 @@ sees them.
 
 ## Two files that are not config
 
-`.claudrunner/notes.md` — what the crew learned about your project and cannot cheaply
-re-derive: scale-sensitive tables, slow paths, deliberate unconventional choices.
+`.claudrunner/profile.md` — the project profile. `init` reads the code once and writes down
+the stack, where things live, how code is written here, how to test a change and what must
+not break. Every run starts from it instead of surveying the repository again, which saves
+minutes and tokens on every run. Keep it under 4 KB and true; re-run `init` when it drifts.
 
 `.claudrunner/gotchas.md` — failure modes that have already happened here. Every review
 reads it first. This file is how the crew becomes specifically good at your codebase.

@@ -104,21 +104,24 @@ routine_test() (
   git config user.name t && git config user.email t@t
   git remote add origin "$tmp/remote.git"
   git commit -q --allow-empty -m init && git push -q origin main
+  mkdir -p .claudrunner
+  cat > .claudrunner/config.yml <<'YML'
+version: 1
+project: {name: t, base_branch: main, host: github}
+stack: {commands: {test: "true"}}
+schedule: {runs_on: routine}
+policy: {autonomy: pr-only}
+board: {adapter: none}
+dashboard: {where: branch}
+YML
   "$plugin/runtime/install-into-repo.sh" "$plugin" --with-commands >/dev/null
   test -f .claude/commands/claudrunner/triage.md
   test -f .claude/skills/work-a-card/SKILL.md
   test -f .claude/agents/inspector.md
   test -x .claudrunner/bin/claudrunner-mark.sh
+  jq -e '.attribution.sessionUrl == false' .claude/settings.json >/dev/null
   # a routine only sees what is committed
   [ -z "$(git check-ignore .claude/skills/ship/SKILL.md .claudrunner/bin/lib/config.sh || true)" ]
-  cat > .claudrunner/config.yml <<'YML'
-version: 1
-project: {name: t, base_branch: main, host: github}
-stack: {commands: {test: "true"}}
-policy: {autonomy: pr-only}
-board: {adapter: none}
-dashboard: {where: branch}
-YML
   echo '[{"id":"c1","title":"Fix the export","url":"https://example.test/c1"}]' > "$tmp/items.json"
   run=$(.claudrunner/bin/claudrunner-mark.sh start triage "$tmp/items.json" 4 | tail -1)
   git fetch -q origin claudrunner-status
@@ -128,7 +131,48 @@ YML
   git fetch -q origin claudrunner-status
   git show origin/claudrunner-status:status.json | jq -e '(.runs | length) == 0 and .retired_today == 1' >/dev/null
 )
-if routine_test >/dev/null 2>&1; then ok "install, record, publish, finish"; else bad "install, record, publish, finish"; fi
+# Not inside `if`: bash ignores set -e there, and every check would pass.
+routine_test >/dev/null 2>&1; rc=$?
+if [ "$rc" -eq 0 ]; then ok "install, record, publish, finish"; else bad "install, record, publish, finish"; fi
+
+echo "install copies only what the configuration uses, and removes what it no longer needs"
+selective_test() (
+  set -e
+  plugin="$(pwd)/plugins/claudrunner"
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  git init -q "$tmp/repo" && cd "$tmp/repo"
+  mkdir -p .claudrunner .claude/skills/my-own
+  echo "# mine" > .claude/skills/my-own/SKILL.md
+  echo "- a fact" > .claudrunner/notes.md
+  cat > .claudrunner/config.yml <<'YML'
+schedule: {runs_on: routine}
+board: {adapter: trello, via: api}
+loops: {slow: {enabled: true, scopes: [security, correctness]}}
+YML
+  "$plugin/runtime/install-into-repo.sh" "$plugin" --with-commands >/dev/null
+  test -f .claudrunner/bin/lib/board-trello.sh
+  test ! -e .claudrunner/bin/lib/board-jira.sh          # another board's binding
+  test ! -e .claudrunner/bin/claudrunner-run.sh         # a routine has no orchestrator
+  test -d .claude/skills/security-sweep
+  test ! -e .claude/skills/scale-sweep                  # a scope it does not run
+  test -f .claude/commands/claudrunner/sweep.md
+  test -f .claudrunner/profile.md && test ! -e .claudrunner/notes.md
+  # narrower config: the connector needs no binding, no slow loop needs no sweep
+  cat > .claudrunner/config.yml <<'YML'
+schedule: {runs_on: routine}
+board: {adapter: trello, via: connector}
+loops: {slow: {enabled: false}}
+YML
+  "$plugin/runtime/install-into-repo.sh" "$plugin" --with-commands >/dev/null
+  test ! -e .claudrunner/bin/lib/board-trello.sh
+  test ! -e .claude/skills/security-sweep
+  test ! -e .claude/commands/claudrunner/sweep.md
+  test -f .claude/skills/my-own/SKILL.md                # never someone else's file
+  test -f .claude/skills/ship/SKILL.md
+)
+# Not inside `if`: bash ignores set -e there, and every check would pass.
+selective_test >/dev/null 2>&1; rc=$?
+if [ "$rc" -eq 0 ]; then ok "selective install and cleanup"; else bad "selective install and cleanup"; fi
 
 echo "workflow templates are valid yaml"
 if python3 -c 'import yaml' 2>/dev/null; then

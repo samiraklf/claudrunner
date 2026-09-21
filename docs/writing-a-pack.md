@@ -20,7 +20,7 @@ detection rule, and the failure modes characteristic of that stack.
 - **Prefer the project's wrapper** where the ecosystem has one, so the agent uses the same
   toolchain version as the team.
 - **Never assume a global install.** An unattended run happens on a clean machine.
-- **No project-specific knowledge.** That belongs in `.claudrunner/notes.md`, not in a pack
+- **No project-specific knowledge.** That belongs in `.claudrunner/profile.md`, not in a pack
   shipped to everybody.
 - Failure modes must be things that *silently* pass tests. Anything a linter already catches
   does not belong here.

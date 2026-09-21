@@ -28,12 +28,13 @@ test_cmd=$(val test)
 
 # The two files that make the crew specifically good at THIS codebase. Capped, because a
 # session-start hook that grows unbounded quietly taxes every session.
-for f in notes.md gotchas.md; do
+for f in profile.md notes.md gotchas.md; do   # notes.md: the profile's name before 0.3
   [ -s "$dir/$f" ] || continue
   echo
   echo "--- .claudrunner/$f ---"
-  head -c 2500 "$dir/$f"
-  [ "$(wc -c < "$dir/$f")" -gt 2500 ] && echo "... (truncated — read the file for the rest)"
+  cap=2500; [ "$f" = profile.md ] && cap=4096
+  head -c "$cap" "$dir/$f"
+  [ "$(wc -c < "$dir/$f")" -gt "$cap" ] && echo "... (truncated — read the file for the rest)"
 done
 
 echo

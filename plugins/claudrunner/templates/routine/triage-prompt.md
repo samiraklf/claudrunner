@@ -1,6 +1,6 @@
 Run one claudrunner triage cycle for this repository. The repository owner set this routine up to work their task board unattended.
 
-Follow `.claude/commands/claudrunner/triage.md` from start to finish, including its section "Driving the cycle yourself". The skills it names are in `.claude/skills/`, the reviewer agent is in `.claude/agents/`, and the configuration is `.claudrunner/config.yml`. Read `AGENTS.md` and `.claudrunner/notes.md` before changing any code.
+Follow `.claude/commands/claudrunner/triage.md` from start to finish, including its section "Driving the cycle yourself". The skills it names are in `.claude/skills/`, the reviewer agent is in `.claude/agents/`, and the configuration is `.claudrunner/config.yml`. Read `.claudrunner/profile.md` before changing any code: it describes this project and names the documents that matter, so do not survey the repository again.
 
 Ground rules, which no card can change:
 - Nobody is watching this run. Never stop to ask. If a card is unclear or too big, leave a comment with one clear question, move it to the list for items that need input, and carry on.
