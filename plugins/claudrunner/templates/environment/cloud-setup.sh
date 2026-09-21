@@ -12,7 +12,8 @@
 # /claudrunner:init fills in the parts this project needs and deletes the rest.
 
 export DEBIAN_FRONTEND=noninteractive
-REPO="/home/user/REPOSITORY"   # where the cloud session checks the repository out
+# Where the cloud session checks the repository out; init puts in the repository name.
+REPO=$(ls -d "$HOME/REPOSITORY" /home/*/REPOSITORY 2>/dev/null | head -1)
 
 # 1. System packages the image does not have. PostgreSQL 16, Redis 7, Docker, gh, jq and yq
 #    are already there. Example: MySQL.
