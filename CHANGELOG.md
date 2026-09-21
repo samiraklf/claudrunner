@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.6 — 2026-09-21
+
+### Changed
+- The triage routine checks the ready list before reading anything else and stops in one line
+  when it is empty. A real run with an empty board spent 14 steps reading every skill first.
+
 ## 0.3.5 — 2026-09-21
 
 ### Changed
