@@ -29,6 +29,13 @@ something, and then set up only that part, as one step. Never repair the environ
 adapter (`board.via: api`), or the board's claude.ai connector on `board.connector.board`
 (`board.via: connector`), into the list named by `board.queues.filed`.
 
+## One session, in the foreground
+
+Work through the scopes yourself, one after another, in this session. Do not hand scopes to
+agents: every agent reads the same code again, which multiplies the cost, and an agent left
+running in the background is lost when a scheduled run ends its turn. Never end your turn while
+anything is still running, and never schedule a wake-up.
+
 ## Never pause
 
 Nobody is watching. Do not ask a question, do not wait for confirmation, and do not stop

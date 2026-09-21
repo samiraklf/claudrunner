@@ -22,7 +22,7 @@ false clean bill of health.
 
 ## Step 2 — Send it out
 
-Spawn the `inspector` agent with the **raw diff**. Never a summary — a summary carries your
+Spawn the `inspector` agent, in the foreground, with the **raw diff**, and wait for its report. Never a summary — a summary carries your
 own framing, which is exactly what the review exists to escape.
 
 Where a second vendor's CLI is configured and available, start it first, read-only, on the

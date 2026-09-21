@@ -74,6 +74,12 @@ section, so a person fixes the setup script once.
 
 With nothing ready in step 1, say so and stop: no branch, no records, no pull request.
 
+## Stay in the foreground
+
+A scheduled run ends the moment your turn ends. Call the reviewer and any other agent in the
+foreground and wait for its result. Never leave work running in the background, never end your
+turn to wait for it, and never schedule a wake-up.
+
 ## Never pause
 
 Nobody is watching. Do not ask a question, do not wait for confirmation, and do not stop

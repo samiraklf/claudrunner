@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.7 — 2026-09-21
+
+### Fixed
+- A sweep routine handed its scopes to background agents and ended its turn to wait. A routine
+  run ends with the turn, so the run was marked finished after 77 seconds while the agents kept
+  going, and nothing was filed on time. The prompts, the triage and sweep commands and the review
+  skill now forbid background work and ending a turn with work still running. A sweep now does
+  its scopes itself, one after another, instead of paying three agents to read the same code.
+
 ## 0.3.6 — 2026-09-21
 
 ### Changed
