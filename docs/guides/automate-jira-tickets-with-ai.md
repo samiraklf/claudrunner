@@ -35,9 +35,10 @@ GitLab, Bitbucket or Azure Repos is a normal setup.
 
 **1. Install the plugin**
 
-```
-/plugin marketplace add samiraklf/claudrunner
-/plugin install claudrunner
+In your terminal — one command, safe to paste as a whole:
+
+```bash
+claude plugin marketplace add samiraklf/claudrunner && claude plugin install claudrunner@claudrunner
 ```
 
 **2. Run the setup inside your repository**

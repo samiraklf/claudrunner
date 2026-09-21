@@ -27,9 +27,15 @@ saying exactly why.
 
 ## Set it up
 
+In your terminal — one command, safe to paste as a whole:
+
+```bash
+claude plugin marketplace add samiraklf/claudrunner && claude plugin install claudrunner@claudrunner
 ```
-/plugin marketplace add samiraklf/claudrunner
-/plugin install claudrunner
+
+Then, in Claude Code inside your repository:
+
+```
 /claudrunner:init
 ```
 

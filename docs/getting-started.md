@@ -2,9 +2,10 @@
 
 ## 1 — Install
 
-```
-/plugin marketplace add samiraklf/claudrunner
-/plugin install claudrunner
+In your terminal — one command, safe to paste as a whole:
+
+```bash
+claude plugin marketplace add samiraklf/claudrunner && claude plugin install claudrunner@claudrunner
 ```
 
 ## 2 — Set it up in a repository

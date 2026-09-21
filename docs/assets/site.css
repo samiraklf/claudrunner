@@ -169,9 +169,12 @@ dialog.search[open]{animation:pop .18s var(--ease)}
 .term-bar i:nth-child(3),.shot-bar i:nth-child(3){background:#28c840}
 .term-bar span,.shot-bar span{margin-left:8px;font:500 12px/1 var(--mono);color:#8ea3c1}
 .term .code-wrap{margin:0}
-.term pre{background:none;border-radius:0;font-size:14px}
+.term pre{background:none;border-radius:0;font-size:14px;padding-right:88px}
+.term pre code{white-space:pre-wrap;overflow-wrap:anywhere}
 .trust{display:flex;flex-wrap:wrap;gap:6px 16px;margin:18px 0 0;font-size:14.5px;color:var(--hero-muted)}
 .trust .icon{color:#7ff0b0;margin-right:4px}
+.then{margin:12px 0 0;font-size:14.5px;color:var(--hero-muted)}
+.then code{color:#fff;background:rgba(255,255,255,.08);padding:1px 6px;border-radius:6px}
 .hero-shot{position:relative;display:block;border-radius:18px;overflow:hidden;background:#0d1a33;text-decoration:none;
   box-shadow:0 40px 90px -30px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.1);transition:transform .25s var(--ease)}
 .hero-shot:hover{transform:translateY(-3px)}

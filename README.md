@@ -29,12 +29,14 @@ on your own server.
 
 ## Quick start
 
-**1. Install** — inside Claude Code:
+**1. Install** — in your terminal, one command, safe to paste as a whole:
 
+```bash
+claude plugin marketplace add samiraklf/claudrunner && claude plugin install claudrunner@claudrunner
 ```
-/plugin marketplace add samiraklf/claudrunner
-/plugin install claudrunner
-```
+
+Already inside Claude Code? Type `/plugin marketplace add samiraklf/claudrunner`, press Enter,
+then `/plugin install claudrunner`. One at a time: the prompt takes one command per line.
 
 **2. Set it up** — inside the repository you want it to work on:
 
