@@ -232,7 +232,7 @@ check "policy.merge review passes" merge_review_ok
 # shellcheck disable=SC2329
 automerge_template() {
   t=plugins/claudrunner/templates/github-actions/claudrunner-automerge.yml
-  grep -q "claudrunner:hold" "$t" && grep -q -- "--match-head-commit" "$t" && grep -q "policy.merge" "$t"
+  grep -q "claudrunner:hold" "$t" && grep -q -- "--match-head-commit" "$t" && grep -q "policy.merge" "$t" && grep -q -- "--exit-status" "$t"
 }
 check "the auto-merge template keeps its gates" automerge_template
 

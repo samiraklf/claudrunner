@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.2 — 2026-09-25
+
+### Fixed
+- After an automatic merge, a deploy that follows CI through `workflow_run` never started: a run
+  that the default token starts triggers no follower. The auto-merge workflow now runs the base
+  branch's workflows itself, in order (`{after_merge_workflows}`, such as `ci.yml deploy.yml`),
+  each only after the one before it passed. Found on the first real merge.
+
 ## 0.6.1 — 2026-09-25
 
 ### Fixed
