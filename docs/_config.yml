@@ -97,6 +97,9 @@ defaults:
     values:
       nav: docs
       description: Teach claudrunner a new git host, so it can push branches and open pull or merge requests there.
+  - scope: { path: "google1f83d92eb90f6859.html" }
+    values:
+      sitemap: false         # the Search Console ownership file, not a page
   - scope: { path: "guides" }
     values:
       nav: guides
