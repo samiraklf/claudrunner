@@ -36,6 +36,8 @@ order and do not skip the records — they are how the status page shows your wo
    - `board.via: connector` — the board's claude.ai connector, on the board at
      `board.connector.board`. Find the lists by the names in `board.queues`; read the cards in
      the ready list, top first.
+   Pass over any item whose prerequisite is not merged yet (the `work-a-card` skill,
+   **Dependencies come first**), and take the next one instead.
 2. **Claim each one before working on it.** API: `board_claim <id>`. Connector: move the card
    to the claimed list, then read it again — if it is not there, another run took it; drop it.
 3. **Record the start**, so the status page shows the work: write the claimed items to a file
@@ -55,7 +57,9 @@ order and do not skip the records — they are how the status page shows your wo
 7. **Close the loop — only for the items you claimed in step 2.** Write the summary JSON from
    the `ship` skill to `<run dir>/summary.json`. Move each done item to the review queue with
    the pull request link as a comment. Move each skipped item where its reason sends it, with
-   its note. Never move or comment on any item that is not in `<run dir>/input.json`.
+   its note. Move each item you claimed but did not work on (the size limit left no room)
+   back to the ready queue, at the top, with no comment: the next run takes it. Never move or
+   comment on any item that is not in `<run dir>/input.json`.
 8. **Record the end**: `.claudrunner/bin/claudrunner-mark.sh finish <run dir> <run dir>/summary.json`.
 
 ### Setting up only what the change needs
