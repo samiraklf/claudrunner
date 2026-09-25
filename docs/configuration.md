@@ -49,6 +49,7 @@ board:
     review: "claudrunner:in-review"
     parked: "claudrunner:needs-input"
     filed: "claudrunner:finding"
+    done: ""                 # optional: with policy.merge auto, merged items move here
 
   # Adapter-specific settings. Only the keys your adapter needs.
   #   trello        settings.lists.<role> (list ids), settings.claim_label_id
@@ -77,6 +78,8 @@ loops:
 policy:
   autonomy: pr-only          # suggest | pr-only | push
   push_branch: null          # required only when autonomy is push
+  merge: review              # review: a person merges | auto: the host merges when CI passes
+  hold_paths: []             # merge auto: file patterns that always wait for a person
   allow_new_dependencies: false
   max_changed_lines: 600
   edit_ci: false             # may the crew change workflow files
@@ -130,6 +133,16 @@ request is yours, under your own git identity. `claudrunner`: commits are author
 `claudrunner`, so your history shows which work the crew did. In both cases Claude, Anthropic and
 other AI models are never named as author or co-author, and `init` turns off the tool's own
 attribution lines.
+
+**`policy.merge`** — who merges the crew's pull requests. `review` (the default): a person
+reads and merges each one. `auto`: the host merges a pull request once CI passes on its last
+commit. The crew itself never runs a merge. On GitHub, `init` installs
+`.github/workflows/claudrunner-automerge.yml`, which merges only `claudrunner/` pull requests
+and skips one that has the `claudrunner:hold` label, changes a workflow, matches
+`policy.hold_paths`, or conflicts. GitLab uses merge-when-pipeline-succeeds and Azure Repos
+auto-complete; Bitbucket is not supported. With `auto`, CI is the only gate before the base
+branch: choose it for a project without users, or a base branch that deploys to a test
+environment. Set `review` to stop every automatic merge at once.
 
 **`board.via`** — `connector` lets the agent use the board's claude.ai connector: the natural
 choice in a routine, with no keys to store. The trade-off is stated plainly: with `api` the

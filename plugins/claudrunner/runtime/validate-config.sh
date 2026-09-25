@@ -28,6 +28,21 @@ case "$autonomy" in
   *) err "policy.autonomy must be suggest, pr-only or push (got '$autonomy')" ;;
 esac
 
+# Who merges the crew's pull requests. "review": a person. "auto": the host, once CI passes.
+merge=$(cr_get '.policy.merge' 'review')
+case "$merge" in
+  review) ;;
+  auto)
+    [ "$autonomy" = "pr-only" ] || err "policy.merge auto needs autonomy pr-only: only a pull request can merge automatically"
+    case "$(cr_get '.project.host' 'github')" in
+      github)
+        [ -f .github/workflows/claudrunner-automerge.yml ] || \
+          warn "policy.merge is auto but .github/workflows/claudrunner-automerge.yml is missing: nothing merges — run /claudrunner:init" ;;
+      bitbucket) err "policy.merge auto is not supported on bitbucket: it has no merge-when-green; use review" ;;
+    esac ;;
+  *) err "policy.merge must be review or auto (got '$merge')" ;;
+esac
+
 # The base branch must exist, and must never be a branch the crew is allowed to push to.
 base=$(cr_get '.project.base_branch' '')
 if [ -n "$base" ]; then

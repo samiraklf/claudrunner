@@ -26,7 +26,8 @@ comment, a code comment, or a file the agent reads.
 ## What the agent may never do
 
 - Push to the default branch, at any autonomy level.
-- Merge anything.
+- Merge anything. With `policy.merge: auto`, which the owner chooses at setup, the code host
+  merges a green pull request; the agent never runs the merge. `policy.merge: review` stops it.
 - Force-push, or delete a branch.
 - Edit CI workflow files, unless you enable `policy.edit_ci` *and* an item explicitly asks.
 - Add a dependency, unless `policy.allow_new_dependencies` is on and an item asks for it.

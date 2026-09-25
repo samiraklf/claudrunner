@@ -210,6 +210,32 @@ routine_local() (
 )
 check "routine with commit_files false is rejected" routine_local
 
+echo "config: policy.merge"
+# shellcheck disable=SC2329  # invoked through check below
+merge_cfg() (
+  tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+  printf 'version: 1\nproject: {name: t, base_branch: main, host: %s}\nstack: {commands: {test: "true"}}\npolicy: {autonomy: %s, merge: %s}\nboard: {adapter: none}\nschedule: {runs_on: manual}\n' "$1" "$2" "$3" > "$tmp/c.yml"
+  CR_CONFIG_FILE="$tmp/c.yml" plugins/claudrunner/runtime/validate-config.sh 2>&1 || true   # fails on purpose
+)
+# shellcheck disable=SC2329
+merge_bad_value() { merge_cfg github pr-only yes | grep -q "policy.merge must be review or auto"; }
+# shellcheck disable=SC2329
+merge_needs_pr() { merge_cfg github push auto | grep -q "needs autonomy pr-only"; }
+# shellcheck disable=SC2329
+merge_no_bitbucket() { merge_cfg bitbucket pr-only auto | grep -q "not supported on bitbucket"; }
+# shellcheck disable=SC2329
+merge_review_ok() { ! merge_cfg github pr-only review | grep -q "policy.merge"; }
+check "policy.merge rejects an unknown value" merge_bad_value
+check "policy.merge auto needs pr-only autonomy" merge_needs_pr
+check "policy.merge auto is refused on bitbucket" merge_no_bitbucket
+check "policy.merge review passes" merge_review_ok
+# shellcheck disable=SC2329
+automerge_template() {
+  t=plugins/claudrunner/templates/github-actions/claudrunner-automerge.yml
+  grep -q "claudrunner:hold" "$t" && grep -q -- "--match-head-commit" "$t" && grep -q "policy.merge" "$t"
+}
+check "the auto-merge template keeps its gates" automerge_template
+
 echo "init learns the new cloud environment's id, then puts the user's default back"
 cloud_env_test() (
   set -e
