@@ -20,8 +20,9 @@ val() {
 }
 
 echo "CLAUDRUNNER: this repository runs a crew. Config in .claudrunner/config.yml."
-printf 'project=%s base=%s host=%s board=%s autonomy=%s\n' \
-  "$(val name)" "$(val base_branch)" "$(val host)" "$(val adapter)" "$(val autonomy)"
+merge=$(val merge)
+printf 'project=%s base=%s host=%s board=%s autonomy=%s merge=%s\n' \
+  "$(val name)" "$(val base_branch)" "$(val host)" "$(val adapter)" "$(val autonomy)" "${merge:-review}"
 
 test_cmd=$(val test)
 [ -n "$test_cmd" ] && echo "tests: $test_cmd  (never invent another command — use this one)"

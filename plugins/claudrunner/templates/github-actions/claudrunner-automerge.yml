@@ -1,0 +1,106 @@
+name: claudrunner auto-merge
+
+# Merges a claudrunner pull request once CI passed on its last commit. Installed by
+# /claudrunner:init only when the owner chose `policy.merge: auto`. The crew itself never
+# merges; this workflow does, under the owner's rules.
+#
+# It merges nothing when any of these holds (a human merges instead):
+# - `policy.merge` in .claudrunner/config.yml on the base branch is not `auto`. Set it to
+#   `review` to stop all automatic merges at once: this is the kill switch.
+# - the pull request has the `claudrunner:hold` label (the crew adds it, with the reason,
+#   for a change it judges needs a human);
+# - the pull request changes a file under .github/workflows/;
+# - it changes a file that matches `policy.hold_paths`;
+# - it is not mergeable (a conflict with the base branch).
+#
+# A merge made with the default GITHUB_TOKEN starts no `push` workflow, so CI and any
+# deploy that listen to pushes would not run. Either add a CLAUDRUNNER_MERGE_TOKEN secret
+# (a fine-grained token with contents and pull-requests write), or let this workflow start
+# {ci_workflow_file} on the base branch after the merge (it needs a `workflow_dispatch:`
+# trigger, which init adds with your agreement).
+on:
+  workflow_run:
+    workflows: ["{ci_workflow_name}"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+# One merge at a time: two green pull requests must not both merge against the same base.
+concurrency:
+  group: claudrunner-automerge
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    name: Merge a green claudrunner pull request
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      startsWith(github.event.workflow_run.head_branch, 'claudrunner/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: "{base_branch}"
+
+      - name: Merge when every gate passes
+        env:
+          GH_TOKEN: ${{ secrets.CLAUDRUNNER_MERGE_TOKEN || github.token }}
+          OWN_TOKEN: ${{ secrets.CLAUDRUNNER_MERGE_TOKEN != '' }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          BASE: "{base_branch}"
+          CI_FILE: "{ci_workflow_file}"
+        run: |
+          set -euo pipefail
+          mode=$(yq -r '.policy.merge // "review"' .claudrunner/config.yml)
+          if [ "$mode" != "auto" ]; then
+            echo "policy.merge is '$mode': nothing merges automatically."
+            exit 0
+          fi
+
+          pr=$(gh pr list --repo "$REPO" --head "$BRANCH" --base "$BASE" --state open \
+            --json number,headRefOid --jq ".[] | select(.headRefOid == \"$HEAD_SHA\") | .number")
+          if [ -z "$pr" ]; then
+            echo "No open pull request at $HEAD_SHA (new commits, or already closed)."
+            exit 0
+          fi
+
+          files=$(gh pr diff "$pr" --repo "$REPO" --name-only)
+          reason=""
+          if gh pr view "$pr" --repo "$REPO" --json labels --jq '.labels[].name' | grep -qx 'claudrunner:hold'; then
+            reason="it has the claudrunner:hold label"
+          elif grep -q '^\.github/workflows/' <<<"$files"; then
+            reason="it changes a workflow file"
+          else
+            while IFS= read -r glob; do
+              [ -n "$glob" ] || continue
+              while IFS= read -r f; do
+                # shellcheck disable=SC2053  # the glob must match as a pattern
+                if [[ "$f" == $glob ]]; then reason="it changes $f, which matches policy.hold_paths ($glob)"; break 2; fi
+              done <<<"$files"
+            done < <(yq -r '.policy.hold_paths[]?' .claudrunner/config.yml)
+          fi
+          if [ -n "$reason" ]; then
+            echo "Not merging #$pr: $reason."
+            if ! gh pr view "$pr" --repo "$REPO" --json comments --jq '.comments[].body' | grep -q '^claudrunner auto-merge skipped'; then
+              gh pr comment "$pr" --repo "$REPO" --body "claudrunner auto-merge skipped: $reason. A person reviews and merges this one."
+            fi
+            exit 0
+          fi
+
+          # Merge only the exact commit CI tested.
+          if ! gh pr merge "$pr" --repo "$REPO" --squash --delete-branch --match-head-commit "$HEAD_SHA"; then
+            gh pr comment "$pr" --repo "$REPO" --body "claudrunner auto-merge failed, most likely a conflict with $BASE. Update the branch from $BASE; CI and auto-merge then run again."
+            exit 1
+          fi
+          echo "Merged #$pr."
+
+          # The default token starts no push workflow: start CI on the base branch by hand.
+          if [ "$OWN_TOKEN" != "true" ] && [ -n "$CI_FILE" ]; then
+            gh workflow run "$CI_FILE" --repo "$REPO" --ref "$BASE"
+          fi

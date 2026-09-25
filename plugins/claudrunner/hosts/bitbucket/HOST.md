@@ -18,3 +18,8 @@ The body of the create call needs `title`, `description`, `source.branch.name` a
 - Bitbucket Data Center (self-hosted) uses a different API. Treat it as a separate host.
 - Default reviewers are applied by the project, not by the crew. Do not set reviewers
   yourself; a machine guessing at reviewers annoys people.
+
+## Auto-merge
+
+Not supported: Bitbucket Cloud has no merge-when-green. `validate-config.sh` rejects
+`policy.merge: auto` for this host.

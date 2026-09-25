@@ -22,3 +22,17 @@ link — one click opens the pull request with your title and body pasted from t
   needs `contents: write` and `pull-requests: write`.
 - Enterprise Server works once `GH_HOST` is set.
 - Never pass `--fill`. The pull-request body is written deliberately, by the `ship` skill.
+
+## Auto-merge (`policy.merge: auto`)
+
+`.github/workflows/claudrunner-automerge.yml` merges the pull request, not the crew. `init`
+installs it from `templates/github-actions/claudrunner-automerge.yml`. It merges a pull request
+from a `claudrunner/` branch once CI passed on its last commit, and never one that is held,
+changes a workflow, matches `policy.hold_paths`, or conflicts with the base branch. Setting
+`policy.merge: review` on the base branch stops it at once.
+
+Nothing to do when you open the pull request: the workflow finds it.
+
+**Hold:** add the label `claudrunner:hold` (`gh pr edit <n> --add-label claudrunner:hold`, or
+the session's GitHub tool). Without either, say "held" in the first line of the pull request
+body and in the item comment, so the owner adds the label; the workflow reads only the label.

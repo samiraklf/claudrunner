@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.6.0 — 2026-09-25
+
+### Added
+- `policy.merge`: `init` asks who merges the crew's pull requests. `review` (default): a person.
+  `auto`: the code host merges a pull request once CI passes. On GitHub this is the new
+  `claudrunner-automerge.yml` workflow template; it merges only `claudrunner/` pull requests and
+  skips one that is held (`claudrunner:hold`), changes a workflow, matches `policy.hold_paths`,
+  or conflicts. GitLab uses merge-when-pipeline-succeeds, Azure Repos auto-complete. Setting
+  `review` stops every automatic merge at once.
+- The `ship` skill holds a risky pull request for a person under `auto`, and says why.
+- `board.queues.done`: with `auto`, triage moves merged items there at the start of a run.
+
+### Changed
+- The routine prompt template follows `policy.merge`. An existing routine keeps its old prompt
+  ("never merge") until you update it, which is safe: it only means nothing is held or tidied.
+
 ## 0.5.1 — 2026-09-21
 
 ### Fixed

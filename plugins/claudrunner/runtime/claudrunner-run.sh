@@ -93,6 +93,9 @@ allowed='Read,Edit,Write,Skill,Agent,Glob,Grep,TodoWrite,BashOutput'
 allowed="$allowed,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Bash(git add:*)"
 allowed="$allowed,Bash(git commit:*),Bash(git revert:*),Bash(git branch -m claudrunner/*)"
 [ "$autonomy" != "suggest" ] && allowed="$allowed,Bash(git push:*),Bash(gh pr create:*)"
+# policy.merge auto: the crew may hold a pull request and read merge states; it never merges.
+[ "$(cr_get '.policy.merge' 'review')" = "auto" ] && \
+  allowed="$allowed,Bash(gh pr edit:*),Bash(gh pr view:*),Bash(gh pr comment:*)"
 
 set +e
 # Whose name is on the commits. A CI runner has no git identity of its own.

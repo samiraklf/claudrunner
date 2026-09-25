@@ -1,6 +1,6 @@
 ---
 name: ship
-description: "Finish a run: format, push within the autonomy level, open the pull request, move the board items, emit the run summary. Triggers: ship it, open the PR, finish the run."
+description: "Finish a run: format, push within the autonomy level, open the pull request, hold it or leave it to merge by itself (policy.merge), move the board items, emit the run summary. Triggers: ship it, open the PR, finish the run."
 ---
 
 # Ship
@@ -21,12 +21,33 @@ Read `autonomy` from `.claudrunner/config.yml`:
 - `pr-only` — push the working branch, open a pull request.
 - `push` — push to the branch named in the config, and only that branch.
 
-**Never push to the default branch at any level. Never merge. Never force-push.**
+**Never push to the default branch at any level. Never merge yourself. Never force-push.**
 
 The three host-specific steps — push, propose the change, return its link — are defined by
 `project.host`. Read that host's `HOST.md` before proposing: on GitLab the change is a merge
 request, and on Azure Repos it can carry its work-item link directly. Everything before the
 push is plain git and identical everywhere.
+
+## 2a — Who merges: `policy.merge`
+
+Read `policy.merge` from the config (default `review`). The owner chose it at setup.
+
+- `review` — a person reviews and merges. Do nothing more.
+- `auto` — the host merges the pull request once CI passes on its last commit. You never run
+  a merge command. The host's `HOST.md` section **Auto-merge** says what, if anything, you do
+  to turn it on for this pull request.
+
+With `auto`, **hold** the pull request for a person when any of these holds:
+
+- the diff changes a CI workflow, or a file matching `policy.hold_paths`;
+- the reviewer (`vk-review`) raised a finding that needs a human decision, or you ship with a
+  doubt you could not settle;
+- the project's own docs say a person must review this kind of change (the profile names
+  them), such as a destructive migration or a change to authentication or payments.
+
+To hold: follow **Hold** in the host's `HOST.md`, and post one comment on the pull request that
+starts with `claudrunner hold:` and gives the reason. Holding is cheap. A wrong automatic merge
+reaches the base branch with nobody having read it.
 
 ## 3 — The pull request body
 
@@ -53,7 +74,9 @@ tool's update), and check again.
 
 ## 4 — Close the loop on the board
 
-For each item: move it to the review queue and post the pull request link back to it. For
+For each item: move it to the review queue and post the pull request link back to it. With
+`policy.merge: auto`, add one line to that comment: "Merges by itself when CI passes", or
+"Held for review: <reason>". For
 each skipped item: post the note and move it to the queue its reason dictates —
 `not-needed` and `better-approach` go to human review, everything else goes to the parked
 queue. An item that leaves with no disposition will be re-analyzed every night forever.

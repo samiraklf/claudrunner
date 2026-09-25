@@ -192,6 +192,10 @@ plenty of teams split them.
 | `pr-only` | **Default.** Branches, commits, opens a pull request. | Never |
 | `push` | Pushes to one branch you name. | Never |
 
+**Who merges** (`policy.merge`, asked at setup): `review` (default) — a person reads and merges
+every pull request. `auto` — your repository merges a crew pull request once CI passes, unless
+the crew or `policy.hold_paths` holds it for a person. The crew itself never runs a merge.
+
 ## Guarantees
 
 | | |
@@ -201,7 +205,7 @@ plenty of teams split them.
 | The agent can touch other board items | ❌ Refused — ids are checked against its own input |
 | It stops mid-run to ask you something | ❌ Never. It parks the item and carries on |
 | A run can stall waiting for an answer | ❌ Never. Nobody has to be watching |
-| The agent can merge | ❌ Never |
+| The agent can merge | ❌ Never. With `policy.merge: auto`, your repository merges green pull requests |
 | The agent can force-push | ❌ Never |
 | Item text can instruct the agent | ❌ Treated as untrusted input |
 | Every change is reviewed by a fresh context | ✅ Always, before the pull request opens |

@@ -1,7 +1,7 @@
 {
   "name": "claudrunner",
   "description": "Autonomous AI coding agent: finds bugs and security holes, fixes your Jira, Trello, GitHub Issues or Linear tickets, reviews the diff and opens the pull request. Any language, 11 task boards, runs on a schedule.",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "author": {
     "name": "samiraklf"
   },

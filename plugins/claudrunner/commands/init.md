@@ -160,6 +160,20 @@ option first.
    when one is active, and the default branch otherwise. Always allow typing another name. With
    `push` autonomy, ask the same for `policy.push_branch`, and never offer a branch that deploys
    to production.
+8b. **Who merges the pull requests** (`policy.merge`) — ask it right after the base branch, and
+   say first what a merge there does, in the words from question 8.
+
+   | Choice | Say |
+   |---|---|
+   | **A person reviews** (`review`) | "The crew opens a pull request and stops. You, or your team, read it and merge it. Slower, and nothing reaches `<base branch>` unread." |
+   | **Merge when CI passes** (`auto`) | "Your repository merges each crew pull request by itself once CI passes on it. Fastest. Nobody reads the change first, so CI is the only gate before `<base branch>`." |
+
+   Recommend `review` when a merge to the base branch reaches real users. `auto` suits a
+   project without users yet, or a base branch that deploys to a test environment. Only for
+   `pr-only` autonomy, and not on Bitbucket. With `auto`, also offer `policy.hold_paths`: file
+   patterns that always wait for a person (for example migrations, or payment code), and say
+   that the crew holds a pull request by itself when its change looks risky (`ship` skill).
+   Say that setting `policy.merge: review` later stops every automatic merge at once.
 9. **Where the status page lives** — see the next step. Ask it last; it is optional.
 
 ## Step 2a — Where the tests run
@@ -237,7 +251,13 @@ workspace the user picks. Then create, in this order:
   `Bug` (purple), `Feature` (blue), `Security` (black), `Scale` (sky), `Test gap` (lime).
 - **Two guide cards** at the top of the inbox list: `📖 How this board works` from
   `${CLAUDE_PLUGIN_ROOT}/templates/board/how-this-board-works.md`, with the real list names put in
-  place of `{inbox}`, `{ready}` and the others; and `✍️ Card template` from
+  place of `{inbox}`, `{ready}` and the others. Fill the merge placeholders from `policy.merge`:
+  for `review`, `{who_merges}` is "You review and merge.", `{review_action}` is "Review and
+  merge it.", and `{done_by}` is "You"; for `auto`, `{who_merges}` is "Pull requests merge by
+  themselves when CI passes, unless the crew holds one for you.", `{review_action}` is "It
+  merges by itself when CI passes. A held one says why; review and merge that one.", and
+  `{done_by}` is "The crew". With `auto`, add the done list's name to `board.queues.done`, so the
+  crew moves merged cards there; and note the inbox list in a comment. Then add `✍️ Card template` from `✍️ Card template` from
   `${CLAUDE_PLUGIN_ROOT}/templates/board/card-template.md`.
 
 The claude.ai Trello connector can create boards, lists and cards, but it cannot create or
@@ -314,6 +334,7 @@ State these back and let the user change them:
   production branch is protected.
 - The diff ceiling per pull request (default 600 changed lines).
 - Whether new dependencies are allowed (default: no).
+- Who merges (`policy.merge`), and with `auto`, the `policy.hold_paths` patterns.
 
 ## Step 4 — Write the files
 
@@ -340,7 +361,19 @@ State these back and let the user change them:
    to the first. When it takes a part name, list the parts in
    `stack.commands.setup_parts`. Keep both quiet: send output to a log file and print one line
    when done. In a run, a failed setup is reported, never repaired.
-6. The schedule for the chosen target: a workflow, crontab line or unit from
+6. With `policy.merge: auto` on GitHub: `.github/workflows/claudrunner-automerge.yml` from
+   `${CLAUDE_PLUGIN_ROOT}/templates/github-actions/claudrunner-automerge.yml`. Fill in
+   `{base_branch}`, the `name:` of the CI workflow that runs on pull requests
+   (`{ci_workflow_name}`), and its file name (`{ci_workflow_file}`). A merge made with the
+   default token starts no push workflow, so CI and deploy on the base branch would not run.
+   Offer two ways and let the user choose: add `workflow_dispatch:` to that CI workflow's
+   triggers (the auto-merge workflow then starts it), or add a `CLAUDRUNNER_MERGE_TOKEN` secret
+   (a fine-grained token with contents and pull-requests write; the user creates it and never
+   pastes it here). Say which of the user's workflows run on a push to the base branch, and
+   that they run after each automatic merge. Create the `claudrunner:hold` label
+   (`gh label create claudrunner:hold --color B60205 --description "claudrunner: a person merges this one"`).
+   These are the only workflow edits init makes, and only with the user's agreement.
+7. The schedule for the chosen target: a workflow, crontab line or unit from
    `${CLAUDE_PLUGIN_ROOT}/templates/` — or, for a routine, nothing here; see Step 4b.
 
 ## Step 4b — Create the routines
@@ -467,7 +500,10 @@ real names. On Trello with the default lists it reads like this:
 3. Every <cadence>, the triage run takes the top card and moves it to **🤖 In progress**.
 4. It writes the code, tests it, reviews it, and opens a pull request against `<base branch>`.
    The card moves to **🔍 In review**, with the link in a comment.
-5. You review the pull request and merge it, then move the card to **✅ Done**.
+5. With `policy.merge: review`: you review the pull request and merge it, then move the card
+   to **✅ Done**. With `auto`: the pull request merges by itself when CI passes, and the next
+   triage run moves the card to **✅ Done**. A held pull request says why in a comment; review
+   and merge that one yourself.
 6. If the crew needs a decision, the card goes to **🙋 Needs you** with one question. Answer
    in a comment and move the card back to **🎯 Ready**.
 7. Every <sweep day and time>, the sweep reads the code and files problems in **🐞 Findings**,
@@ -475,12 +511,13 @@ real names. On Trello with the default lists it reads like this:
    **🎯 Ready**, and the next triage takes them.
 
 Say what a merge to the base branch does (for example "a merge to `main` deploys to
-production"), and that the crew never merges.
+production"), and who merges: "you" for `review`; for `auto`, "the repository, when CI passes;
+the crew itself never runs a merge", and how to stop it (`policy.merge: review`).
 
 ### 3. ⚙️ Your settings, in plain words
 
 A table with three columns — setting, value, what it means — for: where it runs and how often;
-the branch pull requests target and what a merge there does; autonomy; how it tests its
+the branch pull requests target and what a merge there does; autonomy; who merges; how it tests its
 changes (`verify.mode`); the diff limit; new dependencies; the status page. End with: "Change
 any of these in `.claudrunner/config.yml`, or run `/claudrunner:init` again."
 

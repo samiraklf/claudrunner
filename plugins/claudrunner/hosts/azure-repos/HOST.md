@@ -20,3 +20,10 @@ Azure DevOps. The change is a pull request, and this host pairs naturally with t
   merges, but say it in the body so the human is not confused.
 - Organisation and project come from the config, never from the current `az` defaults, which
   are per machine and will differ on a runner.
+
+## Auto-merge (`policy.merge: auto`)
+
+Azure Repos completes a pull request by itself once its policies pass:
+`az repos pr update --id <id> --auto-complete true --squash true --delete-source-branch true`.
+
+**Hold:** do not set auto-complete. Say "held" and the reason in the description.
