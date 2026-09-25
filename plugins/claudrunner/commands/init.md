@@ -364,10 +364,13 @@ State these back and let the user change them:
 6. With `policy.merge: auto` on GitHub: `.github/workflows/claudrunner-automerge.yml` from
    `${CLAUDE_PLUGIN_ROOT}/templates/github-actions/claudrunner-automerge.yml`. Fill in
    `{base_branch}`, the `name:` of the CI workflow that runs on pull requests
-   (`{ci_workflow_name}`), and its file name (`{ci_workflow_file}`). A merge made with the
-   default token starts no push workflow, so CI and deploy on the base branch would not run.
-   Offer two ways and let the user choose: add `workflow_dispatch:` to that CI workflow's
-   triggers (the auto-merge workflow then starts it), or add a `CLAUDRUNNER_MERGE_TOKEN` secret
+   (`{ci_workflow_name}`), and `{after_merge_workflows}`: the file names of the workflows
+   that normally run after a push to the base branch, in order, space-separated (for
+   example `ci.yml deploy.yml`, when deploy follows CI). A merge made with the default token
+   starts no push workflow and no `workflow_run` follower, so they would not run. Offer two
+   ways and let the user choose: add `workflow_dispatch:` to each of those workflows (the
+   auto-merge workflow then runs them in order, each only after the one before it passed), or
+   add a `CLAUDRUNNER_MERGE_TOKEN` secret
    (a fine-grained token with contents and pull-requests write; the user creates it and never
    pastes it here). Say which of the user's workflows run on a push to the base branch, and
    that they run after each automatic merge. Create the `claudrunner:hold` label

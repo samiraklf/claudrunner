@@ -13,11 +13,13 @@ name: claudrunner auto-merge
 # - it changes a file that matches `policy.hold_paths`;
 # - it is not mergeable (a conflict with the base branch).
 #
-# A merge made with the default GITHUB_TOKEN starts no `push` workflow, so CI and any
-# deploy that listen to pushes would not run. Either add a CLAUDRUNNER_MERGE_TOKEN secret
-# (a fine-grained token with contents and pull-requests write), or let this workflow start
-# {ci_workflow_file} on the base branch after the merge (it needs a `workflow_dispatch:`
-# trigger, which init adds with your agreement).
+# A merge made with the default GITHUB_TOKEN starts no `push` workflow, and a run that token
+# starts triggers no `workflow_run` follower either. So CI and deploy on the base branch would
+# not run. Either add a CLAUDRUNNER_MERGE_TOKEN secret (a fine-grained token with contents and
+# pull-requests write): the merge is then a normal push. Or let this workflow start
+# {after_merge_workflows} on the base branch after the merge, one after another, each only
+# when the one before it passed. Each needs a `workflow_dispatch:` trigger, which init adds
+# with your agreement.
 on:
   workflow_run:
     workflows: ["{ci_workflow_name}"]
@@ -41,6 +43,7 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       startsWith(github.event.workflow_run.head_branch, 'claudrunner/')
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,7 +57,7 @@ jobs:
           BRANCH: ${{ github.event.workflow_run.head_branch }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           BASE: "{base_branch}"
-          CI_FILE: "{ci_workflow_file}"
+          AFTER_MERGE: "{after_merge_workflows}"
         run: |
           set -euo pipefail
           mode=$(yq -r '.policy.merge // "review"' .claudrunner/config.yml)
@@ -100,7 +103,24 @@ jobs:
           fi
           echo "Merged #$pr."
 
-          # The default token starts no push workflow: start CI on the base branch by hand.
-          if [ "$OWN_TOKEN" != "true" ] && [ -n "$CI_FILE" ]; then
-            gh workflow run "$CI_FILE" --repo "$REPO" --ref "$BASE"
-          fi
+          # The default token starts no push workflow and no workflow_run follower: start the
+          # base branch's workflows here, in order. A failed one stops the chain, so nothing
+          # deploys on a red base branch.
+          [ "$OWN_TOKEN" = "true" ] && exit 0
+          for wf in $AFTER_MERGE; do
+            since=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+            gh workflow run "$wf" --repo "$REPO" --ref "$BASE"
+            run=""
+            for _ in $(seq 30); do
+              run=$(gh run list --repo "$REPO" --workflow "$wf" --event workflow_dispatch --branch "$BASE" \
+                --json databaseId,createdAt --jq "[.[] | select(.createdAt >= \"$since\")][0].databaseId // empty")
+              [ -n "$run" ] && break
+              sleep 5
+            done
+            if [ -z "$run" ]; then echo "$wf did not start on $BASE."; exit 1; fi
+            if ! gh run watch "$run" --repo "$REPO" --exit-status >/dev/null; then
+              echo "$wf failed on $BASE (run $run). The workflows after it were not started."
+              exit 1
+            fi
+            echo "$wf passed on $BASE (run $run)."
+          done
