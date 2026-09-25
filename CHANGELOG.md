@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.1 — 2026-09-25
+
+### Fixed
+- The crew could build an item on top of a prerequisite that was not merged yet (held, failed
+  CI, or still open). It now passes over an item whose prerequisite is not merged, and takes
+  the next one. This matters most with `policy.merge: auto`, where items land one after another.
+- A claimed item that the size limit left no room for stayed in the claimed queue forever when
+  the crew drove its own cycle. It now goes back to the top of the ready queue.
+
 ## 0.6.0 — 2026-09-25
 
 ### Added

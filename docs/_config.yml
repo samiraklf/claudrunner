@@ -14,6 +14,10 @@ repository: samiraklf/claudrunner
 lang: en
 logo: /assets/logo.png
 
+# Proves ownership to search engines; jekyll-seo-tag writes the meta tags.
+webmaster_verifications:
+  google: aNyYAh6ImIN2Q5F5HA5fip2mKYob3OG6CvZSIzTsC_c
+
 permalink: pretty
 markdown: kramdown
 kramdown:

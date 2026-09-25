@@ -17,6 +17,15 @@ in the report rather than guessed at silently.
 
 ## Selection
 
+**Dependencies come first.** An item that says it needs another item merged first (a
+"Dependencies" section, or "after #12", "needs card 1/9") is not ready until that item is
+merged: it is in the done queue, or its pull request is merged into the base branch. Never
+build on a prerequisite that is not merged. It may still change, be held, or fail CI.
+
+- When you claim items yourself, do not claim a blocked item. Take the next one.
+- When one was already claimed for you, skip it as `unclear`, with the note "Waits for
+  <item>. Move it back to ready once that one is merged."
+
 Judge **priority** from the item's own labels or fields. Priority is urgency, not size.
 
 Judge **size** yourself, from the item and the actual code:

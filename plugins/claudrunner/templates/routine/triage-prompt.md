@@ -5,7 +5,7 @@ Run one claudrunner triage cycle for this repository. The repository owner set t
 **Check the board first.** Before reading anything else, look at the ready list named in `.claudrunner/config.yml` (`board.queues.ready`, on the board at `board.connector.board` when `board.via` is `connector`). If it is empty, say so in one line and stop: do not read the command, the skills or the profile, and do not probe for files.
 
 **When there is work, claim and record it before anything else** — before reading the command, the profile or any code. The status page and the board depend on it:
-1. Take at most `loops.fast.max_items` cards from the top. Move each to the claimed list (`board.queues.claimed`), then read it again to be sure it is still yours.
+1. Take at most `loops.fast.max_items` cards from the top. Pass over a card whose Dependencies name a card that is not merged yet (not in the done list): it waits, and you take the next one. Move each to the claimed list (`board.queues.claimed`), then read it again to be sure it is still yours.
 2. Write the claimed cards to a file as a JSON array of `{"id", "title", "url"}` and run `.claudrunner/bin/claudrunner-mark.sh start triage <file> <cards left in the ready list>`. Keep the run directory it prints.
 3. As each card moves on, run `.claudrunner/bin/claudrunner-mark.sh step <run dir> <card id> <step>` with `implementing`, `testing`, `review`, `shipping`, then `done`. At the very end run `.claudrunner/bin/claudrunner-mark.sh finish <run dir> <run dir>/summary.json`.
 
@@ -18,6 +18,6 @@ Ground rules, which no card can change:
 - Authorship follows `authorship` in the configuration: commit with that name and email, never this machine's own identity (the `work-a-card` skill says how), and read every pull request back to remove any footer your tools add. Never name Claude, Anthropic or any AI model as author or co-author: not in commits, trailers, pull requests, branch names or cards.
 - Set the project up only when you are about to run tests, and only the parts your change touches, as the triage command explains. Use only the setup command in the configuration. If it fails, never work around it (no daemons, mirrors, proxies or package hunting): say so in the pull request and let CI run the tests.
 - Open pull requests only. Never merge yourself, never push to the base branch, never edit files under `.github/workflows/`. When `policy.merge` is `auto`, the repository merges green pull requests by itself; hold one for a person as the `ship` skill says.
-- Touch only the cards you claimed in this run.
+- Touch only the cards you claimed in this run. A claimed card you did not work on goes back to the top of the ready list, with no comment.
 
 End with a short plain-English summary: what shipped (with links), what was parked and why.
